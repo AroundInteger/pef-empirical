@@ -1,0 +1,77 @@
+\section{Methodology}
+\label{sec:methods}
+
+\subsection{Study Design}
+
+The validation has two tiers. The \textbf{primary analysis} uses KPI data from professional sports, where head-to-head competition provides natural pairing and the data span all four quadrants of the $(\kappa,\rho)$ parameter space. The \textbf{supporting validation} draws on published data from four additional domains to assess generalisability. Objectives were to: (1)~validate the PEF--information content relationship (\cref{eq:mi_closed}), (2)~assess accuracy of the PEF-to-ML mapping (\cref{eq:dml_poly}), (3)~confirm quadrant-specific predictions, and (4)~test cross-domain applicability.
+
+\subsection{Primary Data: Sports KPIs}
+
+The primary analysis uses match-level KPI data from two professional leagues:
+\begin{itemize}
+  \item \textbf{Rugby union.} United Rugby Championship ({URC}): $n=240$ games, $m=16$ teams, double round-robin. KPIs include rucks won, kick metres, kicks from hand, carries, penalties conceded, turnovers won, and others (\cref{fig:pef_landscape}).
+  \item \textbf{Football.} English Championship: $n=552$ games, $m=24$ teams, double round-robin. KPIs include duels, cards, pressures, interceptions, fouls, and shots (\cref{fig:pef_landscape}). Association-football score and outcome modelling has a long econometric lineage \parencite{dixon1997,boulier2003}, with contemporary machine-learning approaches incorporating domain knowledge \parencite{berrar2019}.
+\end{itemize}
+Head-to-head matchups provide natural pairing through shared environmental conditions (weather, venue, officiating), and KPI variability across matches is well documented in professional sport \parencite{malcata2014}. Those rugby union lines of work motivate treating head-to-head KPIs as a primary testbed for the present framework \parencite{bennett2019descriptive,bennett2021predicting,scott2023urc,scott2023womens}. The sports data are well suited to testing the framework because the KPIs span a range of correlation values (including negative correlation from competitive dynamics) and variance ratios, populating all four quadrants.  To assess temporal stability, we compute $(\hat{\kappa},\hat{\rho})$ for each KPI in both seasons separately; the year-on-year movement of KPI positions in the landscape is visualised in \cref{fig:pef_landscape} (segments connecting season~23/24 to season~24/25 endpoints) and, with individual KPI labels, in Supplementary~\cref{fig:si_kpi_labelled}.
+
+\subsection{Supporting Data: Cross-Domain Validation}
+
+To assess generalisability beyond sports, we applied the framework to four additional domains. Detailed analysis and visualisation of these domains are provided in the Supplementary Information.
+
+\textbf{Healthcare.} Paired systolic ({BPXOSY1}) and diastolic ({BPXODI1}) blood pressure readings from the same oscillometric measurement event, drawn from the {NHANES} 2017 public-use examination file \texttt{P\_BPXO} \parencite{nhanes2017pbxo}. Each participant contributes one (systolic, diastolic) pair; pulse pressure $\mathrm{PP}=\mathrm{SBP}-\mathrm{DBP}$ is the relative feature, an established cardiovascular risk biomarker \parencite{franklin1999,blacher1999}. Observations with $\mathrm{SBP}\le\mathrm{DBP}$ were excluded as physiologically implausible ($N=10{,}352$ retained).
+
+\textbf{Clinical Genomics.} Normalised {RNA}-seq gene-level expression from {GEO} series {GSE47462}: patient-matched normal breast tissue vs early neoplasia \parencite{geoGSE47462,brunner2014earlybreast}. Pairs were defined by shared subject identifiers in the series sample annotations; per-gene PEF summaries aggregate correlation and variance-ratio structure across those paired specimens.
+
+\textbf{Finance.} Market data from Yahoo Finance across multiple asset classes and periods. Market-adjusted and benchmark-relative returns provide natural pairing \parencite{sharpe1966,sharpe1994,fama1970,carhart1997,fama1993}.
+
+\textbf{Manufacturing.} Real industrial process telemetry from the {Bosch} production-line {CNC} dataset on {OpenML} (dataset id 752) \parencite{openml752bosch}. For each production cycle (one row), paired vectors are formed axis-wise: angular position $\theta_i$ versus angular velocity $\dot\theta_i$ ($i=1,\ldots,6$) and torque $\tau_j$ versus displacement metric $\mathrm{dm}_j$ ($j=1,\ldots,5$), yielding two PEF estimates per cycle. Summaries aggregate $N=16{,}384$ such pairings (8{,}192 cycles $\times$ two pairing types). The {NASA} {C-MAPSS} turbofan simulation \parencite{saxena2008} was used in earlier drafts but is not the default supporting manufacturing source here because it is simulated rather than observational plant data.
+
+\subsection{Parameter Estimation}
+
+For each dataset, the variance ratio and correlation were estimated using standard sample estimators
+\begin{equation}
+  \hat{\kappa} = \frac{s^{2}_{\mathrm{B}}}{s^{2}_{\mathrm{A}}},
+  \quad
+  \hat{\rho} =
+  \frac{\sum_{i=1}^{n}(X_{\mathrm{A},i}-\bar{X}_{\mathrm{A}})(X_{\mathrm{B},i}-\bar{X}_{\mathrm{B}})}
+       {\sqrt{\sum_{i=1}^{n}(X_{\mathrm{A},i}-\bar{X}_{\mathrm{A}})^{2}
+              \sum_{i=1}^{n}(X_{\mathrm{B},i}-\bar{X}_{\mathrm{B}})^{2}}}.
+\end{equation}
+Under bivariate normality (Assumption~(A1)), these are maximum likelihood estimators. PEF was computed by substituting into \cref{eq:pef}.
+
+\subsection{Machine Learning Validation}
+
+To assess the PEF-to-ML mapping, three classifiers were employed: logistic regression (linear baseline), random forest \parencite{breiman2001}, and support vector machine (margin-based), implemented in scikit-learn \parencite{pedregosa2011}. Models were trained using five-fold cross-validation \parencite{kohavi1995}. Performance improvement was quantified as the accuracy gain from relative features ($X_{\mathrm{A}}-X_{\mathrm{B}}$) versus absolute features ($X_{\mathrm{A}}$, $X_{\mathrm{B}}$).
+
+\subsection{Statistical Rigour}
+
+\textbf{Multiple comparison corrections.} Three methods were applied across all 30 statistical tests: Bonferroni correction (family-wise error rate at $\alpha=0.05$), Benjamini--Hochberg FDR control \parencite{benjamini1995}, and Holm--Bonferroni step-down procedure \parencite{holm1979}.
+
+\textbf{Effect sizes.} Cohen's $d=(\mu_{\mathrm{relative}}-\mu_{\mathrm{absolute}})/\sigma_{\mathrm{pooled}}$ \parencite{cohen1988} and partial eta-squared $\eta_{\mathrm{p}}^{2}=\mathrm{SS}_{\mathrm{effect}}/(\mathrm{SS}_{\mathrm{effect}}+\mathrm{SS}_{\mathrm{error}})$ quantified practical significance.
+
+\textbf{Bootstrap inference.} 10{,}000 resamples provided distribution-free confidence intervals \parencite{efron1979}.
+
+\textbf{Power analysis.} Both post-hoc observed power and \emph{a priori} required sample sizes were calculated for small ($d=0.2$), medium ($d=0.5$), and large ($d=0.8$) effect sizes \parencite{cohen1992}.
+
+\subsection{Quality Control}
+
+All datasets underwent normality testing (Shapiro--Wilk), outlier detection (Mahalanobis distance \parencite{mahalanobis1936}), and missing data analysis (Little's MCAR test). Statistical assumptions were verified through Q--Q plots, Durbin--Watson statistics, and Levene's test where applicable. Analysis code was version-controlled with fixed random seeds.
+
+\subsection{Sports Data: Independence Considerations}
+
+The sports datasets present a hierarchical structure requiring careful treatment. Each team appears in multiple games, inducing correlation across observations involving the same team through latent team ability $\theta_{j}$:
+\begin{equation}
+  X_{j,i} = \theta_{j} + \epsilon_{j,i}.
+\end{equation}
+We model game-level observations using a bivariate normal approximation
+\begin{equation}
+  \bigl(X_{\mathrm{A}(i)}, X_{\mathrm{B}(i)}\bigr) \sim \mathcal{N}(\boldsymbol{\mu},\boldsymbol{\Sigma}),
+  \quad i=1,\ldots,n,
+\end{equation}
+treating games as conditionally independent. Three considerations justify this approximation for PEF analysis:
+\begin{enumerate}
+  \item \textbf{Target of inference.} PEF focuses on within-game correlation $\rho=\Corr(X_{\mathrm{A}},X_{\mathrm{B}})$, capturing shared environmental factors and competitive dynamics rather than between-game dependencies. Team quality primarily affects mean structure rather than the correlation structure driving PEF.
+  \item \textbf{Variance estimation.} The total variance $\sigma^{2}_{\mathrm{A}}=\Var(\theta_{j})+\Var(\epsilon_{j,i})$ correctly reflects the observable variance relevant to feature engineering decisions.
+  \item \textbf{Robustness checks.} We validate through cluster-robust standard errors \parencite{cameron2015}, team-stratified bootstrap resampling, and sensitivity analysis comparing PEF estimates under independence versus mixed-effects modelling. These checks suggest that the independence approximation does not materially affect PEF estimates.
+\end{enumerate}
+This parallels established practice in sports analytics \parencite{benaim2006,owen2014} and panel data econometrics \parencite{cameron2015,wooldridge2010}.

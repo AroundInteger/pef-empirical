@@ -1,0 +1,52 @@
+\section{Introduction}
+
+\subsection{Fisher's Paired Efficiency and the Equal-Variance Assumption}
+
+The principle that correlated measurements yield more efficient inference than independent samples has been recognised since Fisher's work on experimental design \parencite{fisher1935}. For two correlated measurements $X_{\mathrm{A}}$ and $X_{\mathrm{B}}$ with equal variances $\sigma^{2}$ and correlation $\rho$, the variance of their difference is
+\begin{equation*}
+  \Var(X_{\mathrm{A}} - X_{\mathrm{B}}) = 2\sigma^{2}(1-\rho).
+\end{equation*}
+Compared to independent measurements (variance $2\sigma^{2}$), the efficiency gain is $1/(1-\rho)$. This result, which is purely algebraic and requires no distributional assumptions beyond finite second moments, underpins the paired $t$-test and decades of experimental design across medicine, psychology, and agriculture \parencite{student1908,fisher1935}.
+
+The efficiency formula rests on a single structural assumption: equal variances. When this assumption is violated, as it routinely is in competitive contexts, financial markets, and asymmetric experimental designs \parencite{welch1947}, the classical formula no longer applies. The natural question is how to quantify pairing efficiency when variances differ.
+
+\subsection{Extension to Unequal Variances}
+
+We extend the classical framework by allowing unequal variances $\sigma^{2}_{\mathrm{A}}$ and $\sigma^{2}_{\mathrm{B}}$ with variance ratio $\kappa=\sigma^{2}_{\mathrm{B}}/\sigma^{2}_{\mathrm{A}}$. The variance of the difference becomes
+\begin{equation*}
+  \Var(X_{\mathrm{A}} - X_{\mathrm{B}}) = \sigma^{2}_{\mathrm{A}}\bigl(1 + \kappa - 2\sqrt{\kappa}\,\rho\bigr).
+\end{equation*}
+Defining the Paired Efficiency Factor as the ratio of unpaired to paired variance,
+\begin{equation}
+  \eta = \frac{1+\kappa}{1+\kappa-2\sqrt{\kappa}\,\rho}.
+  \label{eq:pef}
+\end{equation}
+
+\noindent Here $\eta$ is the Paired Efficiency Factor, defined as the ratio of unpaired to paired variance ($\eta>1$ indicating that pairing reduces variance); $\kappa=\sigma^{2}_{\mathrm{B}}/\sigma^{2}_{\mathrm{A}}$ is the variance ratio, which spans approximately $1.0$--$2.5$ across sports KPIs with a broader empirical range in supplementary domains (\cref{tab:validation}); and $\rho$ is the Pearson correlation between paired measurements, empirically ranging from about $-0.3$ to $+0.4$ in competitive sports and frequently exceeding $0.5$ in repeat-measurement clinical designs (\cref{tab:validation}).
+
+This formula is distribution-free. When $\kappa=1$ it reduces to $1/(1-\rho)$; when $\rho=0$ it equals unity regardless of $\kappa$. The formula shows that efficiency depends jointly on correlation strength and variance asymmetry, a dependence absent from the classical formula. Under bivariate normality and equal group sizes, the PEF equals the Pitman asymptotic relative efficiency of the paired $t$-test relative to the independent two-sample $t$-test, providing a testing-theory corroboration of the variance-ratio formula (see \cref{sec:pitman} and \parencite{lehmann1999} for the general framework).
+
+\subsection{Motivation: Competitive Contexts and the Efficiency--Power Tension}
+
+Competitive settings, sports matches, market comparisons, clinical trial arms, naturally produce paired measurements with both correlation (from shared environmental factors) and unequal variances (from differing consistency or capability). In rugby union, team-level performance indicators measured within the same fixture are empirically correlated under shared conditions, and several studies contrast absolute and relative team-level formulations for match-outcome prediction \parencite{bennett2019descriptive,bennett2021predicting,scott2023urc,scott2023womens}. Management research emphasises that competitive benchmarking shifts attention from absolute totals to relative performance \parencite{keiningham2015}. Quantitative international sports ratings illustrate long-standing structured comparison under common rules \parencite{stefani2011}. These settings frequently exhibit negative correlation: when one competitor performs well, the other often performs poorly.
+
+This creates an apparent tension. Classical reasoning suggests that negative correlation ($\eta<1$) makes relativisation harmful, by increasing variance: the variance of differences exceeds that of independent measurements. Yet machine learning practitioners routinely observe that relative features ($X_{\mathrm{A}}-X_{\mathrm{B}}$) outperform absolute features ($X_{\mathrm{A}}$, $X_{\mathrm{B}}$) in precisely these competitive settings. How can higher variance yield better predictions?
+
+The resolution requires distinguishing between \textbf{statistical efficiency}, how precisely parameters can be estimated, and \textbf{information content}, how much a feature reduces uncertainty about outcomes. We show these quantities are functionally related but can diverge, and we derive conditions under which they do.
+
+\subsection{Scope and Contributions}
+
+The primary empirical analysis draws on KPI data from professional rugby union and football, where head-to-head matchups produce natural pairing across a range of $(\kappa,\rho)$ values, including the challenging Quadrant~4 regime with negative correlation. Performance-indicator construction in invasion games is well established \parencite{hughes2002}, and modern team-sports analytics emphasises spatiotemporal and match-context structure \parencite{bornn2021}. We supplement this with validation data from healthcare ({NHANES} oscillometric systolic and diastolic readings on the same visit), transcriptomics ({GEO} {GSE47462}), finance, and manufacturing (real {CNC} process telemetry) to assess generalisability. Detailed visualisation and analysis of the supplementary domains are provided in the Supplementary Information.
+
+This paper makes the following contributions:
+\begin{enumerate}
+  \item \textbf{PEF generalisation.} We extend Fisher's paired efficiency to unequal variances through a distribution-free formula (\cref{eq:pef}).
+  \item \textbf{Information content relationship.} Under bivariate normality, we derive a closed-form relationship between $\eta$ and the mutual information $I(X;Y)$ \parencite{cover2006,guyon2003}, clarifying the efficiency--power tension.
+  \item \textbf{Quadrant taxonomy.} We partition the $(\kappa,\rho)$ parameter space into four regimes with distinct statistical and predictive properties, each with corresponding feature engineering guidance.
+  \item \textbf{Empirical PEF-to-ML mapping.} We establish a quantitative relationship between $\eta$ and expected machine learning improvement (\cref{fig:pef_ml}).
+  \item \textbf{Cross-domain applicability.} We show that market-adjusted returns, paired clinical designs, manufacturing control charts, and relative sports metrics are all instances of correlation-based variance reduction, differing only in their $(\kappa,\rho)$ values. Supporting validation across four additional domains is consistent with the framework's generalisability.
+\end{enumerate}
+
+\subsection{Organisation}
+
+\Cref{sec:theory} develops the theoretical framework: the PEF formula, the PEF--information content relationship, and boundary analysis. \Cref{sec:methods} describes the validation methodology. \Cref{sec:results} presents results. \Cref{sec:discussion} discusses implications and limitations. Mathematical derivations with full intermediate steps appear in the Appendix.

@@ -1,0 +1,5 @@
+domain,source,n_units,n_fail,max_residual,median_residual,consistency_pass
+Healthcare,real_biology_pef_results.csv,1,0,0,0,1
+Finance,real_finance_pef_results.csv,18,0,0,0,1
+Manufacturing,manufacturing_pef_results.csv,16384,0,0,0,1
+Clinical Genomics,real_gene_expression_tcga_study.csv,3500,0,0,0,1

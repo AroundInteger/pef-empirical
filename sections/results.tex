@@ -1,0 +1,116 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{PEF--Information Content Validation}
+
+The theoretical relationship between $\eta$ and information content (\cref{eq:mi_closed}) was tested across four scenarios spanning a range of competitive and environmental dynamics.
+
+\begin{table}[t]
+  \centering
+  \caption{Scenario-level PEF--information content validation.}
+  \label{tab:scenarios}
+  \begin{tabular}{@{}lccccc@{}}
+    \toprule
+    \textbf{Scenario} & $\kappa$ & $\rho$ & $\eta$ & $I(X;Y)$ (bits) & ML impr.$^{\dagger}$ \\
+    \midrule
+    High competitive dynamics      & 2.0  & $-0.3$  & 0.780 & 0.029 & 15.2\% \\
+    Moderate competitive dynamics& 1.2  & $-0.15$ & 0.870 & 0.044 & 8.7\% \\
+    Environmental dynamics       & 1.1  & 0.4     & 1.665 & 0.087 & 25.3\% \\
+    Balanced (Fisher baseline)     & 1.0  & 0.0     & 1.000 & 0.056 & 5.0\% \\
+    \bottomrule
+  \end{tabular}
+
+  \medskip
+  \begin{minipage}{0.95\linewidth}\small
+    $^{\dagger}$ML improvement is the observed accuracy gain from relative versus absolute features in empirical cross-validation on the corresponding scenario-matched KPI data from the primary sports analysis. These values are \emph{not} computed from the polynomial mapping (\cref{eq:dml_poly}); the mapping (\cref{eq:dml_poly}) is fitted to the full 47-study dataset and provides a first-order predictor of this quantity.
+  \end{minipage}
+\end{table}
+
+The correlation between PEF-derived predictions and observed information content was $r=0.900$ ($p<0.001$; computed across all \PEFtotalStudies{} KPI studies in the primary sports analysis, not the four illustrative scenarios above). The four scenarios in \cref{tab:scenarios} are representative examples drawn from that larger set to span the quadrant space. The first two scenarios illustrate the efficiency--power tension: $\eta<1$ coexists with positive ML improvement, consistent with the information content analysis in \S2.2.3.
+
+\subsection{Primary Analysis: Sports KPIs}
+
+The sports KPIs span all four quadrants (\cref{fig:pef_landscape}). Rugby yielded mean $\eta=\PEFrugbyMeanEta$ (95\% CI: $[\PEFrugbyCIlo,\PEFrugbyCIhi]$, \PEFrugbySuccess\% success rate across \PEFrugbyNkpis{} KPI studies). Football yielded mean $\eta=\PEFfootMeanEta$ (95\% CI: $[\PEFfootCIlo,\PEFfootCIhi]$, \PEFfootSuccess\% success across \PEFfootNkpis{} KPI studies). The distribution of KPIs across quadrants, and the per-KPI season-to-season stability of $(\kappa,\rho)$ positions, is visualised in \cref{fig:pef_landscape}.
+
+KPIs with positive correlation (e.g., kicks from hand, carries) fell into Quadrants~1--2 and yielded $\eta>1$. KPIs with negative or near-zero correlation (e.g., turnovers won, penalties conceded) fell into Quadrants~3--4 and yielded $\eta\le 1$, yet several still showed positive ML improvement, consistent with the efficiency--power tension described in \S2.2.3.
+
+\subsection{Supporting Validation: Cross-Domain Results}
+
+\Cref{tab:validation} summarises results across all six domains. Supporting domains illustrate how empirical $(\kappa,\rho)$ structures propagate into $\eta$ and success rates (here, proportion of units with $\eta>1$ and $p<0.05$ where hypothesis tests apply):
+\begin{itemize}
+  \item \textbf{Healthcare} \parencite{nhanes2017pbxo}: pooled $\eta=\PEFhealthMeanEta$ (bootstrap 95\% CI: $[2.448,2.622]$) across $N=\PEFhealthN$ {NHANES} participants pairing systolic and diastolic blood pressure from the same oscillometric measurement (Quadrant~2). Pulse pressure ($\mathrm{SBP}-\mathrm{DBP}$) is the clinically established relative feature.
+  \item \textbf{Clinical genomics} \parencite{brunner2014earlybreast,geoGSE47462}: mean $\eta=\PEFgenomicsMeanEta$ ({SD} $=\PEFgenomicsSdEta$) across $\PEFgenomicsN$ genes ranked by paired-differential signal in {GSE47462}; $\PEFgenomicsSuccess\%$ of genes yielded $\eta>1$.
+  \item \textbf{Finance}: mean $\eta=\PEFfinanceMeanEta$ ({SD} $=\PEFfinanceSdEta$) across $\PEFfinanceN$ {S\&P}~100 stocks relativised to daily {S\&P}~500 returns (2020--2023 pinned snapshot); $\PEFfinanceSuccess\%$ success rate.
+  \item \textbf{Manufacturing} \parencite{openml752bosch}: mean $\eta=\PEFmfgMeanEta$ ({SD} $=\PEFmfgSdEta$) on {Bosch} {OpenML} 752 {CNC} cycles ($N=\PEFmfgN$ axis-wise pairings). Approximately $\PEFmfgSuccess\%$ of pairings yielded $\eta>1$.
+\end{itemize}
+Detailed visualisations and per-study breakdowns for these domains are provided in the Supplementary Information.
+
+\subsection{Quadrant-Specific Performance}
+
+Empirical performance by quadrant:
+
+\begin{table}[t]
+  \centering
+  \caption{Empirical performance by quadrant.}
+  \label{tab:quad_perf}
+  \begin{tabular}{@{}lcccc@{}}
+    \toprule
+    \textbf{Quadrant} & \textbf{Mean $\eta$} & \textbf{95\% CI} & \textbf{Success$^{\dagger}$} & \textbf{Mean ML impr.} \\
+    \midrule
+    Q1 (high $\kappa$, positive $\rho$) & \PEFqOneMeanEta   & $[\PEFqOneCIlo,\PEFqOneCIhi]$   & 100\% & \PEFqOneMLimpr\% \\
+    Q2 (low $\kappa$, positive $\rho$)  & \PEFqTwoMeanEta   & ---                             & 95\%  & \PEFqTwoMLimpr\% \\
+    Q3 (low $\kappa$, negative $\rho$)  & \PEFqThreeMeanEta & ---                             & 45\%  & \PEFqThreeMLimpr\% \\
+    Q4 (high $\kappa$, negative $\rho$) & \PEFqFourMeanEta  & $[\PEFqFourCIlo,\PEFqFourCIhi]$ & 78\%$^{\ddagger}$  & \PEFqFourMLimpr\% \\
+    \bottomrule
+  \end{tabular}
+
+  \medskip
+  \begin{minipage}{0.95\linewidth}\small
+    $^{\dagger}$Success in Q1--Q3: proportion of KPI studies with $\eta>1$ and $p<0.05$ (two-sided). $^{\ddagger}$Success in Q4 is redefined as observed ML improvement~$>0$, since $\eta>1$ is structurally impossible in this regime ($\kappa>1$, $\rho<0$); the 78\% figure reflects the proportion of Q4 KPI studies for which relative features yielded a positive accuracy gain.
+  \end{minipage}
+\end{table}
+
+In Quadrant~4, mean $\eta=\PEFqFourMeanEta$ (indicating increased variance from pairing) yet mean ML improvement was \PEFqFourMLimpr\%, consistent with the analysis in \S2.2.3.
+
+\subsection{PEF-to-ML Mapping Validation}
+
+\Cref{fig:pef_ml} visualises predicted versus observed machine learning improvement under the empirical mapping (\cref{eq:dml_poly}). The fitted surface yields the following validation metrics:
+
+\begin{table}[t]
+  \centering
+  \caption{PEF-to-ML mapping validation metrics.}
+  \label{tab:pef_ml}
+  \begin{tabular}{@{}lcc@{}}
+    \toprule
+    \textbf{Metric} & \textbf{Value} & \textbf{95\% CI} \\
+    \midrule
+    Correlation ($r$) & \PEFmlCorr & --- \\
+    $R^{2}$           & \PEFmlRsq  & --- \\
+    Mean Absolute Error & \PEFmlMAE\% & --- \\
+    Root Mean Square Error & \PEFmlRMSE\% & --- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Prediction accuracy varied systematically across quadrants: MAE was lower in Quadrants~1--2 (predictable high-correlation regimes) than in Quadrant~4 (complex efficiency--power interplay).
+
+\subsection{Statistical Rigour}
+
+Multiple comparison correction results:
+
+\begin{table}[t]
+  \centering
+  \caption{Multiple comparison correction summary.}
+  \label{tab:mc}
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    \textbf{Correction} & \textbf{Significant} & \textbf{Cohen's $d$} & \textbf{Power} \\
+    \midrule
+    Bonferroni              & 23/30 (77\%) & 0.847 & 0.95 \\
+    FDR (Benjamini--Hochberg) & 26/30 (87\%) & 0.823 & --- \\
+    Holm--Bonferroni        & 24/30 (80\%) & 0.834 & 0.94 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Cohen's $d=0.834$ (95\% CI: $[0.76,0.91]$). Partial $\eta_{\mathrm{p}}^{2}=0.410$ (41\% of variance in ML performance). Bootstrap 95\% CI for mean effect size: $[0.612,1.056]$. Observed power: 0.94.

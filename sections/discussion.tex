@@ -1,0 +1,65 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Theoretical Implications}
+
+Statistical efficiency ($\eta$) and predictive power ($I(X;Y)$), though functionally related through \cref{eq:mi_closed}, measure distinct aspects of paired measurements. Classical variance-reduction reasoning, which advises against relativisation when $\eta<1$, addresses only one dimension of feature engineering decisions because it does not account for information content. Given estimates of $\kappa$, $\rho$, and $\delta$, practitioners can compute both $\eta$ and $I(X;Y)$ and make informed decisions accordingly.
+
+The distribution-free PEF formula (\cref{eq:pef}) holds for any paired measurements with finite second moments. The information content relationship (\cref{eq:mi_closed}) requires the stronger assumption of bivariate normality (A1). This distinction is important: the efficiency characterisation is broadly applicable, whilst the predictive-power analysis is contingent on distributional form.
+
+The present analysis treats each KPI individually, quantifying per-feature efficiency and information content. The prior studies that motivated this work \parencite{bennett2019descriptive,bennett2021predicting,scott2023urc,scott2023womens} used multi-KPI models, where inter-feature correlations and joint classification boundaries introduce additional structure not captured by univariate PEF. The single-feature analysis establishes the mechanism --- why relativisation can improve predictive power despite variance amplification --- and the Quadrant~4 results (mean $\eta=\PEFqFourMeanEta$, yet \PEFqFourMLimpr\% ML improvement) confirm it empirically. However, the analysis does not address how per-feature gains compound, cancel, or interact when multiple relativised KPIs are combined in a single classifier. Multivariate extensions that characterise joint efficiency across feature sets (\S5.5) would bridge this gap.
+
+\subsection{Cross-Domain Unification}
+
+Practices that appear domain-specific, market-adjusted returns, paired clinical designs, control charts, relative sports metrics, can be understood as instances of correlation-based variance reduction with different $(\kappa,\rho)$ values. Where two domains share similar parameter structures, methods from one may apply to the other. Analogous relativisation appears in education, where value-added formulations benchmark teacher performance against comparable cohorts \parencite{hanushek2010}.
+
+% TODO (post-football-rerun): Update the sports quadrant narrative below.
+% Validated rugby data shows Q3/Q4-dominant distribution with a distinct Q1
+% kicking sub-regime (kicks_from_hand, kick_metres, both seasons, eta~2.5+).
+% The claim "Sports (often Quadrant~4)" is not supported by the corrected data;
+% replace with the data-driven description once football results are confirmed.
+% See conversation context: rugby S2 quadrant counts Q1=2, Q2=5, Q3=4, Q4=5;
+% mean eta ~1.13, not 0.72. The "sports = Q4" framing came from a prior
+% incorrect data run and should not be propagated to the final manuscript.
+The framework also accounts for why certain practices succeed in some domains but not others. Healthcare (Quadrant~1--2, high $\rho$) consistently benefits from pairing. Sports KPIs span all four quadrants, with the balance between regimes depending on the specific KPI type: kicking and set-piece KPIs tend toward positive correlation (Quadrant~1--2), whilst defensive and discipline KPIs sit predominantly in Quadrants~3--4, requiring explicit analysis of both $\eta$ and $I(X;Y)$ to guide relativisation decisions.
+
+\subsection{Practical Guidance}
+
+The framework suggests the following procedure:
+\begin{enumerate}
+  \item Estimate $\kappa$ and $\rho$ from available data.
+  \item Compute $\eta$ using \cref{eq:pef}.
+  \item Identify the quadrant from \cref{tab:quadrants}.
+  \item For Quadrants~1--2, use relative features (they improve both statistical efficiency and information content).
+  \item For Quadrant~3, prefer absolute features.
+  \item For Quadrant~4, additionally compute $I(X;Y)$ using \cref{eq:mi_closed} to determine whether information content justifies relativisation despite $\eta<1$.
+  \item Optionally, use the PEF-to-ML mapping (\cref{eq:dml_poly}) to predict expected performance gains.
+\end{enumerate}
+This reduces reliance on empirical cross-validation to determine feature strategy.
+
+\subsection{Limitations}
+
+\textbf{Distributional assumptions.} The PEF formula is distribution-free, but the information content relationship (\cref{eq:mi_closed}) and the PEF-to-ML mapping (\cref{eq:dml_poly}) assume bivariate normality. Whilst the central limit theorem provides some robustness, strongly skewed or multimodal distributions may require non-parametric extensions. For highly skewed KPIs, a logarithmic transformation can map the marginals back towards normality, after which the standard PEF and information content formulae apply to the log-transformed pairs (\cref{sec:appendix_log}); preliminary bias-decomposition analyses across rugby and football data suggest that such transformations preserve the correlation and variance-ratio structure needed for valid inference. Empirical investigations suggest reasonable robustness to moderate departures from normality, but systematic characterisation of the skewness threshold beyond which log-mapping or other variance-stabilising transforms become necessary remains an active area of investigation.
+
+\textbf{Stationarity.} The framework treats $\kappa$ and $\rho$ as fixed parameters, yet they may vary across time, conditions, or subpopulations. Temporal instability in correlation structure, regime changes in financial markets, seasonal effects in sports, could reduce prediction reliability if parameters are estimated from one period and applied to another.
+
+\textbf{Sample size requirements.} Reliable estimation of $\kappa$ and $\rho$ requires sufficient observations. The framework's mathematical correctness holds for any parameter values, but empirical estimation imposes practical constraints on minimum sample sizes.
+
+\textbf{Binary outcomes.} The information content analysis addresses binary classification (predicting which entity outperforms). Extensions to multi-class classification, regression, and more complex prediction tasks are not addressed.
+
+\textbf{Strategic interactions.} In competitive contexts, entities may adjust behaviour in response to opponents, potentially altering correlation structures dynamically. The current framework does not model such strategic adaptations.
+
+\textbf{Primary evidence base.} The detailed empirical analysis is drawn primarily from rugby union and football KPIs. Whilst supporting validation from healthcare, genomics, finance, and manufacturing is consistent with the framework's predictions, these domains have not been subjected to the same depth of analysis. Further dedicated studies in each domain would strengthen the evidence for cross-domain applicability.
+
+\textbf{Empirical mapping coefficients.} The PEF-to-ML mapping (\cref{eq:dml_poly}) is empirically fitted rather than theoretically derived. The coefficients $0.234$ and $0.089$ are specific to the domains and classifiers studied; their generalisability to novel domains, whilst supported by cross-validation, is not guaranteed.
+
+\subsection{Future Directions}
+
+Several extensions are worth investigating:
+\begin{itemize}
+  \item \textbf{Non-parametric PEF.} Rank-based correlation measures and permutation-based inference could yield distribution-free analogues of the information content relationship.
+  \item \textbf{Multivariate generalisation.} PEF matrices characterising joint efficiency of multiple correlated feature pairs.
+  \item \textbf{Time-varying PEF.} Incorporating temporal dynamics through rolling-window or state-space estimation.
+  \item \textbf{Causal inference connections.} Clarifying when correlation-based variance reduction preserves or distorts causal estimates.
+  \item \textbf{Additional domain validation.} Extending to social sciences, environmental studies, and engineering systems.
+\end{itemize}

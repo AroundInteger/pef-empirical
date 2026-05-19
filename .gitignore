@@ -1,0 +1,28 @@
+# MATLAB
+*.asv
+*.m~
+
+# LaTeX aux
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.bcf
+*.run.xml
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Large raw data not in this repo (documented in README)
+Data/Football/Raw/20*_Data.csv
+
+# Optional: uncomment to regenerate outputs locally instead of committing
+# scripts/paper_pipeline/outputs/*.csv
+# !scripts/paper_pipeline/outputs/numbers.tex
+# !scripts/paper_pipeline/outputs/table_numbers.csv

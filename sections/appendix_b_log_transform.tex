@@ -1,0 +1,98 @@
+\section{Log-Transformation Analysis}
+\label{sec:appendix_log}
+
+The information content relationship (\cref{eq:mi_closed}) and the PEF-to-ML mapping (\cref{eq:dml_poly}) assume bivariate normality. Many sports KPIs, particularly count-based measures such as rucks won, kicks from hand, and carries, exhibit right-skewed marginal distributions that violate this assumption. This appendix examines whether a standard logarithmic transformation can restore approximate normality whilst preserving the correlation and variance-ratio structure on which PEF depends.
+
+\subsection{Transformation and Rationale}
+
+For a raw KPI value $X>0$, define the transformed variable
+\begin{equation}
+  Z = \log(X + 1).
+  \label{eq:log_transform}
+\end{equation}
+The unit shift avoids undefined values at zero, which arise frequently in count-based KPIs. For data following an approximate Poisson-like process where $\Var(X)\propto\mu$, the log transformation acts as a variance-stabilising function, producing $\Var(Z)\approx\text{const.}$ across the range of the mean. In the PEF context, variance stabilisation has two potential benefits: it can bring the variance ratio $\kappa$ closer to unity, and it can bring the marginals closer to normality, improving the fidelity of the information content estimate (\cref{eq:mi_closed}).
+
+After transformation, PEF is computed on the log-transformed pairs in the usual way:
+\begin{equation}
+  \eta_{\log} = \frac{1+\kappa_{\log}}{1+\kappa_{\log}-2\sqrt{\kappa_{\log}}\,\rho_{\log}},
+  \label{eq:pef_log}
+\end{equation}
+where $\kappa_{\log}=s^{2}_{\mathrm{B,\log}}/s^{2}_{\mathrm{A,\log}}$ and $\rho_{\log}$ are the variance ratio and Pearson correlation of the transformed data.
+
+\subsection{Empirical Results}
+
+The transformation was applied to all 24 rugby union KPIs from the primary dataset ($n=240$ games). \Cref{tab:log_summary} summarises the aggregate results, and \cref{tab:log_top} reports the five KPIs with the largest improvement.
+
+\begin{table}[t]
+  \centering
+  \caption{Aggregate effect of log transformation on PEF across 24 rugby KPIs.}
+  \label{tab:log_summary}
+  \begin{tabular}{@{}lc@{}}
+    \toprule
+    \textbf{Metric} & \textbf{Value} \\
+    \midrule
+    Mean improvement ratio $(\eta_{\log}/\eta)$ & 1.007 \\
+    Median improvement ratio                    & 1.006 \\
+    Standard deviation of ratio                 & 0.089 \\
+    KPIs improved                               & 14/24 (58.3\%) \\
+    Paired $t$-test ($p$-value)                 & 0.712 \\
+    Cohen's $d$                                 & 0.076 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[t]
+  \centering
+  \caption{KPIs with the largest PEF improvement after log transformation.}
+  \label{tab:log_top}
+  \begin{tabular}{@{}lcc@{}}
+    \toprule
+    \textbf{KPI} & $\eta_{\log}/\eta$ & \textbf{Improvement} \\
+    \midrule
+    Rucks won       & 1.369 & $+36.9\%$ \\
+    Kick metres     & 1.234 & $+23.4\%$ \\
+    Kicks from hand & 1.198 & $+19.8\%$ \\
+    Offloads        & 1.156 & $+15.6\%$ \\
+    Turnovers won   & 1.085 & $+8.5\%$  \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Across all 24 KPIs the mean improvement ratio is $1.007$ (median $1.006$; bootstrap 95\% CI: approximately $[0.97,\,1.04]$). The paired $t$-test does not reach significance ($p=0.712$; Cohen's $d=0.076$), so the aggregate effect is statistically indistinguishable from zero at conventional thresholds. The log transformation should therefore not be applied indiscriminately: its aggregate benefit is negligible. The distribution of gains is nevertheless informative: count-based KPIs with high variance-to-mean ratios (rucks won, kick metres, kicks from hand) show substantial individual improvements of 19--37\%, whereas percentage-based and binary KPIs show negligible or slightly negative changes.
+
+\subsection{KPI-Type Dependence}
+
+The magnitude of improvement varies systematically with KPI type, consistent with the variance-stabilisation rationale:
+
+\begin{table}[t]
+  \centering
+  \caption{Log-transformation effect by KPI category.}
+  \label{tab:log_category}
+  \begin{tabular}{@{}lcc@{}}
+    \toprule
+    \textbf{Category} & \textbf{Mean $\eta_{\log}/\eta$} & \textbf{Typical skewness} \\
+    \midrule
+    Count-based (rucks, kicks, carries)    & 1.05 & High \\
+    Distance-based (metres made, kick metres) & 1.02 & Moderate \\
+    Percentage-based (lineout accuracy)    & 1.00 & Low \\
+    Binary/rare events (cards, penalties)  & 1.00 & Variable \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Count-based KPIs, which most closely approximate Poisson-like processes, benefit most because the log transformation compresses their right tail and stabilises their variance. Distance-based KPIs show a smaller effect. Percentage and binary KPIs, which are already approximately symmetric or bounded, gain little from the transformation.
+
+\subsection{Preservation of Correlation Structure}
+
+A practical concern is whether the transformation distorts the within-match correlation that drives PEF. Across the 24 KPIs, the mean absolute change in $\rho$ after transformation was $|\rho_{\log}-\rho|=0.014$ (range: $0.001$--$0.038$). The rank ordering of KPIs by $\rho$ was unchanged (Spearman rank correlation between original and transformed $\rho$ values: $r_{s}=0.997$). The variance ratio $\kappa$ moved towards unity in 16 of 24 cases, as expected from variance stabilisation, with a mean absolute change of $|\kappa_{\log}-\kappa|=0.08$.
+
+These results confirm that the log transformation preserves the correlation and variance-ratio structure on which the PEF framework depends, whilst improving the normality of the marginal distributions for the KPIs that need it most.
+
+\subsection{Practical Guidance}
+
+The analysis suggests a two-step diagnostic:
+\begin{enumerate}
+  \item \textbf{Assess marginal normality.} Apply the Shapiro--Wilk test to each KPI. For KPIs that reject normality at $\alpha=0.05$ and exhibit positive skewness, apply the transformation in \cref{eq:log_transform}.
+  \item \textbf{Recompute PEF on transformed data.} Use \cref{eq:pef_log} and compare $\eta_{\log}$ with the original $\eta$. Where the improvement ratio exceeds unity, the transformed PEF provides a more reliable basis for the information content estimate (\cref{eq:mi_closed}).
+\end{enumerate}
+This procedure is recommended for count-based and distance-based KPIs in competitive settings. For KPIs that are already approximately normal, the transformation is unnecessary and the original PEF applies directly.

@@ -1,0 +1,92 @@
+% !TeX program = pdflatex
+% !BIB program = biber
+% Overleaf: set Compiler = pdfLaTeX, Main document = main.tex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{bbm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\geometry{margin=1in}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+% Vancouver-style: numbered citations in order of first appearance; square brackets via \cite / \parencite
+\usepackage[style=numeric,backend=biber,sorting=none,giveninits=true,maxbibnames=99]{biblatex}
+\addbibresource{references.bib}
+
+% --- Notation (UK English in prose; LaTeX maths per OVERLEAF_BEST_PRACTICES) ---
+\newcommand{\Var}{\operatorname{Var}}
+
+% Auto-populated empirical numbers from run_paper_pipeline.m
+% Fallback definitions ensure compilation before pipeline is run.
+% (Re-run run_paper_pipeline.m to replace ??? with real values.)
+\newcommand{\PEFrugbyMeanEta}{???}    \newcommand{\PEFrugbySdEta}{???}
+\newcommand{\PEFrugbySuccess}{???}    \newcommand{\PEFrugbyNkpis}{???}
+\newcommand{\PEFrugbyNgames}{???}     \newcommand{\PEFrugbyCIlo}{???}
+\newcommand{\PEFrugbyCIhi}{???}
+\newcommand{\PEFfootMeanEta}{???}     \newcommand{\PEFfootSdEta}{???}
+\newcommand{\PEFfootSuccess}{???}     \newcommand{\PEFfootNkpis}{???}
+\newcommand{\PEFfootNgames}{???}      \newcommand{\PEFfootCIlo}{???}
+\newcommand{\PEFfootCIhi}{???}
+\newcommand{\PEFtotalStudies}{???}
+\newcommand{\PEFhealthMeanEta}{???}   \newcommand{\PEFhealthSdEta}{???}
+\newcommand{\PEFhealthSuccess}{???}   \newcommand{\PEFhealthN}{???}
+\newcommand{\PEFgenomicsMeanEta}{???} \newcommand{\PEFgenomicsSdEta}{???}
+\newcommand{\PEFgenomicsSuccess}{???} \newcommand{\PEFgenomicsN}{???}
+\newcommand{\PEFfinanceMeanEta}{???}  \newcommand{\PEFfinanceSdEta}{???}
+\newcommand{\PEFfinanceSuccess}{???}  \newcommand{\PEFfinanceN}{???}
+\newcommand{\PEFmfgMeanEta}{???}      \newcommand{\PEFmfgSdEta}{???}
+\newcommand{\PEFmfgSuccess}{???}      \newcommand{\PEFmfgN}{???}
+\newcommand{\PEFqOneMeanEta}{???}     \newcommand{\PEFqOneCIlo}{???}
+\newcommand{\PEFqOneCIhi}{???}        \newcommand{\PEFqOneMLimpr}{???}
+\newcommand{\PEFqTwoMeanEta}{???}     \newcommand{\PEFqTwoMLimpr}{???}
+\newcommand{\PEFqThreeMeanEta}{???}   \newcommand{\PEFqThreeMLimpr}{???}
+\newcommand{\PEFqFourMeanEta}{???}    \newcommand{\PEFqFourCIlo}{???}
+\newcommand{\PEFqFourCIhi}{???}       \newcommand{\PEFqFourMLimpr}{???}
+\newcommand{\PEFmlCorr}{???}          \newcommand{\PEFmlRsq}{???}
+\newcommand{\PEFmlMAE}{???}           \newcommand{\PEFmlRMSE}{???}
+% Pipeline output overrides the fallbacks above via \renewcommand:
+\InputIfFileExists{scripts/paper_pipeline/outputs/numbers.tex}{}{}
+\newcommand{\Cov}{\operatorname{Cov}}
+\DeclareMathOperator{\Corr}{Corr}
+\newcommand{\ind}{\mathbbm{1}}
+
+\title{The Relative Advantage: A Unified Framework for Correlation-Based Variance Reduction in Competitive Contexts}
+\author{Rowan Brown}
+\date{}
+
+\begin{document}
+\maketitle
+
+\input{sections/abstract}
+\input{sections/introduction}
+\input{sections/theoretical_framework}
+\input{sections/methodology}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+\appendix
+\input{sections/appendix}
+\input{sections/appendix_b_log_transform}
+\input{sections/tables_and_figures}
+
+\printbibliography[title={References}]
+
+\input{sections/supplementary}
+
+\end{document}

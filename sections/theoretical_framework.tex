@@ -1,0 +1,178 @@
+\section{Theoretical Framework}
+\label{sec:theory}
+
+\subsection{The Paired Efficiency Factor}
+
+\subsubsection{Derivation}
+
+For random variables $X_{\mathrm{A}}$ and $X_{\mathrm{B}}$ with variances $\sigma^{2}_{\mathrm{A}}$, $\sigma^{2}_{\mathrm{B}}$ and correlation $\rho$,
+\begin{equation}
+  \Var(X_{\mathrm{A}} - X_{\mathrm{B}}) = \sigma^{2}_{\mathrm{A}} + \sigma^{2}_{\mathrm{B}} - 2\rho\sigma_{\mathrm{A}}\sigma_{\mathrm{B}}.
+  \label{eq:var_sum}
+\end{equation}
+Introducing $\kappa=\sigma^{2}_{\mathrm{B}}/\sigma^{2}_{\mathrm{A}}$ and factoring,
+\begin{equation}
+  \Var(X_{\mathrm{A}} - X_{\mathrm{B}}) = \sigma^{2}_{\mathrm{A}}\bigl(1 + \kappa - 2\sqrt{\kappa}\,\rho\bigr).
+  \label{eq:var_factored}
+\end{equation}
+
+\noindent Here $\sigma^{2}_{\mathrm{A}}$ is the variance of entity~A's measurements, $\kappa=\sigma^{2}_{\mathrm{B}}/\sigma^{2}_{\mathrm{A}}$ is the variance ratio, and $\rho$ is the Pearson correlation between $X_{\mathrm{A}}$ and $X_{\mathrm{B}}$. For unpaired measurements ($\rho=0$), the variance is $\sigma^{2}_{\mathrm{A}}(1+\kappa)$. The Paired Efficiency Factor is the ratio of unpaired to paired variance, i.e.\ the expression in~\cref{eq:pef}:
+\begin{equation*}
+  \eta = \frac{1+\kappa}{1+\kappa-2\sqrt{\kappa}\,\rho}.
+\end{equation*}
+\noindent with $\eta$, $\kappa$, and $\rho$ as defined for \cref{eq:pef} in \S1.2.
+
+\medskip
+\noindent\textbf{Remark.} No distributional assumptions are required: \cref{eq:pef,eq:var_factored} hold for any random variables with finite second moments.
+
+\subsubsection{Properties}
+
+PEF is strictly increasing in $\rho$ for fixed $\kappa>0$,
+\begin{equation}
+  \frac{\partial \eta}{\partial \rho} = \frac{2\sqrt{\kappa}(1+\kappa)}{\bigl(1+\kappa-2\sqrt{\kappa}\,\rho\bigr)^{2}} > 0,
+  \label{eq:detadrho}
+\end{equation}
+and convex in $\rho$,
+\begin{equation}
+  \frac{\partial^{2} \eta}{\partial \rho^{2}} = \frac{8\kappa(1+\kappa)}{\bigl(1+\kappa-2\sqrt{\kappa}\,\rho\bigr)^{3}} > 0.
+  \label{eq:d2etadrho2}
+\end{equation}
+Three regimes arise:
+\begin{itemize}
+  \item $\eta>1$: pairing reduces variance (positive correlation dominates);
+  \item $\eta=1$: pairing provides no efficiency change (Fisher baseline);
+  \item $\eta<1$: pairing increases variance (negative correlation dominates).
+\end{itemize}
+\Cref{fig:pef_landscape} visualises the PEF landscape across the $(\rho,\kappa)$ parameter space.
+
+\subsubsection{Reduction to Classical Case}
+
+When $\kappa=1$,
+\begin{equation*}
+  \eta = \frac{2}{2-2\rho} = \frac{1}{1-\rho},
+\end{equation*}
+recovering Fisher's classical paired efficiency formula \parencite{fisher1935}.
+
+\subsubsection{Provenance and Scope of Contribution}
+
+The algebraic steps from \cref{eq:var_sum} to \cref{eq:pef} are elementary consequences of the bivariate variance formula, and related efficiency expressions for unequal-variance paired designs appear in the experimental-design literature \parencite{fisher1935,welch1947,cochran1977}. We do not claim priority for the formula itself. The contributions of this paper are:
+
+\begin{enumerate}
+  \item the explicit $(\kappa,\rho)$ parameterisation, which separates variance asymmetry from correlation and makes the two-dimensional dependence tractable;
+  \item the four-quadrant taxonomy of the $(\kappa,\rho)$ parameter space and the corresponding feature-engineering guidance;
+  \item the derivation of the PEF--information content relationship (\cref{eq:mi_closed}), which connects the variance-ratio formula to predictive power under the Gaussian discriminant model;
+  \item the empirical PEF-to-ML mapping (\cref{eq:dml_poly}) and cross-domain validation;
+  \item the formal identification of the formula as the Pitman ARE of the paired versus independent $t$-test under normality \parencite{lehmann1999} (\cref{sec:pitman}), providing a testing-theory anchor absent from prior treatments.
+\end{enumerate}
+
+Readers familiar with design efficiency will recognise \cref{eq:pef} as a variance ratio; the framework built around it, and its consequences for feature engineering and machine learning, are the primary contributions.
+
+\subsection{The PEF--Information Content Relationship}
+
+\subsubsection{Setup and Assumptions}
+
+We now impose distributional assumptions to connect PEF with predictive power. Let $Y\in\{0,1\}$ denote the \textbf{binary match outcome} (whether entity~A outperforms entity~B on the measure of interest), and let $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ be the corresponding relative feature. We require two assumptions:
+
+\begin{description}
+  \item[(A1)] $(X_{\mathrm{A}},X_{\mathrm{B}})$ follows a bivariate normal distribution with means $\mu_{\mathrm{A}}$, $\mu_{\mathrm{B}}$, variances $\sigma^{2}_{\mathrm{A}}$, $\sigma^{2}_{\mathrm{B}}$, and correlation $\rho$. Under (A1), $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ is normally distributed with mean $\delta=\mu_{\mathrm{A}}-\mu_{\mathrm{B}}$ and variance given by \cref{eq:var_factored}.
+  \item[(A2)] The class-conditional distributions of $X$ given $Y$ follow a symmetric Gaussian discriminant model:
+  \[
+    X \mid Y=1 \;\sim\; \mathcal{N}\!\left(+\tfrac{\delta}{2},\,\Var(X)\right),
+    \quad
+    X \mid Y=0 \;\sim\; \mathcal{N}\!\left(-\tfrac{\delta}{2},\,\Var(X)\right),
+  \]
+  with equal class priors $\mathbb{P}(Y=1)=\mathbb{P}(Y=0)=\tfrac{1}{2}$.
+\end{description}
+
+Under (A2), $Y$ is \emph{not} a deterministic function of $X$: the outcome depends on many factors beyond the single observed KPI difference, so $H(Y\mid X)>0$. The Gaussian discriminant model is the natural linear classifier for normally distributed features and is consistent with (A1) when the within-class variance equals the marginal $\Var(X)$.
+
+\medskip
+\noindent\textbf{Remark.} Assumption (A1) is required for the PEF formula and the information content derivation. Assumption (A2) is an additional approximation for the predictive setting; it is not required for the PEF formula itself.
+
+\subsubsection{Derivation}
+
+The mutual information \parencite{shannon1948,cover2006} between $X$ and $Y$ is
+\begin{equation}
+  I(X;Y) = H(Y) - H(Y\mid X).
+  \label{eq:mi_def}
+\end{equation}
+
+\noindent Here $I(X;Y)$ is the mutual information (in bits) between the relative feature $X$ and the binary outcome $Y$; $H(Y)$ is the Shannon entropy of $Y$; and $H(Y\mid X)=\mathbb{E}_{X}[H(Y\mid X=x)]$ is the conditional entropy. For equiprobable outcomes, $H(Y)=1$ bit. Under (A2), the posterior probability of winning given the observed KPI difference is
+\[
+  \mathbb{P}(Y=1\mid X=x) = \Phi\!\left(\frac{x}{\sqrt{\Var(X)}}\right),
+\]
+where $\Phi$ is the standard normal CDF. The Bayes error rate is accordingly $\Phi\!\bigl(-\delta/(2\sqrt{\Var(X)})\bigr)$, and the expected conditional entropy evaluates to
+\begin{equation}
+  H(Y\mid X) = H\!\left(\Phi\!\left(\frac{\delta}{2\sqrt{\Var(X)}}\right)\right),
+  \label{eq:hygx}
+\end{equation}
+where $H(p)=-p\log_{2}p-(1-p)\log_{2}(1-p)$ is the binary entropy function. (Full derivation in \cref{sec:appendix}.)
+
+Substituting $\Var(X)=\sigma^{2}_{\mathrm{A}}(1+\kappa)/\eta$ from the rearranged PEF formula,
+\begin{equation}
+  I(X;Y) = 1 - H\!\left(\Phi\!\left(\frac{\delta}{2\sigma_{\mathrm{A}}\sqrt{(1+\kappa)/\eta}}\right)\right).
+  \label{eq:mi_closed}
+\end{equation}
+
+\noindent Here $\delta=\mu_{\mathrm{A}}-\mu_{\mathrm{B}}$ is the mean difference between entities and $\sigma_{\mathrm{A}}$ is the standard deviation of entity~A; $\Phi$, $H(p)$, $\kappa$, and $\eta$ retain their earlier definitions (\cref{eq:pef,eq:hygx}). This is the \textbf{PEF--information content relationship}. $\eta$ and $I(X;Y)$ are functionally linked through the signal-to-noise ratio $\delta/\bigl(2\sigma_{\mathrm{A}}\sqrt{(1+\kappa)/\eta}\bigr)$. \Cref{fig:info_surface} visualises the information content surface $I(X;Y)$ across the $(\kappa,\rho)$ parameter space for the nominal case $\delta/\sigma_{\mathrm{A}}=1$; sensitivity of the surface to this parameter is examined in the Supplementary Information (Figure~S1).
+
+\subsubsection{The Efficiency--Power Tension}
+
+From \cref{eq:mi_closed}, $\eta$ enters the information content formula through the denominator $\sqrt{(1+\kappa)/\eta}$. Consider two effects of negative correlation ($\rho<0$):
+\begin{enumerate}
+  \item \textbf{Variance increases:} $\eta<1$, meaning $\Var(X)>\Var_{\text{unpaired}}(X)$. This harms statistical efficiency.
+  \item \textbf{Signal may increase relative to noise:} if the mean difference $\delta$ is large relative to the amplified standard deviation, $I(X;Y)$ can still be substantial.
+\end{enumerate}
+Predictive power depends on $I(X;Y)$, not $\eta$ alone. When $\delta$ is sufficiently large relative to the amplified standard deviation, the information content remains high despite increased variance. This accounts for cases where machine learning models benefit from relative features even when $\eta<1$.
+
+\subsection{Sources of Competitive Correlation}
+
+Paired measurements in competitive contexts exhibit correlation through:
+\begin{itemize}
+  \item \textbf{Shared environmental factors:} weather, venue, officiating, and regulatory conditions create positive correlation.
+  \item \textbf{Competitive dynamics:} zero-sum interactions can create negative correlation, when one competitor performs exceptionally, the opponent often underperforms.
+  \item \textbf{Non-zero-sum constraints:} both competitors can perform well or poorly simultaneously, enabling positive correlation even in competitive settings.
+\end{itemize}
+The PEF formula accommodates all correlation signs, covering environmental dynamics (typically $\rho>0$) and competitive dynamics (potentially $\rho<0$) within the same expression.
+
+\subsection{Quadrant Taxonomy}
+
+The $(\kappa,\rho)$ parameter space divides naturally into four quadrants with distinct statistical and predictive properties (\cref{tab:quadrants}):
+
+\textbf{Quadrant 1 ($\kappa>1$, $\rho>0$): High efficiency, high information.} Positive correlation combined with variance asymmetry produces $\eta>1$ with high information content. Relative features outperform absolute features in this regime. Exemplified by market-adjusted returns and paired clinical trials.
+
+\textbf{Quadrant 2 ($\kappa<1$, $\rho>0$): High efficiency, moderate information.} Positive correlation provides variance reduction even with low variance ratio, though information content is lower than Quadrant~1. Exemplified by manufacturing control charts.
+
+\textbf{Quadrant 3 ($\kappa<1$, $\rho<0$): Low efficiency, low information.} Negative correlation with low variance asymmetry amplifies variance without commensurate information gain. Absolute features are preferred. Exemplified by weakly competitive or uncorrelated independent measurements.
+
+\textbf{Quadrant 4 ($\kappa>1$, $\rho<0$): Low efficiency, variable information.} This is where the efficiency--power tension is most pronounced. $\eta<1$ indicates statistical harm, yet information content may remain substantial when $\delta$ is large. The decision to relativise requires explicit analysis of both $\eta$ and $I(X;Y)$. Exemplified by competitive sports and head-to-head business comparisons.
+
+\subsection{Empirical PEF-to-ML Mapping}
+
+Beyond qualitative guidance, we seek a quantitative relationship between $\eta$ and observed machine learning improvement. Fitting a second-order polynomial to cross-domain validation data yields
+\begin{equation}
+  \Delta\mathrm{ML} = 0.234(\eta-1) + 0.089(\eta-1)^{2}.
+  \label{eq:dml_poly}
+\end{equation}
+
+\noindent Here $\Delta\mathrm{ML}$ is the proportional improvement in classification accuracy from using relative features ($X_{\mathrm{A}}-X_{\mathrm{B}}$) versus absolute features ($X_{\mathrm{A}}$, $X_{\mathrm{B}}$), $\eta$ is the Paired Efficiency Factor (\cref{eq:pef}), and the coefficients $0.234$ and $0.089$ are empirically fitted to the cross-domain validation data (\cref{tab:pef_ml}). This is an \textbf{empirical} relationship, not a theoretical derivation; it provides first-order estimates of expected performance gains given estimated $\eta$. Validation is presented in \cref{sec:results}.
+
+\subsection{Cross-Domain Connections}
+
+Under the PEF framework, established practices across disciplines can be viewed as instances of a common principle:
+
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Field} & \textbf{Method} & \textbf{Correlation source} & \textbf{Typical PEF regime} \\
+\midrule
+Statistics & Paired $t$-test & Repeated measures & $\eta=1/(1-\rho)$ when $\kappa=1$ \\
+Finance & Market-adjusted returns & Market factors & Q1: $\eta>1$, high $\rho$ \\
+Healthcare & Paired clinical trials & Temporal/biological & Q1--Q2: $\eta\gg 1$ \\
+Manufacturing & Control charts & Process dynamics & Q2: $\eta>1$, moderate $\rho$ \\
+Sports & Relative metrics & Environmental/competitive & Q4: $\eta$ variable \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+When two domains share similar $(\kappa,\rho)$ values, techniques from one may transfer to the other, for example, methods from healthcare (high-$\rho$ settings) to manufacturing contexts with similar correlation structures.

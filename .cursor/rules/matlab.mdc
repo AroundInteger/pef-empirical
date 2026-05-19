@@ -1,0 +1,46 @@
+---
+description: MATLAB R2025b install path and how to run scripts from the shell
+globs: "**/*.{m,mlx}"
+alwaysApply: true
+---
+
+# MATLAB (this machine)
+
+MATLAB is installed but **not** on the default shell `PATH`. Use the full path below.
+
+| Item | Path |
+|------|------|
+| Install root | `/Applications/MATLAB_R2025b.app` |
+| Executable | `/Applications/MATLAB_R2025b.app/bin/matlab` |
+| Version | R2025b (25.2) |
+
+## Running scripts
+
+Prefer **batch** mode (non-interactive, exits when done):
+
+```bash
+/Applications/MATLAB_R2025b.app/bin/matlab -batch "cd('path/to/script/dir'); run('script_name.m')"
+```
+
+Or from the script directory:
+
+```bash
+cd /path/to/script/dir
+/Applications/MATLAB_R2025b.app/bin/matlab -batch "run('script_name.m')"
+```
+
+Do not assume `matlab` or `which matlab` works unless `PATH` has been set in that shell session.
+
+## Paper pipeline scripts
+
+MATLAB figure and validation scripts for the article live under:
+
+- `paper/overleaf_pef_article/scripts/Matlab Figures/`
+- `paper/overleaf_pef_article/scripts/paper_pipeline/`
+
+Many scripts need the **Statistics and Machine Learning Toolbox** (`fitglm`, `cvpartition`, `perfcurve`, etc.).
+
+## Agent notes
+
+- When validating or running `.m` files, invoke MATLAB with the full path above.
+- Use relative or repo-local output paths; avoid hard-coded paths from other machines (e.g. `/Users/iMacPro/...`).

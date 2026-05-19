@@ -1,0 +1,101 @@
+% Consolidated tables matching the manuscript numbering (Tables 1--2, 5).
+% Tables 3--4 appear in \texttt{results.tex} with the subsections that discuss them.
+
+\begin{table}[p]
+  \centering
+  \caption{Validation results across domains.}
+  \label{tab:validation}
+  \small
+  \begin{tabular}{@{}llccccl@{}}
+    \toprule
+    \textbf{Domain} & \textbf{Tier} & \textbf{$n$ studies} & \textbf{Mean $\eta$} & \textbf{SD} & \textbf{Success} & \textbf{Data source} \\
+    \midrule
+    Sports (Rugby)      & Primary    & \PEFrugbyNkpis  & \PEFrugbyMeanEta  & \PEFrugbySdEta  & \PEFrugbySuccess\%  & {URC} \\
+    Sports (Football)   & Primary    & \PEFfootNkpis   & \PEFfootMeanEta   & \PEFfootSdEta   & \PEFfootSuccess\%   & English Championship \\
+    Healthcare          & Supporting & $\PEFhealthN^{\dagger}$ & \PEFhealthMeanEta & 0.04$^{\dagger}$ & \PEFhealthSuccess\% & \cite{nhanes2017pbxo} \\
+    Clinical Genomics   & Supporting & $\PEFgenomicsN^{\ddagger}$ & \PEFgenomicsMeanEta & \PEFgenomicsSdEta & \PEFgenomicsSuccess\% & \cite{brunner2014earlybreast,geoGSE47462} \\
+    Finance             & Supporting & \PEFfinanceN    & \PEFfinanceMeanEta & \PEFfinanceSdEta & \PEFfinanceSuccess\% & Yahoo Finance \\
+    Manufacturing       & Supporting & $\PEFmfgN^{\S}$ & \PEFmfgMeanEta    & \PEFmfgSdEta    & \PEFmfgSuccess\%    & \cite{openml752bosch} \\
+    \bottomrule
+  \end{tabular}
+  \normalsize
+
+  \medskip
+  \begin{minipage}{0.95\linewidth}\small
+    \textit{Note:} Success rate defined as $\eta>1.0$ with $p<0.05$ where applicable. $^{\dagger}$Paired {NHANES} oscillometric records (participants; systolic vs diastolic, first reading); SD column gives a bootstrap standard error for the pooled $\eta$ (not a cross-unit sample SD). $^{\ddagger}$Genes in the ranked subset of the {GSE47462} paired design (see Methods). $^{\S}$Axis-wise paired process features per {Bosch} production cycle ({OpenML} 752); SD is the sample {SD} of $\eta$ across pairings. Primary tier: full KPI-level analysis with visualisation (\cref{fig:pef_landscape,fig:info_surface,fig:pef_ml}). Supporting tier: parameter estimation and PEF calculation; detailed visualisation in Supplementary Information.
+  \end{minipage}
+\end{table}
+
+\begin{table}[p]
+  \centering
+  \caption{Quadrant taxonomy and practical guidance.}
+  \label{tab:quadrants}
+  \begin{tabular}{@{}lllll@{}}
+    \toprule
+    \textbf{Q} & \textbf{Parameters} & $\eta$ & $I(X;Y)$ & \textbf{Recommendation} \\
+    \midrule
+    Q1 & $\kappa>1$, $\rho>0$  & $>1$  & High     & Always use relative features \\
+    Q2 & $\kappa<1$, $\rho>0$  & $>1$  & Moderate & Use relative features \\
+    Q3 & $\kappa<1$, $\rho<0$  & $<1$  & Low      & Prefer absolute features \\
+    Q4 & $\kappa>1$, $\rho<0$  & $<1$  & Variable & Analyse both $\eta$ and $I(X;Y)$ \\
+    \bottomrule
+  \end{tabular}
+
+  \medskip
+  \begin{minipage}{0.95\linewidth}\small
+    \textbf{Examples:} Q1, market-adjusted returns, paired clinical trials; Q2, control charts, quality metrics; Q3, independent measurements; Q4, competitive sports, head-to-head comparisons.
+  \end{minipage}
+\end{table}
+
+\begin{table}[p]
+  \centering
+  \caption{Boundary behaviour (illustrative).}
+  \label{tab:boundary}
+  \begin{tabular}{@{}lccc@{}}
+    \toprule
+    \textbf{Condition} & $\eta$ & $I(X;Y)$ & \textbf{Interpretation} \\
+    \midrule
+    $\kappa=1$, $\rho=0$ (Fisher) & 1.000 & 0.056 & Baseline: independent, equal variances \\
+    $\kappa\to 0$                 & 1.000 & 0.108 & Entity B negligible \\
+    $\kappa\to\infty$             & 1.000 & $\to 0$ & Signal drowned in noise \\
+    $\rho\to -1$ ($\kappa=1$)     & 0.500 & 0.028 & Maximum variance amplification \\
+    $\rho\to +1$ ($\kappa=1$)     & $\to\infty$ & $\to 1$ & Perfect cancellation of noise \\
+    \bottomrule
+  \end{tabular}
+
+  \medskip
+  \begin{minipage}{0.95\linewidth}\small
+    \textit{Note:} $I(X;Y)$ computed with $\delta/\sigma_{\mathrm{A}}=1$.
+  \end{minipage}
+\end{table}
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/Figure_1.png}
+  \caption{PEF landscape, $\eta$ as a function of $\rho$ and $\kappa$, with four quadrants labelled.
+    \textbf{Sports KPIs} (rugby union URC, circles; football Championship, squares): each KPI is represented by a
+    short segment whose endpoints are the season~23/24 and season~24/25 estimates of $(\kappa,\rho)$,
+    with the two-season mean shown as a filled marker.  Segments therefore convey both the central
+    tendency and the year-on-year stability of each KPI's position in the landscape.
+    \textbf{Supporting domains} (triangles): mean $(\kappa,\rho)$ for healthcare, clinical genomics, finance,
+    and manufacturing (see Supplementary Information).
+    All markers are coloured by the corresponding $\eta$ on a $\log_{10}$ scale.
+    Individual KPI labels and per-season arrows are shown in Supplementary~\cref{fig:si_kpi_labelled}.}
+  \label{fig:pef_landscape}
+\end{figure}
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/Figure_2.png}
+  \caption{Information-theoretic surface, $I(X;Y)$ as a function of $\kappa$ and $\rho$ (\cref{eq:mi_closed}), computed with $\delta/\sigma_{\mathrm{A}}=1$. Sensitivity of the surface to $\delta/\sigma_{\mathrm{A}}\in\{0.5,1.0,2.0\}$ is shown in Supplementary~\cref{fig:si_info_sensitivity}.}
+  \label{fig:info_surface}
+\end{figure}
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=0.95\linewidth]{figures/Figure_3.png}
+  \caption{PEF-to-ML surface mapping, predicted versus observed machine learning improvement.}
+  \label{fig:pef_ml}
+\end{figure}
+
+\noindent\textit{Cross-domain validation visualisations (healthcare, clinical genomics, finance, manufacturing) are provided in the Supplementary Information.}
