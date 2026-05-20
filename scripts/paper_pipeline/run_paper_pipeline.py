@@ -338,7 +338,7 @@ def load_nonsports(ns_dir: Path) -> pd.DataFrame:
     specs = [
         ("Finance",          "real_finance_pef_results.csv"),
         ("Manufacturing",    "manufacturing_pef_results.csv"),
-        ("Clinical Genomics","tcga_brca_gene_pef.csv"),
+        ("Clinical Genomics","real_gene_expression_tcga_study.csv"),
     ]
     ETA_COLS   = ["eta","pef","PEF","ETA","eta_pooled","mean_eta"]
     RHO_COLS   = ["rho","correlation","pearson_r","rho_pooled","mean_rho"]

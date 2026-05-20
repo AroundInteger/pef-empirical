@@ -1,0 +1,30 @@
+---
+description: LaTeX and British English conventions for PEF manuscripts
+globs: "**/*.tex"
+alwaysApply: false
+---
+
+# LaTeX — PEF papers
+
+## Language
+
+British English: recognised, behaviour, rigour, optimisation, generalised.
+
+## Maths
+
+- Greek in math mode: `$\eta$`, `$\kappa$`, `$\rho$`, `$\psi$` — not Unicode κ, ρ
+- Display: `\begin{equation}...\end{equation}` with `\label{eq:...}`; cite `\ref{eq:...}`
+- Fractions: `\frac{}{}`; subscripts with braces: `$\sigma^2_A$`
+
+## Structure
+
+- One `\section` per file under `sections/`; `main.tex` only inputs and preamble
+- Generated counts: `\input{scripts/paper_pipeline/outputs/numbers.tex}` (empirical) — never hand-edit macro values that pipeline owns
+
+## Tone
+
+Modest claims; statistics or citations for empirical statements. Distribution-free η in empirical; Gaussian MI link labelled as (A1)–(A2).
+
+## Reference
+
+Full checklist: `UP1_PEF/paper/draft_v13_comprehensive_theoretical/documentation/OVERLEAF_BEST_PRACTICES.md` (archive).

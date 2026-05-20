@@ -2,6 +2,8 @@
 
 Companion to the Paired Efficiency Factor (PEF) empirical manuscript. The mathematical companion lives in [`pef-mathematics`](../pef-mathematics) (local) or on GitHub when published.
 
+**Project memory (both repos, workspace, archive):** [PEF_PROJECT_MEMORY.md](PEF_PROJECT_MEMORY.md)
+
 ## Layout
 
 ```
@@ -21,9 +23,11 @@ pef-empirical/
 
 | Rule | Purpose |
 |------|---------|
+| `project-context.mdc` | Repo map, workspace, pipeline, scope |
 | `companion-paper.mdc` | What belongs in `pef-mathematics` vs here |
 | `github-workflow.mdc` | Post-edit reminders: pipeline, commit, push, sync §7 CSVs |
 | `matlab.mdc` | Full path to MATLAB R2025b on this machine |
+| `latex-paper.mdc` | British English and LaTeX maths (`.tex` files) |
 
 Open **both** repos in one Cursor window (multi-root workspace) when editing cross-citations or refreshing validation inputs.
 

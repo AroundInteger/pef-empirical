@@ -1,0 +1,49 @@
+---
+description: PEF two-repo project map, workspace, archive, and agent defaults
+alwaysApply: true
+---
+
+# PEF project context (empirical repo)
+
+## Repos and workspace
+
+| Repo | Local path | GitHub (AroundInteger) |
+|------|------------|------------------------|
+| **This repo** | `pef-empirical` | `pef-empirical` |
+| Companion | `/Users/rowanbrown/Documents/GitHub/pef-mathematics` | `pef-mathematics` |
+| Archive only | `/Users/rowanbrown/Documents/GitHub/UP1_PEF` | `SEF-Framework-Cross-Sport-Validation` (legacy) |
+
+**Day-to-day workspace:** `/Users/rowanbrown/Documents/GitHub/pef-papers.code-workspace` (both PEF repos only — not UP1_PEF).
+
+**User:** Rowan Brown (`AroundInteger`). Learning GitHub; commit/push **only when explicitly asked**.
+
+## Layout (flat at repo root)
+
+`main.tex`, `sections/`, `Data/`, `figures/`, `scripts/paper_pipeline/`, `scripts/PEF_Normality_4seasons/`, `scripts/matlab_figures/`, `paper_data_and_analysis/outputs/`.
+
+## Canonical reproducibility
+
+```bash
+cd scripts/paper_pipeline
+/Applications/MATLAB_R2025b.app/bin/matlab -batch "run('run_paper_pipeline.m')"
+```
+
+- Writes `outputs/numbers.tex` → `\input` in `main.tex`
+- MATLAB uses `real_gene_expression_tcga_study.csv` for genomics; Python subset may differ
+- **Exclude** multi-GB football event CSVs (`20*_Data.csv`)
+
+## After pipeline / §7 changes
+
+Copy to companion: `kappa_symmetry_*.csv`, `psi_*.csv`, `pef_landscape_2season_geometry.csv` → `pef-mathematics/validation_inputs/`.
+
+## Scope (see also `companion-paper.mdc`)
+
+- Empirical owns quadrants, six-domain validation, Gaussian MI link, weak η→ML story; submit **first**
+- Rugby landscape is **Q3-heavy** — do not claim “sports = Q4”
+- `pef_landscape_ml_validation_matlab_script.m` is **synthetic Monte Carlo**, not KPI rerun
+
+## Writing defaults
+
+- British English; LaTeX maths per `latex-paper.mdc`
+- Do not edit manuscript `.tex` unless user asks
+- No hard-coded `/Users/iMacPro/` paths
