@@ -31,14 +31,18 @@ cd /path/to/script/dir
 
 Do not assume `matlab` or `which matlab` works unless `PATH` has been set in that shell session.
 
-## Paper pipeline scripts
+## This repo (`pef-empirical`)
 
-MATLAB figure and validation scripts for the article live under:
-
-- `paper/overleaf_pef_article/scripts/Matlab Figures/`
-- `paper/overleaf_pef_article/scripts/paper_pipeline/`
+| Purpose | Path |
+|---------|------|
+| Canonical pipeline | `scripts/paper_pipeline/run_paper_pipeline.m` |
+| KPI loaders / PEF | `scripts/PEF_Normality_4seasons/` |
+| SI figures S1–S2 | `scripts/matlab_figures/` |
+| Generated numbers | `scripts/paper_pipeline/outputs/numbers.tex` |
 
 Many scripts need the **Statistics and Machine Learning Toolbox** (`fitglm`, `cvpartition`, `perfcurve`, etc.).
+
+Companion §7 CSVs are copied to `pef-mathematics/validation_inputs/` — do not maintain a second pipeline there.
 
 ## Agent notes
 

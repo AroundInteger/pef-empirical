@@ -1,0 +1,38 @@
+---
+description: Companion mathematics paper — path, research questions, and scope boundaries
+alwaysApply: true
+---
+
+# Companion paper (`pef-mathematics`)
+
+**Sibling repo (local):** `/Users/rowanbrown/Documents/GitHub/pef-mathematics`  
+**Role:** Geometric and information-theoretic structure of the PEF formula (solo-authored).
+
+## This repo (`pef-empirical`) owns
+
+- Distribution-free \(\eta = (1+\kappa)/(1+\kappa-2\sqrt{\kappa}\,\rho)\) and **four-quadrant taxonomy**
+- Primary validation: rugby + football KPIs (seasons 23/24–24/25 pooled), plus supporting domains in `paper_data_and_analysis/outputs/`
+- `eq:mi_closed` under (A1)–(A2): \(\eta \leftrightarrow I(X;Y)\) for **Gaussian** predictive story
+- Empirical ML: `home_win`, absolute vs relative KPI, `scripts/paper_pipeline/run_paper_pipeline.m`
+- Weak global \(\eta \rightarrow\) ML mapping (report honestly; do not oversell `eq:dml_poly`)
+- Submission **first**
+
+## Companion repo owns (cite, do not reproduce at length)
+
+- \(\tau = \tfrac{1}{2}\log\kappa\), canonical \(\eta = \cosh\tau/(\cosh\tau-\rho)\)
+- \(\kappa \leftrightarrow 1/\kappa\) involution, Möbius linearisation, Chebyshev/Poisson series
+- Sphere \(\eta = 1/(1-\cos\sigma)\), partition function \(\log\eta = -\log(1-\rho\,\mathrm{sech}\,\tau)\)
+- Fisher–Rao coordinate \(\psi\), **regime change at \(\rho=0\)**, meta-analytic \(\psi\) scale
+- §7 numerical tests: symmetry, cumulant identity, \(\psi\)-stabilisation, regime LRT (CSV inputs from **this** pipeline)
+
+## Pipeline rule
+
+- **Run** `scripts/paper_pipeline/run_paper_pipeline.m` **only here**
+- Scripts `geometry_diagnostics.m`, `kappa_involution_audit.m`, `psi_scale_pooling.m`, `psi_ml_residuals.m` live here for reproducibility but **ψ headline interpretation** belongs in the companion manuscript
+- After pipeline changes that affect §7 inputs, remind user to refresh `pef-mathematics/validation_inputs/`
+
+## Writing guardrails
+
+- Do not promote \(\psi\) or partition-function proofs into empirical Results as primary contributions
+- Sports quadrant narrative must match `outputs/pef_landscape_2season.csv` (rugby is Q3-heavy, not “mostly Q4”)
+- `numbers.tex` is generated — re-run pipeline after numeric edits, then commit outputs if user requests a commit

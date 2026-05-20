@@ -1,0 +1,50 @@
+---
+description: Git and GitHub habits for this paper repo (learning-friendly prompts)
+alwaysApply: true
+---
+
+# Git workflow — `pef-empirical`
+
+Use this repo as the **maintained** source for the empirical paper. Pair with `pef-mathematics` (separate remote).
+
+## After an agreed edit — agent checklist
+
+When the user and agent have **agreed** a change is complete, before finishing:
+
+1. **Summarise** what changed (files + why in one sentence).
+2. **Pipeline:** If KPI data, pipeline scripts, or LaTeX numbers macros were touched, note whether `run_paper_pipeline.m` was re-run and `outputs/numbers.tex` is current.
+3. **Figures:** If landscape/ML figures depend on new outputs, confirm `figures/Figure_*.png` were regenerated.
+4. **Commit:** Only if the user asked to commit (or their rules explicitly request it). Suggest a commit message focused on **why**, not a file list.
+5. **Push:** Only if the user asked. Remind: `git push -u origin main` on first push to a new GitHub repo.
+6. **Companion sync:** If outputs feed companion §7 (`kappa_symmetry_*.csv`, `psi_*.csv`), mention refreshing `pef-mathematics/validation_inputs/`.
+
+## Branching (simple default)
+
+| Work | Branch |
+|------|--------|
+| Submission polish on `main` | Short-lived branch `draft/…` or commit directly on `main` if solo |
+| Experimental pipeline | `experiment/…` — merge only when validated |
+| Do not | Force-push `main`, commit secrets, commit multi-GB raw event CSVs |
+
+## Good commit message shape
+
+```
+Short imperative summary (≤72 chars).
+
+Why this change matters for the paper or reproducibility.
+```
+
+## PRs (optional learning path)
+
+For a non-trivial change set, suggest opening a PR on GitHub even when solo — good practice before co-authors join.
+
+## What not to commit
+
+- `Data/Football/Raw/20*_Data.csv` (multi-GB event files; already gitignored)
+- LaTeX aux (`.aux`, `.log`, …)
+- Machine-specific paths (`/Users/iMacPro/…`)
+
+## Remotes
+
+- Intended GitHub name: **`pef-empirical`** (not `SEF-Framework-Cross-Sport-Validation`)
+- Old monorepo `UP1_PEF` is archive-only — do not treat it as source of truth
