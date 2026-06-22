@@ -30,6 +30,15 @@ function out = compute_pef(paired, kpi_names, sport_label)
 %              cohens_d_paired, kappa, rho, eta, kappa_abs,
 %              quadrant, p_rho, sig_rho
 
+    % Ensure shared PEF library (eta_pef, classify_quadrant, ...) is on path.
+    persistent libAdded
+    if isempty(libAdded)
+        thisDir = fileparts(mfilename('fullpath'));
+        addpath(fullfile(thisDir, '..', 'paper_pipeline', 'lib'));
+        libAdded = true;
+    end
+    H = pef_theory_helpers();
+
     n_kpi = numel(kpi_names);
 
     sport = repmat(string(sport_label), n_kpi, 1);
@@ -74,7 +83,7 @@ function out = compute_pef(paired, kpi_names, sport_label)
         [r, p]      = corrcoef(A, B);
         rho(k)      = r(1,2);
         p_rho(k)    = p(1,2);
-        eta(k)      = (1 + kappa(k)) / (1 + kappa(k) - 2*sqrt(kappa(k))*rho(k));
+        eta(k)      = H.eta_pef(kappa(k), rho(k));
         % Paired Cohen's d for the home-vs-away difference (using
         % variance of the difference as the standardising denominator).
         d = A - B;
@@ -82,7 +91,7 @@ function out = compute_pef(paired, kpi_names, sport_label)
         if sd_d > 0
             cohens_d(k) = mean(d) / sd_d;
         end
-        quadrant(k) = classify_quadrant(kappa(k), rho(k));
+        quadrant(k) = H.classify_quadrant(kappa(k), rho(k));
     end
 
     sig_rho = p_rho < 0.05;
@@ -93,17 +102,4 @@ function out = compute_pef(paired, kpi_names, sport_label)
                     'sport','kpi','n','var_home','var_away','mean_home','mean_away', ...
                     'cohens_d_paired','kappa','rho','eta','kappa_abs','quadrant', ...
                     'p_rho','sig_rho'});
-end
-
-
-function q = classify_quadrant(kappa, rho)
-    if isnan(kappa) || isnan(rho)
-        q = "NA"; return
-    end
-    if kappa > 1 && rho > 0,      q = "Q1";
-    elseif kappa < 1 && rho > 0,  q = "Q2";
-    elseif kappa < 1 && rho < 0,  q = "Q3";
-    elseif kappa > 1 && rho < 0,  q = "Q4";
-    else,                         q = "boundary";  % kappa==1 or rho==0
-    end
 end

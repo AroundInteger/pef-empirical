@@ -23,6 +23,7 @@ clear; close all; clc;
 script_dir = fileparts(mfilename('fullpath'));
 cfg = si_figure_config();
 addpath(cfg.normality_dir);
+addpath(fullfile(fileparts(script_dir), 'paper_pipeline', 'lib'));
 
 rugby_raw_file = cfg.rugby_raw;
 fig_dir        = cfg.fig_dir;
@@ -153,6 +154,8 @@ function plot_kpi_panel(ax, kpi_data, stems, clr_cat, clr_migrate, marker, ttl)
 
     label_offsets = compute_label_offsets(kpi_data, n_kpi);
 
+    H = pef_theory_helpers();
+
     for k = 1:n_kpi
         rh1 = kpi_data(k, 1, 2);  kp1 = kpi_data(k, 1, 1);
         rh2 = kpi_data(k, 2, 2);  kp2 = kpi_data(k, 2, 1);
@@ -160,11 +163,15 @@ function plot_kpi_panel(ax, kpi_data, stems, clr_cat, clr_migrate, marker, ttl)
         % Skip KPIs with missing data in either season
         if any(isnan([rh1 kp1 rh2 kp2])), continue; end
 
-        % Detect quadrant migration
-        q1 = quadrant_id(rh1, kp1);
-        q2 = quadrant_id(rh2, kp2);
+        % Detect quadrant migration via the canonical pef_theory_helpers
+        % classifier (note arg order: kappa, rho). Boundary cases (kappa==1
+        % or rho==0) return "boundary" rather than being absorbed into a
+        % neighbouring quadrant; in continuous KPI data this is measure-zero
+        % and the visual outcome matches the previous local quadrant_id.
+        q1 = H.classify_quadrant(kp1, rh1);
+        q2 = H.classify_quadrant(kp2, rh2);
         clr = clr_cat;
-        if q1 ~= q2, clr = clr_migrate; end
+        if ~strcmp(q1, q2), clr = clr_migrate; end
 
         % Arrow from season 1 → season 2
         dr = rh2 - rh1;  dk = kp2 - kp1;
@@ -206,15 +213,6 @@ function plot_kpi_panel(ax, kpi_data, stems, clr_cat, clr_migrate, marker, ttl)
            'Location', 'southeast', 'Box', 'off', 'FontSize', 10, 'TextColor', 'w');
 
     title(ttl, 'FontSize', 13, 'FontWeight', 'bold');
-end
-
-function q = quadrant_id(rho_val, kappa_val)
-%QUADRANT_ID  Return 1-4 for the (rho,kappa) quadrant.
-    if     kappa_val >= 1 && rho_val >= 0, q = 1;
-    elseif kappa_val <  1 && rho_val >= 0, q = 2;
-    elseif kappa_val <  1 && rho_val <  0, q = 3;
-    else,                                   q = 4;
-    end
 end
 
 function offsets = compute_label_offsets(kpi_data, n_kpi)

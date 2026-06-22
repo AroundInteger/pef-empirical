@@ -2,69 +2,109 @@
 
 Companion to the Paired Efficiency Factor (PEF) empirical manuscript. The mathematical companion lives in [`pef-mathematics`](../pef-mathematics) (local) or on GitHub when published.
 
-**Project memory (both repos, workspace, archive):** [PEF_PROJECT_MEMORY.md](PEF_PROJECT_MEMORY.md)
+**Project memory:** [`PEF_PROJECT_MEMORY.md`](PEF_PROJECT_MEMORY.md) (both repos).  
+**Submission checklist, companion drafting order, and 2-day timeline:** [`PAPER_ROADMAP.md`](PAPER_ROADMAP.md).
 
 ## Layout
 
 ```
 pef-empirical/
 ├── main.tex, sections/, references.bib
-├── figures/                    Generated PNGs (Figures 1–3, 3b, S1, S2)
-├── Data/                       Sports raw inputs (~2.5 MB; no multi-GB event files)
-├── paper_data_and_analysis/    Supporting-domain summary CSVs
+├── figures/                         Generated PNGs (see table below)
+├── Data/                            Sports raw inputs (~2.5 MB; no multi-GB event files)
+├── paper_data_and_analysis/         Supporting-domain summary CSVs
 ├── scripts/
-│   ├── paper_pipeline/         Canonical entry: run_paper_pipeline.m
-│   ├── PEF_Normality_4seasons/ KPI loaders, compute_pef, normality
-│   └── matlab_figures/          Supplementary figures S1–S2
-└── .cursor/rules/              MATLAB path, companion scope, Git workflow
+│   ├── paper_pipeline/              Canonical pipeline (three MATLAB entry points)
+│   │   ├── run_paper_pipeline.m
+│   │   ├── run_pef_idealised_probit_sim.m
+│   │   ├── run_pef_finalize_diagnostics.m
+│   │   ├── sync_to_companion.sh
+│   │   ├── lib/pef_theory_helpers.m
+│   │   └── outputs/                 numbers.tex, CSVs, SI diagnostics
+│   ├── PEF_Normality_4seasons/      KPI loaders, compute_pef, normality
+│   └── matlab_figures/              Supplementary figures S1–S2 (standalone)
+└── .cursor/rules/                   MATLAB path, companion scope, Git workflow
 ```
 
-## Cursor rules (symmetric with companion repo)
+## Figures
 
-| Rule | Purpose |
-|------|---------|
-| `project-context.mdc` | Repo map, workspace, pipeline, scope |
-| `companion-paper.mdc` | What belongs in `pef-mathematics` vs here |
-| `github-workflow.mdc` | Post-edit reminders: pipeline, commit, push, sync §7 CSVs |
-| `matlab.mdc` | Full path to MATLAB R2025b on this machine |
-| `latex-paper.mdc` | British English and LaTeX maths (`.tex` files) |
+| File | Role | Generator |
+|------|------|-----------|
+| `Figure_1.png` | PEF landscape (main) | `run_paper_pipeline.m` |
+| `Figure_2.png` | Information surface (main) | `run_paper_pipeline.m` |
+| `Figure_3.png` | PEF-to-ML mapping (main) | `run_paper_pipeline.m` |
+| `Figure_3b.png` | ψ-stratified ML residual (companion bridge) | `run_paper_pipeline.m` |
+| `Figure_1_SI.png` | Info sensitivity (S1) | `matlab_figures/generate_figure_S1_info_sensitivity.m` |
+| `Figure_2_SI.png` | Labelled KPI maps (S2) | `matlab_figures/generate_figure_S2_labelled_kpis.m` |
+| `Figure_S3_Ipred_vs_dML.png` | *I*\_pred vs ΔML (S3) | `run_pef_finalize_diagnostics.m` |
+| `Figure_S4_idealised_I_vs_dML_stratified.png` | Idealised probit (S4) | `run_pef_idealised_probit_sim.m` + finalize |
+| `Figure_S5_iso_eta_I_tension.png` | Iso-η / iso-*I* (S5) | `run_pef_finalize_diagnostics.m` |
+| `Figure_finalize_bootstrap_exemplars.png` | Bootstrap exemplars (S6) | `run_pef_finalize_diagnostics.m` |
+| `Figure_S6_q4_bayes_gap.png` | Q4 Bayes gap (S7) | `run_pef_finalize_diagnostics.m` |
+| `Figure_S7_season_drift_alignment.png` | Season drift (S8) | `run_pef_finalize_diagnostics.m` |
 
-Open **both** repos in one Cursor window (multi-root workspace) when editing cross-citations or refreshing validation inputs.
+Captions for S1–S8 are in `sections/supplementary.tex`.
 
 ## Requirements
 
-- MATLAB R2019b+ with **Statistics and Machine Learning Toolbox**
-- Optional: Python 3.10+ for `run_paper_pipeline.py` (subset of outputs)
+- MATLAB R2019b+ with **Statistics and Machine Learning Toolbox** (`fitglm`, `cvpartition`, etc.)
+- On this machine: `/Applications/MATLAB_R2025b.app/bin/matlab` (not on default shell `PATH`)
+- Optional: Python 3.10+ for `run_paper_pipeline.py` (subset of outputs only; **MATLAB is canonical**)
 
-## Reproduce numbers and figures
+## Reproduce numbers and figures (three-script workflow)
+
+Run from `scripts/paper_pipeline` in order:
 
 ```bash
 cd scripts/paper_pipeline
+
+# 1. Main pipeline (~3–8 min): landscape, ML, numbers.tex, companion §7 CSVs
 /Applications/MATLAB_R2025b.app/bin/matlab -batch "run('run_paper_pipeline.m')"
+
+# 2. Idealised probit simulation (A1)–(A2); PRODUCTION_CONFIG locked in script
+/Applications/MATLAB_R2025b.app/bin/matlab -batch "run('run_pef_idealised_probit_sim.m')"
+
+# 3. Pre-submission diagnostics: S3–S8 figures + finalize_*.csv
+/Applications/MATLAB_R2025b.app/bin/matlab -batch "run('run_pef_finalize_diagnostics.m')"
 ```
 
-Outputs: `scripts/paper_pipeline/outputs/numbers.tex` (included in `main.tex` via `\input`).
+### LaTeX numeric inputs
 
-Supplementary figures:
+| File | Included in `main.tex` | Contents |
+|------|------------------------|----------|
+| `outputs/numbers.tex` | `\input` after fallbacks | Domain means, quadrant stats, η→ML metrics |
+| `outputs/finalize_correlations.tex` | `\input` after `numbers.tex` | `\PEFcorrIpredML`, `\PEFcorrEtaML`, `\PEFcorrEtaIpred`, `\PEFmedianDeltaRatio` |
+
+Do **not** hand-edit these files; re-run the scripts above.
+
+### Standalone SI figures (S1–S2)
+
+If S1–S2 need regenerating without a full pipeline run:
 
 ```bash
 cd scripts/matlab_figures
-/Applications/MATLAB_R2025b.app/bin/matlab -batch "generate_figure_S1_info_sensitivity; generate_figure_S2_labelled_kpis"
+/Applications/MATLAB_R2025b.app/bin/matlab -batch "generate_figure_S1_info_sensitivity"
+/Applications/MATLAB_R2025b.app/bin/matlab -batch "generate_figure_S2_labelled_kpis"
 ```
 
-After pipeline changes that affect companion §7, refresh mathematics inputs:
+## Companion sync (§7 validation inputs)
+
+After a pipeline run that changes geometry or ψ outputs, from the **empirical repo root**:
 
 ```bash
-cp scripts/paper_pipeline/outputs/{kappa_symmetry_*,psi_*,pef_landscape_2season_geometry.csv} \
-   ../pef-mathematics/validation_inputs/
+bash scripts/paper_pipeline/sync_to_companion.sh
 ```
+
+This copies eight validation CSVs plus mirrors `lib/pef_theory_helpers.m` to `pef-mathematics/validation_inputs/` and `pef-mathematics/scripts/lib/`, and writes `validation_inputs/_manifest.csv` (sha256, commit SHA, timestamp). The script warns if the empirical tree is dirty — commit before claiming provenance.
+
+Override sibling path: `PEF_MATHEMATICS_DIR=/path/to/pef-mathematics bash scripts/paper_pipeline/sync_to_companion.sh`
 
 ## Data provenance
 
 | Domain | Source |
 |--------|--------|
-| Rugby | URC match KPIs, seasons 23/24–24/25 (`Data/Rugby/`) |
-| Football | English Championship team summaries (`Data/Football/Raw/team_summaries_4seasons/`) |
+| Rugby | URC match KPIs, seasons 23/24–24/25 pooled (`Data/Rugby/`) |
+| Football | English Championship team summaries, same two seasons (`Data/Football/Raw/team_summaries_4seasons/`) |
 | Healthcare, finance, genomics, manufacturing | `paper_data_and_analysis/outputs/` |
 
 Large event-level football files from the legacy repo are **not** required for this pipeline.
@@ -76,6 +116,20 @@ From repo root:
 ```bash
 latexmk -pdf -bibtex- -e '$bibtex = q/biber %O %B;' main.tex
 ```
+
+Overleaf: pdfLaTeX + Biber, main document `main.tex`.
+
+## Cursor rules (symmetric with companion repo)
+
+| Rule | Purpose |
+|------|---------|
+| `project-context.mdc` | Repo map, workspace, pipeline, scope |
+| `companion-paper.mdc` | What belongs in `pef-mathematics` vs here |
+| `github-workflow.mdc` | Post-edit reminders: pipeline, commit, push, sync §7 CSVs |
+| `matlab.mdc` | Full path to MATLAB R2025b on this machine |
+| `latex-paper.mdc` | British English and LaTeX maths (`.tex` files) |
+
+Open **both** repos in `pef-papers.code-workspace` when editing cross-citations or refreshing validation inputs.
 
 ## Git (learning notes)
 

@@ -9,8 +9,8 @@ The validation has two tiers. The \textbf{primary analysis} uses KPI data from p
 
 The primary analysis uses match-level KPI data from two professional leagues:
 \begin{itemize}
-  \item \textbf{Rugby union.} United Rugby Championship ({URC}): $n=240$ games, $m=16$ teams, double round-robin. KPIs include rucks won, kick metres, kicks from hand, carries, penalties conceded, turnovers won, and others (\cref{fig:pef_landscape}).
-  \item \textbf{Football.} English Championship: $n=552$ games, $m=24$ teams, double round-robin. KPIs include duels, cards, pressures, interceptions, fouls, and shots (\cref{fig:pef_landscape}). Association-football score and outcome modelling has a long econometric lineage \parencite{dixon1997,boulier2003}, with contemporary machine-learning approaches incorporating domain knowledge \parencite{berrar2019}.
+  \item \textbf{Rugby union.} United Rugby Championship ({URC}): $n=\PEFrugbyNgames$ games pooled across seasons 23/24 and 24/25 ($m=16$ teams, double round-robin). KPIs include rucks won, kick metres, kicks from hand, carries, penalties conceded, turnovers won, and others (\cref{fig:pef_landscape}).
+  \item \textbf{Football.} English Championship: $n=\PEFfootNgames$ games pooled across the same two seasons ($m=24$ teams, double round-robin). KPIs include duels, cards, pressures, interceptions, fouls, and shots (\cref{fig:pef_landscape}). Association-football score and outcome modelling has a long econometric lineage \parencite{dixon1997,boulier2003}, with contemporary machine-learning approaches incorporating domain knowledge \parencite{berrar2019}.
 \end{itemize}
 Head-to-head matchups provide natural pairing through shared environmental conditions (weather, venue, officiating), and KPI variability across matches is well documented in professional sport \parencite{malcata2014}. Those rugby union lines of work motivate treating head-to-head KPIs as a primary testbed for the present framework \parencite{bennett2019descriptive,bennett2021predicting,scott2023urc,scott2023womens}. The sports data are well suited to testing the framework because the KPIs span a range of correlation values (including negative correlation from competitive dynamics) and variance ratios, populating all four quadrants.  To assess temporal stability, we compute $(\hat{\kappa},\hat{\rho})$ for each KPI in both seasons separately; the year-on-year movement of KPI positions in the landscape is visualised in \cref{fig:pef_landscape} (segments connecting season~23/24 to season~24/25 endpoints) and, with individual KPI labels, in Supplementary~\cref{fig:si_kpi_labelled}.
 
@@ -41,11 +41,11 @@ Under bivariate normality (Assumption~(A1)), these are maximum likelihood estima
 
 \subsection{Machine Learning Validation}
 
-To assess the PEF-to-ML mapping, three classifiers were employed: logistic regression (linear baseline), random forest \parencite{breiman2001}, and support vector machine (margin-based), implemented in scikit-learn \parencite{pedregosa2011}. Models were trained using five-fold cross-validation \parencite{kohavi1995}. Performance improvement was quantified as the accuracy gain from relative features ($X_{\mathrm{A}}-X_{\mathrm{B}}$) versus absolute features ($X_{\mathrm{A}}$, $X_{\mathrm{B}}$).
+To assess the PEF-to-ML mapping, logistic regression was fitted with five-fold cross-validation \parencite{kohavi1995}, implemented in {MATLAB} (\texttt{fitglm}, Statistics and Machine Learning Toolbox). Performance improvement was quantified as the accuracy gain from relative features ($X_{\mathrm{A}}-X_{\mathrm{B}}$) versus absolute features ($X_{\mathrm{A}}$ only).
 
 \subsection{Statistical Rigour}
 
-\textbf{Multiple comparison corrections.} Three methods were applied across all 30 statistical tests: Bonferroni correction (family-wise error rate at $\alpha=0.05$), Benjamini--Hochberg FDR control \parencite{benjamini1995}, and Holm--Bonferroni step-down procedure \parencite{holm1979}.
+\textbf{Multiple comparison corrections.} Where hypothesis tests were applied across a fixed battery of sports KPI checks, three methods were considered: Bonferroni correction (family-wise error rate at $\alpha=0.05$), Benjamini--Hochberg FDR control \parencite{benjamini1995}, and Holm--Bonferroni step-down procedure \parencite{holm1979}. \Cref{tab:mc} summarises an illustrative legacy tabulation; the primary sports analysis reports per-KPI bootstrap intervals (\S\ref{sec:results}, Supplementary Information).
 
 \textbf{Effect sizes.} Cohen's $d=(\mu_{\mathrm{relative}}-\mu_{\mathrm{absolute}})/\sigma_{\mathrm{pooled}}$ \parencite{cohen1988} and partial eta-squared $\eta_{\mathrm{p}}^{2}=\mathrm{SS}_{\mathrm{effect}}/(\mathrm{SS}_{\mathrm{effect}}+\mathrm{SS}_{\mathrm{error}})$ quantified practical significance.
 

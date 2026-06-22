@@ -1,0 +1,2 @@
+iso_eta_I_panel_delta_ratio = 0.283736
+median_empirical_delta_ratio = 0.283736

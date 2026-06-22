@@ -61,6 +61,7 @@ THIS_DIR  = fileparts(mfilename('fullpath'));
 SCRIPTS   = fileparts(THIS_DIR);                        % scripts/
 REPO      = fileparts(SCRIPTS);                         % overleaf_pef_article/
 addpath(fullfile(SCRIPTS, 'PEF_Normality_4seasons'));    % load_*_paired, compute_pef, normality_windows, swtest
+addpath(fullfile(THIS_DIR, 'lib'));                      % pef_theory_helpers (eta_pef, classify_quadrant, ...)
 
 RUGBY_RAW   = fullfile(REPO, 'Data', 'Rugby', 'Raw', '4_seasons rugby abs.csv');
 FOOT_DIR    = fullfile(REPO, 'Data', 'Football', 'Raw', 'team_summaries_4seasons');
@@ -328,6 +329,12 @@ fprintf(' Pipeline complete.\n');
 fprintf(' Figures : %s\n', FIG_DIR);
 fprintf(' Outputs : %s\n', OUT_DIR);
 fprintf('==========================================================\n');
+fprintf('\n');
+fprintf(' To refresh the companion repo (pef-mathematics/validation_inputs/\n');
+fprintf(' and scripts/lib/) with these outputs and a provenance manifest,\n');
+fprintf(' run from the empirical repo root:\n');
+fprintf('   bash scripts/paper_pipeline/sync_to_companion.sh\n');
+fprintf('\n');
 
 % ======================================================================
 %  LOCAL FUNCTIONS  (MATLAB R2019b+)

@@ -70,6 +70,7 @@ Readers familiar with design efficiency will recognise \cref{eq:pef} as a varian
 \subsection{The PEF--Information Content Relationship}
 
 \subsubsection{Setup and Assumptions}
+\label{sec:mi_setup}
 
 We now impose distributional assumptions to connect PEF with predictive power. Let $Y\in\{0,1\}$ denote the \textbf{binary match outcome} (whether entity~A outperforms entity~B on the measure of interest), and let $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ be the corresponding relative feature. We require two assumptions:
 
@@ -117,6 +118,7 @@ Substituting $\Var(X)=\sigma^{2}_{\mathrm{A}}(1+\kappa)/\eta$ from the rearrange
 \noindent Here $\delta=\mu_{\mathrm{A}}-\mu_{\mathrm{B}}$ is the mean difference between entities and $\sigma_{\mathrm{A}}$ is the standard deviation of entity~A; $\Phi$, $H(p)$, $\kappa$, and $\eta$ retain their earlier definitions (\cref{eq:pef,eq:hygx}). This is the \textbf{PEF--information content relationship}. $\eta$ and $I(X;Y)$ are functionally linked through the signal-to-noise ratio $\delta/\bigl(2\sigma_{\mathrm{A}}\sqrt{(1+\kappa)/\eta}\bigr)$. \Cref{fig:info_surface} visualises the information content surface $I(X;Y)$ across the $(\kappa,\rho)$ parameter space for the nominal case $\delta/\sigma_{\mathrm{A}}=1$; sensitivity of the surface to this parameter is examined in the Supplementary Information (Figure~S1).
 
 \subsubsection{The Efficiency--Power Tension}
+\label{sec:eff_power_theory}
 
 From \cref{eq:mi_closed}, $\eta$ enters the information content formula through the denominator $\sqrt{(1+\kappa)/\eta}$. Consider two effects of negative correlation ($\rho<0$):
 \begin{enumerate}

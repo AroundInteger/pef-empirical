@@ -1,0 +1,23 @@
+=== Idealised probit simulation summary ===
+Date: 22-Jun-2026 10:59:47
+PRODUCTION_CONFIG: n=5000 trials=50 k-fold=5
+kappa grid: [0.8 1 1.2 2]
+delta/sigma_A grid: [0.3 0.5 1 2]
+parpool workers: 16
+
+--- Correlations (full grid) ---
+corr(I(X;Y), mean ML improvement) = -0.7046
+corr(eta, mean ML improvement)     = 0.3334
+Q4 cells eta<1 and mean impr>0: 16 / 16
+
+--- Stratified corr(I, ML) by delta/sigma_A ---
+  delta/sigma_A=0.3  n=16  corr=0.3949
+  delta/sigma_A=0.5  n=16  corr=0.3144
+  delta/sigma_A=1.0  n=16  corr=-0.1773
+  delta/sigma_A=2.0  n=16  corr=-0.8743
+
+--- Named scenarios ---
+High competitive dynamics: eta=0.780 I=0.0294 bayes=0.601 impr=9.4+/-1.0%
+Moderate competitive dynamics: eta=0.870 I=0.0444 bayes=0.623 impr=8.2+/-0.9%
+Environmental dynamics: eta=1.665 I=0.0871 bayes=0.672 impr=8.6+/-0.9%
+Balanced (Fisher baseline): eta=1.000 I=0.0558 bayes=0.638 impr=7.9+/-0.8%

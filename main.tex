@@ -62,6 +62,11 @@
 \newcommand{\PEFmlMAE}{???}           \newcommand{\PEFmlRMSE}{???}
 % Pipeline output overrides the fallbacks above via \renewcommand:
 \InputIfFileExists{scripts/paper_pipeline/outputs/numbers.tex}{}{}
+\providecommand{\PEFcorrIpredML}{???}
+\providecommand{\PEFcorrEtaML}{???}
+\providecommand{\PEFcorrEtaIpred}{???}
+\providecommand{\PEFmedianDeltaRatio}{???}
+\InputIfFileExists{scripts/paper_pipeline/outputs/finalize_correlations.tex}{}{}
 \newcommand{\Cov}{\operatorname{Cov}}
 \DeclareMathOperator{\Corr}{Corr}
 \newcommand{\ind}{\mathbbm{1}}

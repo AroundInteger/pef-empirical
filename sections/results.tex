@@ -3,36 +3,36 @@
 
 \subsection{PEF--Information Content Validation}
 
-The theoretical relationship between $\eta$ and information content (\cref{eq:mi_closed}) was tested across four scenarios spanning a range of competitive and environmental dynamics.
+The theoretical relationship between $\eta$ and information content (\cref{eq:mi_closed}) was examined in four named scenarios from the theory-aligned idealised probit simulation (\cref{fig:si_idealised_stratified}; \texttt{run\_pef\_idealised\_probit\_sim.m}) under assumptions (A1)--(A2), with $n=5{,}000$ per cell, 50 Monte Carlo trials, and five-fold logistic cross-validation matching the empirical protocol.
 
 \begin{table}[t]
   \centering
-  \caption{Scenario-level PEF--information content validation.}
+  \caption{Scenario-level validation from the idealised probit simulation (A1)--(A2).}
   \label{tab:scenarios}
   \begin{tabular}{@{}lccccc@{}}
     \toprule
     \textbf{Scenario} & $\kappa$ & $\rho$ & $\eta$ & $I(X;Y)$ (bits) & ML impr.$^{\dagger}$ \\
     \midrule
-    High competitive dynamics      & 2.0  & $-0.3$  & 0.780 & 0.029 & 15.2\% \\
-    Moderate competitive dynamics& 1.2  & $-0.15$ & 0.870 & 0.044 & 8.7\% \\
-    Environmental dynamics       & 1.1  & 0.4     & 1.665 & 0.087 & 25.3\% \\
-    Balanced (Fisher baseline)     & 1.0  & 0.0     & 1.000 & 0.056 & 5.0\% \\
+    High competitive dynamics      & 2.0  & $-0.3$  & 0.780 & 0.029 & 9.4\% \\
+    Moderate competitive dynamics  & 1.2  & $-0.15$ & 0.870 & 0.044 & 8.2\% \\
+    Environmental dynamics         & 1.1  & 0.4     & 1.665 & 0.087 & 8.6\% \\
+    Balanced (Fisher baseline)     & 1.0  & 0.0     & 1.000 & 0.056 & 7.9\% \\
     \bottomrule
   \end{tabular}
 
   \medskip
   \begin{minipage}{0.95\linewidth}\small
-    $^{\dagger}$ML improvement is the observed accuracy gain from relative versus absolute features in empirical cross-validation on the corresponding scenario-matched KPI data from the primary sports analysis. These values are \emph{not} computed from the polynomial mapping (\cref{eq:dml_poly}); the mapping (\cref{eq:dml_poly}) is fitted to the full 47-study dataset and provides a first-order predictor of this quantity.
+    $^{\dagger}$Mean five-fold cross-validated accuracy improvement (relative minus absolute features) across 50 Monte Carlo trials per scenario cell ($\delta/\sigma_{\mathrm{A}}=1$). Standard errors are $\approx$0.8--1.0 percentage points (see \texttt{idealised\_probit\_scenarios.csv}).
   \end{minipage}
 \end{table}
 
-The correlation between PEF-derived predictions and observed information content was $r=0.900$ ($p<0.001$; computed across all \PEFtotalStudies{} KPI studies in the primary sports analysis, not the four illustrative scenarios above). The four scenarios in \cref{tab:scenarios} are representative examples drawn from that larger set to span the quadrant space. The first two scenarios illustrate the efficiency--power tension: $\eta<1$ coexists with positive ML improvement, consistent with the information content analysis in \S2.2.3.
+On the admissible $(\kappa,\rho)$ grid at fixed $\delta/\sigma_{\mathrm{A}}=1$, analytic $\eta$ and $I(X;Y)$ from \cref{eq:mi_closed} are strongly correlated ($r\approx 0.87$ across 16 grid cells in the idealised simulation). Across all \PEFtotalStudies{} sports KPI studies, however, $\delta/\sigma_{\mathrm{A}}$ varies (median $\PEFmedianDeltaRatio$; Supplementary~\cref{fig:si_iso_eta_I}), and the per-KPI mapping weakens: $\Corr(\eta,I_{\mathrm{pred}})=r=\PEFcorrEtaIpred$, whilst $\Corr(I_{\mathrm{pred}},\Delta\mathrm{ML})=\PEFcorrIpredML$ exceeds $\Corr(\eta,\Delta\mathrm{ML})=\PEFcorrEtaML$---but all three remain weak (Supplementary~\cref{fig:si_ipred_vs_dml}). The four scenarios in \cref{tab:scenarios} span the quadrant space under controlled (A1)--(A2) conditions; the first two illustrate the efficiency--power tension ($\eta<1$ with positive mean ML improvement), consistent with \cref{sec:eff_power_theory}.
 
 \subsection{Primary Analysis: Sports KPIs}
 
 The sports KPIs span all four quadrants (\cref{fig:pef_landscape}). Rugby yielded mean $\eta=\PEFrugbyMeanEta$ (95\% CI: $[\PEFrugbyCIlo,\PEFrugbyCIhi]$, \PEFrugbySuccess\% success rate across \PEFrugbyNkpis{} KPI studies). Football yielded mean $\eta=\PEFfootMeanEta$ (95\% CI: $[\PEFfootCIlo,\PEFfootCIhi]$, \PEFfootSuccess\% success across \PEFfootNkpis{} KPI studies). The distribution of KPIs across quadrants, and the per-KPI season-to-season stability of $(\kappa,\rho)$ positions, is visualised in \cref{fig:pef_landscape}.
 
-KPIs with positive correlation (e.g., kicks from hand, carries) fell into Quadrants~1--2 and yielded $\eta>1$. KPIs with negative or near-zero correlation (e.g., turnovers won, penalties conceded) fell into Quadrants~3--4 and yielded $\eta\le 1$, yet several still showed positive ML improvement, consistent with the efficiency--power tension described in \S2.2.3.
+KPIs with positive correlation (e.g., kicks from hand, carries) fell into Quadrants~1--2 and yielded $\eta>1$. KPIs with negative or near-zero correlation (e.g., turnovers won, penalties conceded) fell into Quadrants~3--4 and yielded $\eta\le 1$, yet several still showed positive ML improvement, consistent with the efficiency--power tension described in \cref{sec:eff_power_theory}.
 
 \subsection{Supporting Validation: Cross-Domain Results}
 
@@ -43,7 +43,7 @@ KPIs with positive correlation (e.g., kicks from hand, carries) fell into Quadra
   \item \textbf{Finance}: mean $\eta=\PEFfinanceMeanEta$ ({SD} $=\PEFfinanceSdEta$) across $\PEFfinanceN$ {S\&P}~100 stocks relativised to daily {S\&P}~500 returns (2020--2023 pinned snapshot); $\PEFfinanceSuccess\%$ success rate.
   \item \textbf{Manufacturing} \parencite{openml752bosch}: mean $\eta=\PEFmfgMeanEta$ ({SD} $=\PEFmfgSdEta$) on {Bosch} {OpenML} 752 {CNC} cycles ($N=\PEFmfgN$ axis-wise pairings). Approximately $\PEFmfgSuccess\%$ of pairings yielded $\eta>1$.
 \end{itemize}
-Detailed visualisations and per-study breakdowns for these domains are provided in the Supplementary Information.
+Summary statistics for all six domains are collected in \cref{tab:validation}; the sports landscape with supporting-domain overlay markers appears in \cref{fig:pef_landscape}. Detailed per-study breakdowns for the non-sports domains are not separately visualised given the cross-sectional nature of those datasets.
 
 \subsection{Quadrant-Specific Performance}
 
@@ -70,7 +70,18 @@ Empirical performance by quadrant:
   \end{minipage}
 \end{table}
 
-In Quadrant~4, mean $\eta=\PEFqFourMeanEta$ (indicating increased variance from pairing) yet mean ML improvement was \PEFqFourMLimpr\%, consistent with the analysis in \S2.2.3.
+In Quadrant~4, mean $\eta=\PEFqFourMeanEta$ (indicating increased variance from pairing) yet mean ML improvement was \PEFqFourMLimpr\%, consistent with the analysis in \cref{sec:eff_power_theory}.
+
+\subsection{Efficiency--Power Alignment Across Quadrants}
+\label{sec:eff_power}
+
+The four quadrants differ not only in mean $\eta$ but in the relationship between efficiency and predictive gain. Three supplementary analyses characterise this structure.
+
+\textbf{Idealised simulation under (A1)--(A2).} On the theory-aligned probit grid (Supplementary~\cref{fig:si_idealised_stratified}; $n=5{,}000$, 50 trials, five-fold CV), all 16 out of 16 Quadrant~4 cells with $\eta<1$ produced positive mean ML improvement. At fixed $\delta/\sigma_{\mathrm{A}}$, $\eta$ and $I(X;Y)$ are strongly correlated (within-slice $r\approx0.87$ at the empirical median $\delta/\sigma_{\mathrm{A}}=\PEFmedianDeltaRatio$). However, the pooled-across-$\delta/\sigma_{\mathrm{A}}$ correlation is negative ($r=-0.70$), because signal strength shifts the $I(X;Y)$ level independently of the $(\kappa,\rho)$ position. The practical consequence is that iso-$\eta$ and iso-$I(X;Y)$ contours diverge once $\delta/\sigma_{\mathrm{A}}$ varies across KPIs (Supplementary~\cref{fig:si_iso_eta_I}).
+
+\textbf{Empirical KPI correlations.} Across all \PEFtotalStudies{} sports KPI studies, both $\eta$ and per-KPI predicted information content $I_{\mathrm{pred}}$ correlate weakly with observed ML improvement: $\Corr(\eta,\Delta\mathrm{ML})=\PEFcorrEtaML$ and $\Corr(I_{\mathrm{pred}},\Delta\mathrm{ML})=\PEFcorrIpredML$ (Supplementary~\cref{fig:si_ipred_vs_dml}). That neither single-feature statistic reliably predicts ML gain reflects the heterogeneity of $\delta/\sigma_{\mathrm{A}}$ across KPIs: both $\eta$ and $I_{\mathrm{pred}}$ encode $(\kappa,\rho)$ position, but $I_{\mathrm{pred}}$ additionally conditions on signal strength and therefore outperforms $\eta$ as a predictor.
+
+\textbf{Quadrant~4 and the Bayes bound.} Bootstrap confidence intervals on exemplar KPIs confirm that $\eta<1$ is estimated with low uncertainty for the Quadrant~4 sports KPIs studied (Supplementary~\cref{fig:si_bootstrap_exemplars}). Despite this, several Quadrant~4 KPIs yielded five-fold CV accuracy for relative features that exceeded the Gaussian Bayes-optimal bound on absolute features alone---a pattern consistent with the information content not being fully captured by the absolute-feature classifier (Supplementary~\cref{fig:si_q4_bayes_gap}). Together, these results support the interpretation in \cref{sec:eff_power_theory}: statistical efficiency and information content are related but distinct quantities, and the practical value of relativisation in competitive settings cannot be determined from $\eta$ alone.
 
 \subsection{PEF-to-ML Mapping Validation}
 
@@ -100,7 +111,7 @@ Multiple comparison correction results:
 
 \begin{table}[t]
   \centering
-  \caption{Multiple comparison correction summary.}
+  \caption{Multiple comparison correction summary (illustrative legacy tabulation on a 30-test sports KPI battery; per-KPI inference in the current analysis uses bootstrap intervals, \S\ref{sec:methods}).}
   \label{tab:mc}
   \begin{tabular}{@{}lccc@{}}
     \toprule

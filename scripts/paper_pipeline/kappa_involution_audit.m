@@ -74,12 +74,18 @@ function audit = kappa_involution_audit(varargin)
 
     rng(a.seed, 'twister');
 
+    % Shared PEF library (eta_pef, eta_pef_vec, ...). Caller usually sets
+    % the addpath, but make this script self-sufficient too.
+    thisDir = fileparts(mfilename('fullpath'));
+    addpath(fullfile(thisDir, 'lib'));
+    H = pef_theory_helpers();
+
     %% ---- Level 1: algebraic grid check
     kg = logspace(-3, 3, a.grid_n);
     rg = linspace(-0.95, 0.95, a.grid_n);
     [K, R] = meshgrid(kg, rg);
-    eta_kr     = pef_eta(K,    R);
-    eta_invkr  = pef_eta(1./K, R);
+    eta_kr     = H.eta_pef_vec(K,    R);
+    eta_invkr  = H.eta_pef_vec(1./K, R);
     grid_residual = max(abs(eta_kr(:) - eta_invkr(:)), [], 'omitnan');
 
     %% ---- Levels 2 + 2.5 on sports KPIs
@@ -218,6 +224,10 @@ function tbl = empty_audit_table()
 end
 
 function [eta_, kappa_, rho_] = est_eta_pair(A, B)
+    persistent H
+    if isempty(H)
+        H = pef_theory_helpers();
+    end
     A = A(:); B = B(:);
     if numel(A) < 2 || std(A) == 0 || std(B) == 0
         eta_ = NaN; kappa_ = NaN; rho_ = NaN; return
@@ -226,11 +236,7 @@ function [eta_, kappa_, rho_] = est_eta_pair(A, B)
     kappa_ = vB / vA;
     cc  = corrcoef(A, B);
     rho_ = cc(1, 2);
-    eta_ = (1 + kappa_) / (1 + kappa_ - 2 * sqrt(kappa_) * rho_);
-end
-
-function eta_ = pef_eta(K, R)
-    eta_ = (1 + K) ./ (1 + K - 2 * sqrt(K) .* R);
+    eta_ = H.eta_pef_vec(kappa_, rho_);
 end
 
 function out = nonsports_consistency_check(ns_dir, tol)

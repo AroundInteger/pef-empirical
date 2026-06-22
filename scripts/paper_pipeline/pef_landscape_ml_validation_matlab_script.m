@@ -1,4 +1,11 @@
 %% PEF Landscape ML Validation (MATLAB) - Script Version
+% DEPRECATED: Superseded by run_pef_idealised_probit_sim.m (theory-aligned
+% probit simulation under assumptions A1--A2). This script uses non-theory
+% tanh outcomes and a hard-coded legacy machine path. Kept for reference only.
+%
+% Use instead:
+%   /Applications/MATLAB_R2025b.app/bin/matlab -batch "run('run_pef_idealised_probit_sim.m')"
+%
 % This script validates PEF framework across all landscape quadrants with hard-coded inputs
 % No function calls required - just run the script directly
 
