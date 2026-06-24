@@ -1,6 +1,6 @@
 # PEF papers — dual roadmap
 
-**Last updated:** 2026-06-15  
+**Last updated:** 2026-06-22  
 **Target:** complete drafts of both papers by **2026-06-17** (two days)
 
 This file tracks the two parallel paths to submission. Tick items in Git commits or by editing status columns as work completes.
@@ -84,17 +84,17 @@ cd scripts/paper_pipeline
 
 | Phase | Section | File | Depends on | Status |
 |-------|---------|------|------------|--------|
-| 0 | Refresh inputs + companion Fig 1 plan | `validation_inputs/` | Empirical pipeline | Stale |
-| 1 | §2 Canonical form + κ ↔ 1/κ | `sections/canonical_form.tex` | — | Not started |
-| 2 | §7.1–7.2 Symmetry tests | `sections/numerical_validation.tex` | CSVs | Not started |
-| 3 | §5 Partition function | `sections/partition_function.tex` | §2 | Not started |
-| 4 | §4 Sphere realisation + Fig 4 | `sections/sphere_realisation.tex` | §2 | Not started |
-| 5 | §6 Fisher–Rao ψ | `sections/fisher_rao.tex` | §5, §7.5 CSVs | Not started |
-| 6 | §3 Möbius / Chebyshev | `sections/mobius_chebyshev.tex` | §2 (+ literature scan) | Not started |
-| 7 | §7.3–7.7 Remaining validation + falsifiability table | `numerical_validation.tex` | §3–§6 | Not started |
-| 8 | §1 Introduction | `sections/introduction.tex` | §2–§7 drafts | Not started |
-| 9 | §8 Discussion | `sections/discussion.tex` | §7.7 | Not started |
-| 10 | Abstract | `sections/abstract.tex` | All above | Not started |
+| 0 | Refresh inputs + companion Fig 1 plan | `validation_inputs/` | Empirical pipeline | **Done** (2026-06-22, commit 5aa9cfc) |
+| 1 | §2 Canonical form + κ ↔ 1/κ | `sections/canonical_form.tex` | — | **Drafted** 2026-06-22 |
+| 1b | §1 Introduction | `sections/introduction.tex` | §2 | **Drafted** 2026-06-22 |
+| 2 | §7.1–7.2 Symmetry tests | `sections/numerical_validation.tex` | CSVs | **Drafted** 2026-06-22 (§7.3–7.7 pending theory) |
+| 3 | §5 Partition function | `sections/partition_function.tex` | §2 | **Drafted** 2026-06-22 |
+| 4 | §4 Sphere realisation + Fig 4 | `sections/sphere_realisation.tex` | §2 | **Drafted** 2026-06-22 |
+| 5 | §6 Fisher–Rao ψ | `sections/fisher_rao.tex` | §5, §7.5 CSVs | **Drafted** 2026-06-22 |
+| 6 | §3 Möbius / Chebyshev | `sections/mobius_chebyshev.tex` | §2 (+ literature scan) | **Drafted** 2026-06-22 |
+| 7 | §7.3–7.7 Remaining validation + falsifiability table | `numerical_validation.tex` | §3–§6 | **Drafted** 2026-06-22 |
+| 9 | §8 Discussion | `sections/discussion.tex` | §7.7 | **Drafted** 2026-06-22 |
+| 10 | Abstract | `sections/abstract.tex` | All above | **Drafted** 2026-06-22 |
 
 ```mermaid
 flowchart TD
