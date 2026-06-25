@@ -3,7 +3,7 @@
 
 \subsection{Study Design}
 
-The validation has two tiers. The \textbf{primary analysis} uses KPI data from professional sports, where head-to-head competition provides natural pairing and the data span all four quadrants of the $(\kappa,\rho)$ parameter space. The \textbf{supporting validation} draws on published data from four additional domains to assess generalisability. Objectives were to: (1)~validate the PEF--information content relationship (\cref{eq:mi_closed}), (2)~assess accuracy of the PEF-to-ML mapping (\cref{eq:dml_poly}), (3)~confirm quadrant-specific predictions, and (4)~test cross-domain applicability.
+The validation has two tiers. The \textbf{primary analysis} uses KPI data from professional sports, where head-to-head competition provides natural pairing and the data span all four quadrants of the $(\kappa,\rho)$ parameter space. The \textbf{supporting validation} draws on published data from four additional domains to assess generalisability. Objectives were to: (1)~validate the PEF--information content relationship (\cref{eq:mi_closed}), (2)~confirm quadrant-specific predictions and the role of signal strength $\delta/\sigma_{\mathrm{A}}$ as a moderator, (3)~characterise the efficiency--power tension in Quadrant~4, and (4)~test cross-domain applicability.
 
 \subsection{Primary Data: Sports KPIs}
 
@@ -41,11 +41,11 @@ Under bivariate normality (Assumption~(A1)), these are maximum likelihood estima
 
 \subsection{Machine Learning Validation}
 
-To assess the PEF-to-ML mapping, logistic regression was fitted with five-fold cross-validation \parencite{kohavi1995}, implemented in {MATLAB} (\texttt{fitglm}, Statistics and Machine Learning Toolbox). Performance improvement was quantified as the accuracy gain from relative features ($X_{\mathrm{A}}-X_{\mathrm{B}}$) versus absolute features ($X_{\mathrm{A}}$ only).
+To assess the relationship between quadrant position and ML performance, logistic regression was fitted with five-fold cross-validation \parencite{kohavi1995}, implemented in {MATLAB} (\texttt{fitglm}, Statistics and Machine Learning Toolbox). Performance improvement ($\Delta\mathrm{ML}$) was quantified as the accuracy gain from relative features ($X_{\mathrm{A}}-X_{\mathrm{B}}$) versus absolute features ($X_{\mathrm{A}}$ only). Signal strength was estimated as $\hat{\delta}/\hat{\sigma}_{\mathrm{A}} = (\bar{X}_{\mathrm{A}}-\bar{X}_{\mathrm{B}})/s_{\mathrm{A}}$ (\cref{eq:delta_ratio}).
 
 \subsection{Statistical Rigour}
 
-\textbf{Multiple comparison corrections.} Where hypothesis tests were applied across a fixed battery of sports KPI checks, three methods were considered: Bonferroni correction (family-wise error rate at $\alpha=0.05$), Benjamini--Hochberg FDR control \parencite{benjamini1995}, and Holm--Bonferroni step-down procedure \parencite{holm1979}. \Cref{tab:mc} summarises an illustrative legacy tabulation; the primary sports analysis reports per-KPI bootstrap intervals (\S\ref{sec:results}, Supplementary Information).
+\textbf{Multiple comparison corrections.} Where hypothesis tests were applied across a fixed battery of sports KPI checks, three methods were considered: Bonferroni correction (family-wise error rate at $\alpha=0.05$), Benjamini--Hochberg FDR control \parencite{benjamini1995}, and Holm--Bonferroni step-down procedure \parencite{holm1979}. The primary sports analysis reports per-KPI bootstrap intervals (\S\ref{sec:results}, Supplementary Information).
 
 \textbf{Effect sizes.} Cohen's $d=(\mu_{\mathrm{relative}}-\mu_{\mathrm{absolute}})/\sigma_{\mathrm{pooled}}$ \parencite{cohen1988} and partial eta-squared $\eta_{\mathrm{p}}^{2}=\mathrm{SS}_{\mathrm{effect}}/(\mathrm{SS}_{\mathrm{effect}}+\mathrm{SS}_{\mathrm{error}})$ quantified practical significance.
 

@@ -83,45 +83,30 @@ The four quadrants differ not only in mean $\eta$ but in the relationship betwee
 
 \textbf{Quadrant~4 and the Bayes bound.} Bootstrap confidence intervals on exemplar KPIs confirm that $\eta<1$ is estimated with low uncertainty for the Quadrant~4 sports KPIs studied (Supplementary~\cref{fig:si_bootstrap_exemplars}). Despite this, several Quadrant~4 KPIs yielded five-fold CV accuracy for relative features that exceeded the Gaussian Bayes-optimal bound on absolute features alone---a pattern consistent with the information content not being fully captured by the absolute-feature classifier (Supplementary~\cref{fig:si_q4_bayes_gap}). Together, these results support the interpretation in \cref{sec:eff_power_theory}: statistical efficiency and information content are related but distinct quantities, and the practical value of relativisation in competitive settings cannot be determined from $\eta$ alone.
 
-\subsection{PEF-to-ML Mapping Validation}
+\subsection{Quadrant Exemplars and Signal-Strength Context}
+\label{sec:exemplars}
 
-\Cref{fig:pef_ml} visualises predicted versus observed machine learning improvement under the empirical mapping (\cref{eq:dml_poly}). The fitted surface yields the following validation metrics:
-
-\begin{table}[t]
-  \centering
-  \caption{PEF-to-ML mapping validation metrics.}
-  \label{tab:pef_ml}
-  \begin{tabular}{@{}lcc@{}}
-    \toprule
-    \textbf{Metric} & \textbf{Value} & \textbf{95\% CI} \\
-    \midrule
-    Correlation ($r$) & \PEFmlCorr & --- \\
-    $R^{2}$           & \PEFmlRsq  & --- \\
-    Mean Absolute Error & \PEFmlMAE\% & --- \\
-    Root Mean Square Error & \PEFmlRMSE\% & --- \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-Prediction accuracy varied systematically across quadrants: MAE was lower in Quadrants~1--2 (predictable high-correlation regimes) than in Quadrant~4 (complex efficiency--power interplay).
-
-\subsection{Statistical Rigour}
-
-Multiple comparison correction results:
+\Cref{fig:pef_ml} shows the empirical $\eta$--$\Delta\mathrm{ML}$ scatter for all \PEFtotalStudies{} sports KPI studies, with four annotated exemplars---one per quadrant---selected to illustrate how the $(\kappa,\rho)$ taxonomy predicts the direction of ML gain when signal strength is held approximately constant (\cref{tab:exemplars}).
 
 \begin{table}[t]
   \centering
-  \caption{Multiple comparison correction summary (illustrative legacy tabulation on a 30-test sports KPI battery; per-KPI inference in the current analysis uses bootstrap intervals, \S\ref{sec:methods}).}
-  \label{tab:mc}
-  \begin{tabular}{@{}lccc@{}}
+  \caption{Quadrant exemplars: four KPIs spanning the $(\kappa,\rho)$ parameter space.}
+  \label{tab:exemplars}
+  \begin{tabular}{@{}llccccc@{}}
     \toprule
-    \textbf{Correction} & \textbf{Significant} & \textbf{Cohen's $d$} & \textbf{Power} \\
+    \textbf{Q} & \textbf{KPI (sport)} & $\kappa$ & $\rho$ & $\eta$ & $\delta/\sigma_{\mathrm{A}}$ & $\Delta\mathrm{ML}$ (\%) \\
     \midrule
-    Bonferroni              & 23/30 (77\%) & 0.847 & 0.95 \\
-    FDR (Benjamini--Hochberg) & 26/30 (87\%) & 0.823 & --- \\
-    Holm--Bonferroni        & 24/30 (80\%) & 0.834 & 0.94 \\
+    Q1 & Kick metres (rugby)              & 1.06 & $+0.65$ & 2.84 & 0.19 & $+4.8$ \\
+    Q2 & Long balls (football)            & 0.91 & $+0.23$ & 1.30 & 0.16 & $+4.4$ \\
+    Q3 & Passes (football)                & 0.84 & $-0.65$ & 0.61 & 0.32 & $-0.5$ \\
+    Q4 & Goalkeeper long balls (football) & 1.00 & $-0.24$ & 0.81 & 0.26 & $+2.2$ \\
     \bottomrule
   \end{tabular}
+
+  \medskip
+  \begin{minipage}{0.95\linewidth}\small
+    Two-season pooled estimates ($\kappa$, $\rho$, $\eta$, $\delta/\sigma_{\mathrm{A}}$) and five-fold cross-validated logistic improvement ($\Delta\mathrm{ML}$, relative minus absolute features). Signal strengths ($\delta/\sigma_{\mathrm{A}}\approx0.16$--$0.32$) are broadly comparable across exemplars. Q1 and Q2 show positive ML gain consistent with $\eta>1$; Q3 shows negative gain consistent with $\eta<1$; Q4 shows positive ML gain despite $\eta<1$, illustrating the efficiency--power tension (\cref{sec:eff_power_theory}).
+  \end{minipage}
 \end{table}
 
-Cohen's $d=0.834$ (95\% CI: $[0.76,0.91]$). Partial $\eta_{\mathrm{p}}^{2}=0.410$ (41\% of variance in ML performance). Bootstrap 95\% CI for mean effect size: $[0.612,1.056]$. Observed power: 0.94.
+The Q4 exemplar (goalkeeper long balls, $\eta=0.81$) shows that relativisation can deliver a net ML benefit even when it statistically increases variance. The Q3 exemplar (passes, football; $\rho=-0.65$, $\eta=0.61$) shows the complementary case: strong negative correlation places this KPI deep in the low-efficiency regime, and $\Delta\mathrm{ML}=-0.5\%$ confirms that absolute features are preferred, consistent with the taxonomy. Rucks won (rugby; Q2: $\kappa=0.82$, $\rho=+0.82$, $\eta=5.38$, $\delta/\sigma_{\mathrm{A}}=0.08$) provides a useful boundary illustration: despite the highest $\eta$ in the dataset, $\Delta\mathrm{ML}=0\%$ because the two teams are almost equally matched on average (negligible $\delta/\sigma_{\mathrm{A}}$). This confirms that even very high pairing efficiency confers no ML gain without sufficient signal strength.

@@ -620,110 +620,110 @@ function surf = build_ml_surface()
     surf  = struct('eta', eta_g, 'ml_improvement', ml_g);
 end
 
-% ---- FIGURE 1: PEF landscape with KPI segments ----------------------
-function figure_1_landscape(pef_2s, pef_per_season, domain_summary, fpath, pef_exemplars)
-    if nargin < 5, pef_exemplars = table(); end
+% ---- FIGURE 1: PEF landscape — curated exemplars --------------------
+function figure_1_landscape(pef_2s, ~, domain_summary, fpath, ~)
+%FIGURE_1_LANDSCAPE  Exemplar-based PEF landscape.
+%  Shows four curated rugby exemplars (one per quadrant) and four football
+%  exemplars (one per quadrant) on the eta heatmap, plus non-sports domain
+%  mean markers.  All positions verified against pef_landscape_2season.csv.
+
     fig = figure('Color','w','Position',[100 100 1050 780]);
     hold on;
 
-    % Background eta heatmap
+    % ---- Background eta heatmap -----------------------------------------
     r_g = linspace(-0.95, 0.95, 400);
-    k_g = linspace(0.05, 5,    400);
+    k_g = linspace(0.05,  5.0,  400);
     [R, K] = meshgrid(r_g, k_g);
-    eta_s = (1+K) ./ (1+K - 2*sqrt(K).*R);
+    eta_s = (1 + K) ./ (1 + K - 2*sqrt(K).*R);
     eta_s(eta_s <= 0 | eta_s > 10) = NaN;
     imagesc(r_g, k_g, log2(eta_s), 'AlphaData', 0.4);
     set(gca,'YDir','normal');
     colormap(redblue_local(256));
-    cb = colorbar; cb.Label.String = 'log_2(\eta)'; caxis([-1.5 1.5]);
+    cb = colorbar;  cb.Label.String = 'log_2(\eta)';  caxis([-1.5 1.5]);
 
-    % Iso-eta contours
+    % ---- Iso-eta contours -----------------------------------------------
     [C,h] = contour(R, K, eta_s, [0.5 0.75 1 1.25 1.5 2 3], 'k-','LineWidth',0.7);
     clabel(C, h, 'FontSize', 8, 'Color',[0.25 0.25 0.25]);
 
-    % Quadrant boundaries
+    % ---- Quadrant boundaries --------------------------------------------
     plot([-1 1],[1 1],'k--','LineWidth',1.5,'HandleVisibility','off');
     plot([0 0],[0.05 5],'k--','LineWidth',1.5,'HandleVisibility','off');
 
-    % KPI segments: endpoints = per-season (kappa,rho); filled = 2s mean
-    sport_clr = struct('rugby',[0.12 0.47 0.71],'football',[0.90 0.40 0.05]);
-    sport_mker = struct('rugby','o','football','s');
-    seasons_u = sort(unique(string(pef_per_season.season)));
-    if numel(seasons_u) >= 2
-        s1 = seasons_u(end-1); s2 = seasons_u(end);
-    else
-        s1 = seasons_u(1); s2 = seasons_u(1);
+    % ---- Curated exemplars (8 sports + non-sports domains) --------------
+    % Columns: display label | sport key | kpi key | rho fallback | kappa fallback
+    %          rho label offset | kappa label offset | text HorizontalAlignment
+    % Fallbacks verified against outputs/pef_landscape_2season.csv.
+    rugby_clr = [0.12 0.47 0.71];
+    foot_clr  = [0.90 0.40 0.05];
+
+    rugby_spec = { ...
+        'Kick metres',     'kick_metres',           +0.649, 1.059,  +0.05, +0.22, 'left';  % Q1
+        'Rucks won',       'rucks_won',             +0.818, 0.820,  -0.21, -0.30, 'left';  % Q2 — below/left of point to avoid Long balls
+        'Lineout throws',  'lineout_throws_won',    -0.224, 0.918,  +0.05, -0.22, 'left';  % Q3 — below/right of point
+        'Missed tackles',  'missed_tackles',        -0.043, 1.183,  -0.40, +0.16, 'left';  % Q4 — left of point
+    };
+    foot_spec = { ...
+        'Yellow cards',    'yellow_cards',          +0.161, 1.098,  +0.05, +0.22, 'left';  % Q1 — above/right of point
+        'Long balls',      'long_balls',            +0.233, 0.911,  +0.05, +0.16, 'left';  % Q2 — above/right (towards Q1 boundary)
+        'Passes',          'passes',                -0.649, 0.839,  +0.05, -0.22, 'left';  % Q3 — below point (far left, room below)
+        'GK long balls',   'goalkeeper_long_balls', -0.241, 1.001,  -0.07, +0.22, 'right'; % Q4 — above/left of point
+    };
+
+    % ---- Plot sport exemplars -------------------------------------------
+    scatter(NaN, NaN, 80, rugby_clr, 'o', 'filled', ...
+        'MarkerEdgeColor','k','LineWidth',0.5, 'DisplayName','Rugby (exemplar)');
+    for i = 1:size(rugby_spec,1)
+        [xp, yp, ep] = lookup_pef(pef_2s, "rugby", rugby_spec{i,2}, ...
+                                   rugby_spec{i,3}, rugby_spec{i,4});
+        scatter(xp, yp, 110, rugby_clr, 'o', 'filled', ...
+            'MarkerEdgeColor','k','LineWidth',1.0, 'HandleVisibility','off');
+        text(xp + rugby_spec{i,5}, yp + rugby_spec{i,6}, ...
+            sprintf('%s\n\\eta = %.2f', rugby_spec{i,1}, ep), ...
+            'FontSize', 7.5, 'Color', rugby_clr * 0.70, 'FontWeight','bold', ...
+            'HorizontalAlignment', rugby_spec{i,7}, ...
+            'BackgroundColor', [1 1 1], 'EdgeColor','none', ...
+            'Interpreter','tex', 'HandleVisibility','off');
     end
 
-    for sp_cell = fieldnames(sport_clr)'
-        sp  = string(sp_cell{1});
-        clr = sport_clr.(char(sp));
-        mk  = sport_mker.(char(sp));
-        sub1 = pef_per_season(pef_per_season.sport == sp & pef_per_season.season == s1, :);
-        sub2 = pef_per_season(pef_per_season.sport == sp & pef_per_season.season == s2, :);
-        for ki = 1:height(sub1)
-            kname = sub1.kpi(ki);
-            idx2  = find(sub2.kpi == kname, 1);
-            if isempty(idx2), continue; end
-            r1 = sub1.rho(ki);   k1 = sub1.kappa(ki);
-            r2 = sub2.rho(idx2); k2 = sub2.kappa(idx2);
-            if any(isnan([r1 k1 r2 k2])), continue; end
-            plot([r1 r2],[k1 k2],'-','Color',[clr 0.35],'LineWidth',1.1,...
-                'HandleVisibility','off');
-        end
-        % Mean position (from 2s pooled table)
-        sub_m = pef_2s(pef_2s.sport == sp, :);
-        scatter(sub_m.rho, sub_m.kappa, 60, clr, mk, 'filled', ...
-            'MarkerEdgeColor','k','LineWidth',0.5,'MarkerFaceAlpha',0.85,...
-            'DisplayName', sprintf('%s (mean, n=%d)', sp, height(sub_m)));
+    scatter(NaN, NaN, 80, foot_clr, 's', 'filled', ...
+        'MarkerEdgeColor','k','LineWidth',0.5, 'DisplayName','Football (exemplar)');
+    for i = 1:size(foot_spec,1)
+        [xp, yp, ep] = lookup_pef(pef_2s, "football", foot_spec{i,2}, ...
+                                   foot_spec{i,3}, foot_spec{i,4});
+        scatter(xp, yp, 110, foot_clr, 's', 'filled', ...
+            'MarkerEdgeColor','k','LineWidth',1.0, 'HandleVisibility','off');
+        text(xp + foot_spec{i,5}, yp + foot_spec{i,6}, ...
+            sprintf('%s\n\\eta = %.2f', foot_spec{i,1}, ep), ...
+            'FontSize', 7.5, 'Color', foot_clr * 0.75, 'FontWeight','bold', ...
+            'HorizontalAlignment', foot_spec{i,7}, ...
+            'BackgroundColor', [1 1 1], 'EdgeColor','none', ...
+            'Interpreter','tex', 'HandleVisibility','off');
     end
 
-    % Non-sports domain triangles
+    % ---- Non-sports domain triangles ------------------------------------
     if ~isempty(domain_summary) && height(domain_summary) > 0 && ...
        all(ismember({'rho_mean','kappa_mean'}, domain_summary.Properties.VariableNames))
         dom_pal = lines(height(domain_summary));
         for di = 1:height(domain_summary)
             rd = domain_summary.rho_mean(di); kd = domain_summary.kappa_mean(di);
             if isnan(rd) || isnan(kd), continue; end
-            scatter(rd, kd, 100, dom_pal(di,:), '^', 'filled', ...
+            scatter(rd, kd, 110, dom_pal(di,:), '^', 'filled', ...
                 'MarkerEdgeColor','k','LineWidth',0.8, ...
                 'DisplayName', domain_summary.domain{di});
         end
     end
 
-    % Exemplar KPI text annotations (top-ranked exemplar per quadrant+role, deduped)
-    if ~isempty(pef_exemplars) && ...
-       all(ismember({'kpi','rank_in_group'}, pef_exemplars.Properties.VariableNames))
-        % Use only rank 1 exemplars to avoid clutter, then unique by KPI name
-        top_ex = pef_exemplars(pef_exemplars.rank_in_group == 1, :);
-        [~, ia] = unique(top_ex.kpi, 'stable');
-        top_ex  = top_ex(ia, :);
-        for ex = 1:height(top_ex)
-            kname = top_ex.kpi(ex);
-            match = pef_2s.kpi == kname;
-            if ~any(match), continue; end
-            idx    = find(match,1);
-            ex_rho = pef_2s.rho(idx);
-            ex_kap = pef_2s.kappa(idx);
-            if isnan(ex_rho) || isnan(ex_kap), continue; end
-            label  = strrep(char(kname), '_', ' ');
-            text(ex_rho + 0.02, ex_kap, label, 'FontSize', 7, ...
-                 'Color', [0.15 0.15 0.15], 'Interpreter', 'none', ...
-                 'HandleVisibility', 'off');
-        end
-    end
-
-    % Quadrant labels
-    text(0.82, 4.5, 'Q1','FontSize',13,'FontWeight','bold','Color',[0.2 0.2 0.2]);
-    text(0.82, 0.12,'Q2','FontSize',13,'FontWeight','bold','Color',[0.2 0.2 0.2]);
-    text(-0.97,0.12,'Q3','FontSize',13,'FontWeight','bold','Color',[0.2 0.2 0.2]);
-    text(-0.97,4.5, 'Q4','FontSize',13,'FontWeight','bold','Color',[0.2 0.2 0.2]);
+    % ---- Quadrant labels ------------------------------------------------
+    text( 0.82, 4.5,  'Q1','FontSize',13,'FontWeight','bold','Color',[0.2 0.2 0.2]);
+    text( 0.82, 0.12, 'Q2','FontSize',13,'FontWeight','bold','Color',[0.2 0.2 0.2]);
+    text(-0.97, 0.12, 'Q3','FontSize',13,'FontWeight','bold','Color',[0.2 0.2 0.2]);
+    text(-0.97, 4.5,  'Q4','FontSize',13,'FontWeight','bold','Color',[0.2 0.2 0.2]);
 
     xlim([-1 1]); ylim([0.05 5]);
-    xlabel('Pairwise correlation \rho',                 'FontSize',12);
-    ylabel('Variance ratio \kappa = \sigma_B^2/\sigma_A^2','FontSize',12);
-    title('PEF landscape: rugby URC + football Championship (23/24 and 24/25)',...
-          'FontSize',11);
+    xlabel('Pairwise correlation \rho',                      'FontSize',12);
+    ylabel('Variance ratio \kappa = \sigma_B^2/\sigma_A^2', 'FontSize',12);
+    title({'PEF landscape: representative exemplars'; ...
+           'rugby URC + football Championship (23/24–24/25)'}, 'FontSize',11);
     legend('Location','northeastoutside','Box','off','FontSize',9);
     set(gca,'FontSize',11); grid on; box on; hold off;
 
@@ -731,6 +731,21 @@ function figure_1_landscape(pef_2s, pef_per_season, domain_summary, fpath, pef_e
         exportgraphics(fig, fpath, 'Resolution',200);
     end
     close(fig);
+end
+
+% ---- Helper: look up (rho, kappa, eta) from pef table or use fallback --
+function [rp, kp, ep] = lookup_pef(pef_tbl, sport_str, kpi_str, fb_rho, fb_kap)
+    rp = fb_rho; kp = fb_kap;
+    fb_eta = (1 + fb_kap) / (1 + fb_kap - 2*sqrt(fb_kap)*fb_rho);
+    ep = fb_eta;
+    if isempty(pef_tbl), return; end
+    m = pef_tbl.sport == sport_str & pef_tbl.kpi == kpi_str;
+    if any(m)
+        idx = find(m,1);
+        rp  = pef_tbl.rho(idx);
+        kp  = pef_tbl.kappa(idx);
+        ep  = pef_tbl.eta(idx);
+    end
 end
 
 function map = redblue_local(n)
@@ -773,50 +788,112 @@ function figure_2_info_surface(fpath)
 end
 
 % ---- FIGURE 3: PEF-to-ML surface + empirical overlay ----------------
-function figure_3_ml_mapping(ml_all, ml_surface, fpath)
-    fig = figure('Color','w','Position',[100 100 900 650]);
+function figure_3_ml_mapping(ml_all, ~, fpath)
+    % Figure 3: empirical eta vs DeltaML scatter with quadrant exemplar annotations.
+    % x-axis [0,5.5]: retains rucks_won (eta~5.38), the Discussion counter-example.
+    % y-axis [-5,10]: clips high-DeltaML outliers (noted in caption).
+    % The polynomial surface (ml_surface) argument is accepted but not plotted.
+    X_LIM = [0, 5.5];
+    Y_LIM = [-5, 10];
 
-    % Left panel: empirical scatter per quadrant
-    subplot(1,2,1); hold on;
+    fig = figure('Color','w','Position',[100 100 950 650]);
+
     quads = ["Q1","Q2","Q3","Q4"];
     qcol  = [0.20 0.63 0.17; 0.12 0.47 0.71; 0.89 0.47 0.07; 0.77 0.15 0.16];
     valid = ~isnan(ml_all.eta) & ~isnan(ml_all.acc_improvement);
+
+    % Count points that will be clipped (for caption note)
+    n_clip_x = sum(valid & ml_all.eta > X_LIM(2));
+    n_clip_y = sum(valid & (ml_all.acc_improvement < Y_LIM(1) | ...
+                            ml_all.acc_improvement > Y_LIM(2)));
+
+    % ---- Left panel: empirical scatter per quadrant ----------------------
+    subplot(1,2,1); hold on;
     if any(valid)
         for qi = 1:4
             qm = valid & ml_all.quadrant == quads(qi);
             if ~any(qm), continue; end
-            scatter(ml_all.eta(qm), ml_all.acc_improvement(qm), 55, qcol(qi,:), ...
-                'filled','MarkerEdgeColor','k','LineWidth',0.4, ...
+            scatter(ml_all.eta(qm), ml_all.acc_improvement(qm), 45, qcol(qi,:), ...
+                'filled','MarkerEdgeColor','k','LineWidth',0.3,'MarkerFaceAlpha',0.35, ...
                 'DisplayName', char(quads(qi)));
         end
     end
-    plot(ml_surface.eta, 100*ml_surface.ml_improvement, 'k-','LineWidth',2,...
-        'DisplayName','Polynomial fit');
-    plot([1 1],ylim,'k:','LineWidth',1,'HandleVisibility','off');
-    xlabel('\eta (PEF)','FontSize',11); ylabel('Acc. improvement (%)','FontSize',11);
-    title('Empirical ML improvement vs \eta','FontSize',11);
-    legend('Location','northwest','Box','off','FontSize',8);
-    grid on; hold off;
+    % Reference lines
+    xline(1, 'k:', 'LineWidth',1.0, 'HandleVisibility','off');
+    yline(0, 'k:', 'LineWidth',0.8, 'HandleVisibility','off');
 
-    % Right panel: acc improvement by quadrant bar
-    subplot(1,2,2); hold on;
-    q_means = zeros(4,1); q_n = zeros(4,1);
-    for qi = 1:4
-        qm = valid & ml_all.quadrant == quads(qi);
-        q_means(qi) = mean(ml_all.acc_improvement(qm),'omitnan');
-        q_n(qi)     = sum(qm);
+    % Exemplar annotations (one per quadrant, verified against pipeline outputs)
+    exemplar_sport = ["rugby",        "football",   "football", "football"];
+    exemplar_kpi   = ["kick_metres",  "long_balls",  "passes",  "goalkeeper_long_balls"];
+    exemplar_label = ["Q1: kick metres", "Q2: long balls", "Q3: passes", "Q4: gk long balls"];
+    exemplar_xoff  = [ 0.12,  0.10,  0.10, 0.15];  % label x-offset (data units)
+    exemplar_yoff  = [ 1.2,   1.8,  -2.0,  1.5];   % label y-offset (percentage points)
+    for ei = 1:4
+        emask = valid & ml_all.sport == exemplar_sport(ei) & ...
+                        ml_all.kpi   == exemplar_kpi(ei);
+        if ~any(emask), continue; end
+        xe = ml_all.eta(emask);
+        ye = ml_all.acc_improvement(emask);
+        scatter(xe, ye, 160, 'k', 'o', 'LineWidth', 2.0, 'HandleVisibility','off');
+        text(xe + exemplar_xoff(ei), ye + exemplar_yoff(ei), exemplar_label(ei), ...
+            'FontSize', 8, 'FontWeight', 'bold', 'Color', [0.10 0.10 0.10], ...
+            'HorizontalAlignment', 'left');
     end
-    bh = bar(q_means,'FaceColor','flat');
-    for qi=1:4, bh.CData(qi,:) = qcol(qi,:); end
-    xticklabels(cellstr(quads)); xlabel('Quadrant','FontSize',11);
-    ylabel('Mean acc. improvement (%)','FontSize',11);
-    title('Mean improvement by quadrant','FontSize',11);
-    text(1:4, q_means'+0.5*sign(q_means)'+0.3, ...
-        arrayfun(@(x)sprintf('n=%d',x),q_n,'UniformOutput',false), ...
-        'HorizontalAlignment','center','FontSize',9);
+
+    % Annotate the rucks_won counter-example (Discussion: high eta, zero DeltaML)
+    rmask = valid & ml_all.sport == "rugby" & ml_all.kpi == "rucks_won";
+    if any(rmask)
+        scatter(ml_all.eta(rmask), ml_all.acc_improvement(rmask), 130, ...
+            [0.5 0.5 0.5], 'd', 'LineWidth', 1.5, 'HandleVisibility','off');
+        text(ml_all.eta(rmask) + 0.12, ml_all.acc_improvement(rmask) + 1.2, ...
+            'rucks won', 'FontSize', 7.5, 'Color', [0.35 0.35 0.35], ...
+            'HorizontalAlignment','left');
+    end
+
+    xlim(X_LIM); ylim(Y_LIM);
+    xlabel('\eta (PEF)','FontSize',11);
+    ylabel('\DeltaML accuracy (%)','FontSize',11);
+    title('ML improvement vs \eta  (annotated exemplars)','FontSize',11);
+    leg = legend('Location','northwest','Box','off','FontSize',8);
+    % Clip note below legend if any points hidden
+    if n_clip_x + n_clip_y > 0
+        annotation('textbox',[0.09 0.04 0.36 0.04], ...
+            'String', sprintf('%d pt(s) outside shown range', n_clip_x+n_clip_y), ...
+            'EdgeColor','none','FontSize',7,'Color',[0.5 0.5 0.5]);
+    end
     grid on; hold off;
 
-    sgtitle('PEF-to-ML mapping (empirical, 23/24 + 24/25)','FontSize',12,'FontWeight','bold');
+    % ---- Right panel: mean ± SE by quadrant bar --------------------------
+    subplot(1,2,2); hold on;
+    q_means = zeros(4,1); q_se = zeros(4,1); q_n = zeros(4,1);
+    for qi = 1:4
+        qm  = valid & ml_all.quadrant == quads(qi);
+        vals = ml_all.acc_improvement(qm);
+        q_n(qi)     = sum(qm);
+        q_means(qi) = mean(vals, 'omitnan');
+        q_se(qi)    = std(vals, 'omitnan') / sqrt(max(q_n(qi), 1));
+    end
+    bh = bar(q_means, 'FaceColor','flat');
+    for qi = 1:4, bh.CData(qi,:) = qcol(qi,:); end
+    % ±1 SE error bars
+    errorbar(1:4, q_means, q_se, 'k.', 'LineWidth', 1.2, 'CapSize', 6, ...
+        'HandleVisibility','off');
+    yline(0, 'k-', 'LineWidth', 0.8, 'HandleVisibility','off');
+    xticklabels(cellstr(quads)); xlabel('Quadrant','FontSize',11);
+    ylabel('Mean \DeltaML accuracy (%)','FontSize',11);
+    title('Mean \pm 1 SE by quadrant','FontSize',11);
+    % n-labels inside bars
+    ax2 = gca; yl = ax2.YLim;
+    for qi = 1:4
+        ty = q_means(qi) * 0.5;
+        ty = max(min(ty, yl(2)-0.2), yl(1)+0.1);
+        text(qi, ty, sprintf('n=%d', q_n(qi)), ...
+            'HorizontalAlignment','center','FontSize',9,'Color','w','FontWeight','bold');
+    end
+    grid on; hold off;
+
+    sgtitle('PEF empirical ML improvement  (23/24 + 24/25 pooled)', ...
+        'FontSize',12,'FontWeight','bold');
     if nargin >= 3 && ~isempty(fpath)
         exportgraphics(fig, fpath, 'Resolution',200);
     end

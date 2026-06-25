@@ -138,6 +138,58 @@ Open **both** repos in `pef-papers.code-workspace` when editing cross-citations 
 - First push to GitHub: `git remote add origin git@github.com:YOUR_USER/pef-empirical.git` then `git push -u origin main`.
 - See `.cursor/rules/github-workflow.mdc` for the agent checklist after each agreed edit.
 
-## History
+## Changelog
 
-Migrated from the development monorepo `UP1_PEF` (2026-05-19). See `paper/REPO_MIGRATION_INVENTORY.md` in the archive for the full dependency audit.
+Entries in reverse-chronological order. Add a new entry here in the same commit as the work it describes.
+
+---
+
+### `draft/strand2-reframe` branch — in progress
+
+**Planned changes (Phases 1–4):**  
+Retire `eq:dml_poly` (polynomial η→ML mapping) from main text; replace §2.5 and Results §4.2 with a δ/σ_A framing and a four-exemplar table (one per quadrant: rugby `kick_metres` Q1, football `long_balls` Q2, football `passes` Q3, football `goalkeeper_long_balls` Q4). Drop legacy significance apparatus (Methods §4.5, Results §4.3, `tab:mc`). Compress `appendix_b_log_transform` into a brief SI note. Annotate four exemplar points on Figure 3. Target journal: **JQAS** (primary), JRSS Series C (backup).
+
+---
+
+### 2026-06-24 · `863bd7c` — Pitman-Morgan citations and roadmap status update
+
+Added formal citations for Pitman (1939) and Morgan (1939) in `theoretical_framework.tex`, establishing provenance of the variance-ratio test that underlies Section 2. Added a closing sentence cross-referencing the companion mathematics paper (`brownPEFmath`). Updated `PAPER_ROADMAP.md` to reflect June 2026 drafting sprint completion for the companion (`pef-mathematics`).
+
+---
+
+### 2026-06-22 · `5aa9cfc` — Idealised probit diagnostic figures
+
+Added outputs from `run_pef_idealised_probit_sim.m` and `run_pef_finalize_diagnostics.m` to the repository: `idealised_probit_grid.csv`, `idealised_probit_scenarios.csv`, SI figures S3–S8. These figures underpin Strand 1 of the empirical validation (theory-aligned probit simulation under assumptions A1–A2).
+
+---
+
+### 2026-06-22 · `85bdbc6` — Submission-prep consistency pass
+
+Major consistency pass across manuscript and pipeline:
+
+- **Game counts:** Methods and appendix updated to use two-season pooled figures (rugby 283, football 1114) throughout.
+- **Study count:** Corrected to 113 KPI studies.
+- **ML methods:** Aligned to MATLAB logistic `fitglm`, 5-fold CV.
+- **η–I narrative:** Updated correlation figures (fixed-δ r ≈ 0.87; heterogeneous KPI r ≈ −0.21); replaced stale r = 0.900.
+- **Scenario table:** Updated to idealised probit figures (≈9.4, 8.2, 8.6, 7.9 %).
+- **SI integration:** New §Efficiency–Power Alignment subsection in `results.tex`; S3–S8 figures wired into captions in `supplementary.tex`.
+- **Scripts:** Added `run_pef_finalize_diagnostics.m`, `run_pef_idealised_probit_sim.m`, `lib/pef_theory_helpers.m`, `sync_to_companion.sh`.
+- **`numbers.tex`:** Regenerated with pipeline run at 2026-06-22 10:59.
+
+---
+
+### 2026-05-20 · `371faba` — Project memory, Cursor context rules, README links
+
+Added `PEF_PROJECT_MEMORY.md` (master reference document for humans and Cursor agents). Added `.cursor/rules/` files symmetric with the companion repo: `project-context.mdc`, `companion-paper.mdc`, `github-workflow.mdc`, `matlab.mdc`, `latex-paper.mdc`. Updated README with layout tree, figures table, and three-script workflow.
+
+---
+
+### 2026-05-20 · `8875f35` — Symmetric Cursor rules and README layout fix
+
+Minor fix to README formatting after initial import; ensured Cursor rule filenames and content are symmetric across both PEF repos.
+
+---
+
+### 2026-05-19 · `19baf6f` — Initial import from UP1_PEF migration
+
+First commit in standalone `pef-empirical` repository, migrated from the development monorepo `UP1_PEF`. Includes: manuscript `.tex` files, `Data/`, `figures/`, `scripts/paper_pipeline/` with outputs, `paper_data_and_analysis/outputs/`. Multi-GB football event files deliberately excluded (gitignored). See `UP1_PEF/paper/REPO_MIGRATION_INVENTORY.md` for full dependency audit.

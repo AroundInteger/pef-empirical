@@ -24,14 +24,13 @@ The framework suggests the following procedure:
   \item Identify the quadrant from \cref{tab:quadrants}.
   \item For Quadrants~1--2, use relative features (they improve both statistical efficiency and information content).
   \item For Quadrant~3, prefer absolute features.
-  \item For Quadrant~4, additionally compute $I(X;Y)$ using \cref{eq:mi_closed} to determine whether information content justifies relativisation despite $\eta<1$.
-  \item Optionally, use the PEF-to-ML mapping (\cref{eq:dml_poly}) to predict expected performance gains.
+  \item For Quadrant~4, additionally estimate $\delta/\sigma_{\mathrm{A}}$ and compute $I(X;Y)$ using \cref{eq:mi_closed,eq:delta_ratio} to determine whether information content justifies relativisation despite $\eta<1$.
 \end{enumerate}
-This reduces reliance on empirical cross-validation to determine feature strategy.
+This reduces reliance on trial-and-error cross-validation to determine feature strategy; the decision logic is fully determined by $(\kappa,\rho,\delta/\sigma_{\mathrm{A}})$.
 
 \subsection{Limitations}
 
-\textbf{Distributional assumptions.} The PEF formula is distribution-free, but the information content relationship (\cref{eq:mi_closed}) and the PEF-to-ML mapping (\cref{eq:dml_poly}) assume bivariate normality. Whilst the central limit theorem provides some robustness, strongly skewed or multimodal distributions may require non-parametric extensions. For highly skewed KPIs, a logarithmic transformation can map the marginals back towards normality, after which the standard PEF and information content formulae apply to the log-transformed pairs (\cref{sec:appendix_log}); preliminary bias-decomposition analyses across rugby and football data suggest that such transformations preserve the correlation and variance-ratio structure needed for valid inference. Empirical investigations suggest reasonable robustness to moderate departures from normality, but systematic characterisation of the skewness threshold beyond which log-mapping or other variance-stabilising transforms become necessary remains an active area of investigation.
+\textbf{Distributional assumptions.} The PEF formula is distribution-free, but the information content relationship (\cref{eq:mi_closed}) assumes bivariate normality. Whilst the central limit theorem provides some robustness, strongly skewed or multimodal distributions may require non-parametric extensions. For count-based KPIs, the transformation $Z=\log(X+1)$ can improve normality whilst preserving the $(\kappa,\rho)$ structure: across 24 rugby KPIs the rank ordering by $\rho$ was unchanged after transformation (Spearman $r_{s}=0.997$) and the aggregate PEF change was negligible ($\bar{\eta}_{\log}/\bar{\eta}=1.007$, $p=0.712$; Supplementary~Note~S1), though individual count-based KPIs (rucks won, kick metres, kicks from hand) showed improvements of 19--37\%. Systematic characterisation of the skewness threshold beyond which variance-stabilising transforms become necessary remains an active area of investigation.
 
 \textbf{Stationarity.} The framework treats $\kappa$ and $\rho$ as fixed parameters, yet they may vary across time, conditions, or subpopulations. Temporal instability in correlation structure, regime changes in financial markets, seasonal effects in sports, could reduce prediction reliability if parameters are estimated from one period and applied to another.
 
@@ -42,8 +41,6 @@ This reduces reliance on empirical cross-validation to determine feature strateg
 \textbf{Strategic interactions.} In competitive contexts, entities may adjust behaviour in response to opponents, potentially altering correlation structures dynamically. The current framework does not model such strategic adaptations.
 
 \textbf{Primary evidence base.} The detailed empirical analysis is drawn primarily from rugby union and football KPIs. Whilst supporting validation from healthcare, genomics, finance, and manufacturing is consistent with the framework's predictions, these domains have not been subjected to the same depth of analysis. Further dedicated studies in each domain would strengthen the evidence for cross-domain applicability.
-
-\textbf{Empirical mapping coefficients.} The PEF-to-ML mapping (\cref{eq:dml_poly}) is empirically fitted rather than theoretically derived. The coefficients $0.234$ and $0.089$ are specific to the domains and classifiers studied; their generalisability to novel domains, whilst supported by cross-validation, is not guaranteed.
 
 \subsection{Future Directions}
 

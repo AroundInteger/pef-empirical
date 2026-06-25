@@ -61,7 +61,7 @@ The algebraic steps from \cref{eq:var_sum} to \cref{eq:pef} are elementary conse
   \item the explicit $(\kappa,\rho)$ parameterisation, which separates variance asymmetry from correlation and makes the two-dimensional dependence tractable;
   \item the four-quadrant taxonomy of the $(\kappa,\rho)$ parameter space and the corresponding feature-engineering guidance;
   \item the derivation of the PEF--information content relationship (\cref{eq:mi_closed}), which connects the variance-ratio formula to predictive power under the Gaussian discriminant model;
-  \item the empirical PEF-to-ML mapping (\cref{eq:dml_poly}) and cross-domain validation;
+  \item empirical quadrant exemplars demonstrating that the $(\kappa,\rho)$ taxonomy correctly predicts the direction of machine learning gain when signal strength $\delta/\sigma_{\mathrm{A}}$ is controlled (\cref{sec:exemplars});
   \item the formal identification of the formula as the Pitman ARE of the paired versus independent $t$-test under normality \parencite{lehmann1999} (\cref{sec:pitman}), providing a testing-theory anchor absent from prior treatments.
 \end{enumerate}
 
@@ -149,15 +149,19 @@ The $(\kappa,\rho)$ parameter space divides naturally into four quadrants with d
 
 \textbf{Quadrant 4 ($\kappa>1$, $\rho<0$): Low efficiency, variable information.} This is where the efficiency--power tension is most pronounced. $\eta<1$ indicates statistical harm, yet information content may remain substantial when $\delta$ is large. The decision to relativise requires explicit analysis of both $\eta$ and $I(X;Y)$. Exemplified by competitive sports and head-to-head business comparisons.
 
-\subsection{Empirical PEF-to-ML Mapping}
+\subsection{Signal Strength and the Limits of \texorpdfstring{$\eta$}{eta} as a Predictor}
+\label{sec:signal_strength}
 
-Beyond qualitative guidance, we seek a quantitative relationship between $\eta$ and observed machine learning improvement. Fitting a second-order polynomial to cross-domain validation data yields
+The PEF--information content relationship (\cref{eq:mi_closed}) shows that $\eta$ is not the sole determinant of predictive gain. The mutual information $I(X;Y)$ depends on $\eta$ through the denominator $\sqrt{(1+\kappa)/\eta}$, but also on the signal-to-noise ratio
 \begin{equation}
-  \Delta\mathrm{ML} = 0.234(\eta-1) + 0.089(\eta-1)^{2}.
-  \label{eq:dml_poly}
+  \frac{\delta}{\sigma_{\mathrm{A}}} = \frac{\mu_{\mathrm{A}} - \mu_{\mathrm{B}}}{\sigma_{\mathrm{A}}},
+  \label{eq:delta_ratio}
 \end{equation}
+the standardised mean difference between the two entities. Two KPIs with identical $(\kappa,\rho)$ positions---and therefore identical $\eta$---will yield different information content if their signal strengths differ.
 
-\noindent Here $\Delta\mathrm{ML}$ is the proportional improvement in classification accuracy from using relative features ($X_{\mathrm{A}}-X_{\mathrm{B}}$) versus absolute features ($X_{\mathrm{A}}$, $X_{\mathrm{B}}$), $\eta$ is the Paired Efficiency Factor (\cref{eq:pef}), and the coefficients $0.234$ and $0.089$ are empirically fitted to the cross-domain validation data (\cref{tab:pef_ml}). This is an \textbf{empirical} relationship, not a theoretical derivation; it provides first-order estimates of expected performance gains given estimated $\eta$. Validation is presented in \cref{sec:results}.
+This has a practical consequence: pooling KPIs with heterogeneous signal strengths weakens the observed $\eta$--$\Delta\mathrm{ML}$ relationship. Across \PEFtotalStudies{} sports KPI studies, $\delta/\sigma_{\mathrm{A}}$ varies substantially (median $\PEFmedianDeltaRatio$; Supplementary~\cref{fig:si_iso_eta_I}), and the pooled $\Corr(\eta,\Delta\mathrm{ML})=\PEFcorrEtaML$ is accordingly weak. This is the expected behaviour under the theory, not a failure of it: $\eta$ encodes the $(\kappa,\rho)$ position, but $\delta/\sigma_{\mathrm{A}}$ is an independent source of variation in ML outcome that must be accounted for separately.
+
+The practical implication is that the four-quadrant taxonomy and the $I(X;Y)$ formula together constitute the appropriate predictive tool, with $\delta/\sigma_{\mathrm{A}}$ estimated from data. \Cref{sec:exemplars} illustrates this with four quadrant exemplars spanning the empirical range of $(\kappa,\rho,\delta/\sigma_{\mathrm{A}})$ values.
 
 \subsection{Cross-Domain Connections}
 

@@ -1,7 +1,8 @@
 # PEF papers — dual roadmap
 
-**Last updated:** 2026-06-22  
-**Target:** complete drafts of both papers by **2026-06-17** (two days)
+**Last updated:** 2026-06-25  
+**Current branch (`pef-empirical`):** `draft/strand2-reframe` (Phases 1–2 complete; Phases 3–4 in progress)  
+**Target:** submission-ready empirical draft; companion complete draft follows
 
 This file tracks the two parallel paths to submission. Tick items in Git commits or by editing status columns as work completes.
 
@@ -27,7 +28,7 @@ cd scripts/paper_pipeline
 | A1 | Full pipeline + finalize + idealised sim run on clean tree | Partial |
 | A2 | All `figures/Figure_*.png` paths resolve | Done |
 | A3 | `numbers.tex` + `finalize_correlations.tex` match manuscript | Done |
-| A4 | Commit June pipeline/SI work | Pending |
+| A4 | Commit June pipeline/SI work | **Done** — commit 863bd7c (2026-06-24) + Phase 1–2 work on `draft/strand2-reframe` (2026-06-25) |
 | A5 | README documents S1–S8 and three-script workflow | Done |
 | A6 | `sync_to_companion.sh` after clean commit (optional pre-submit) | Stale (2026-05-21) |
 
@@ -40,9 +41,9 @@ cd scripts/paper_pipeline
 | B3 | ML methods: logistic `fitglm`, 5-fold CV (MATLAB), not scikit-learn trio | Done |
 | B4 | η–*I* narrative: fixed-δ idealised *r* ≈ 0.87; heterogeneous KPI *r* ≈ −0.21; replace stale *r* = 0.900 | Done |
 | B5 | Scenario table: idealised probit ML % (≈ 9.4, 8.2, 8.6, 7.9), not legacy 15.2 / 25.3 | Done |
-| B6 | Multiple-comparison table (`tab:mc`): not pipeline-generated — soften, replace, or move to SI | Partial (caption qualified) |
-| B7 | Polynomial `eq:dml_poly` coefficients 0.234 / 0.089 — consistent with pipeline | Done |
-| B8 | Abstract `\PEFmlCorr` = 0.033 — honest weak mapping | Done |
+| B6 | Multiple-comparison table (`tab:mc`): not pipeline-generated — soften, replace, or move to SI | **Done** — removed entirely (Phase 1, 2026-06-25) |
+| B7 | `eq:dml_poly` retired from main text; §2.5 replaced with signal-strength narrative (`eq:delta_ratio`) | **Done** (Phase 1, 2026-06-25) |
+| B8 | Abstract `\PEFmlCorr` headline removed; replaced with quadrant exemplar statement | **Done** (Phase 1, 2026-06-25) |
 | B9 | Discussion quadrant narrative; remove obsolete TODO | Done |
 
 ### C. SI and narrative integration
@@ -53,7 +54,7 @@ cd scripts/paper_pipeline
 | C2 | Main text cites S3–S8 (minimal Results paragraph vs SI-only) | Done — new §Efficiency–Power Alignment subsection in results.tex |
 | C3 | `Figure_3b` (ψ residual): cite, defer to companion, or omit | Done — one sentence in Fig 3 caption; `brownPEFmath` stub added to references.bib |
 | C4 | Supporting-domain SI figures vs prose claim | Done — prose now cites tab:validation and fig:pef_landscape only |
-| C5 | Efficiency–power story wired to S4–S7 | Partial (SI captions done) |
+| C5 | Efficiency–power story wired to S4–S7 | **Done** — §2.5 rewritten as signal-strength narrative; exemplar table in Results (Phase 1, 2026-06-25) |
 
 ### D. Pre-submission polish
 
@@ -61,16 +62,20 @@ cd scripts/paper_pipeline
 |----|------|--------|
 | D1 | `latexmk -pdf` — zero undefined refs | Pending |
 | D2 | Author block, affiliations, data/code statement | Pending |
-| D3 | Target journal + SI format | Pending |
+| D3 | Target journal + SI format | Partial — see [`TARGET_JOURNAL_MATRIX.md`](TARGET_JOURNAL_MATRIX.md) (JQAS primary) |
 | D4 | Co-author sign-off on weak η→ML framing | Pending |
 
 ### Empirical sequence (recommended)
 
 1. ~~**B1–B5** (consistency pass)~~ ✓ 2026-06-15
 2. ~~**C2–C3** (SI integration decisions)~~ ✓ 2026-06-22
-3. A1 + A4 (pipeline rerun + commit)
-4. D-items → submit
-5. A6 (companion sync when drafting §7)
+3. ~~**Phase 1** (Strand 2 reframe: retire `eq:dml_poly`; §2.5 → signal-strength; exemplar table; drop `tab:mc` + `appendix_b`; log-transform → SI Note S1)~~ ✓ 2026-06-25 (branch `draft/strand2-reframe`)
+4. ~~**Phase 2** (Figure 3 exemplar annotations; regenerated `figures/Figure_3.png`)~~ ✓ 2026-06-25
+5. **A1** — full three-script pipeline rerun on clean tree (verify `numbers.tex` macros; no `???`)
+6. **D1** — `latexmk` compile; fix any undefined refs
+7. **D2** — author block, affiliations, data/code statement
+8. **D4** — co-author sign-off on weak η→ML framing and exemplar table values
+9. A6 (companion sync when drafting §7)
 
 ---
 
