@@ -1,5 +1,5 @@
 === Idealised probit simulation summary ===
-Date: 22-Jun-2026 10:59:47
+Date: 25-Jun-2026 16:19:42
 PRODUCTION_CONFIG: n=5000 trials=50 k-fold=5
 kappa grid: [0.8 1 1.2 2]
 delta/sigma_A grid: [0.3 0.5 1 2]

@@ -61,6 +61,7 @@ THIS_DIR  = fileparts(mfilename('fullpath'));
 SCRIPTS   = fileparts(THIS_DIR);                        % scripts/
 REPO      = fileparts(SCRIPTS);                         % overleaf_pef_article/
 addpath(fullfile(SCRIPTS, 'PEF_Normality_4seasons'));    % load_*_paired, compute_pef, normality_windows, swtest
+addpath(THIS_DIR);                                         % figure_1_landscape.m
 addpath(fullfile(THIS_DIR, 'lib'));                      % pef_theory_helpers (eta_pef, classify_quadrant, ...)
 
 RUGBY_RAW   = fullfile(REPO, 'Data', 'Rugby', 'Raw', '4_seasons rugby abs.csv');
@@ -303,7 +304,7 @@ figure_1_landscape(pef_2s, pef_per_season, domain_summary, ...
                    fullfile(FIG_DIR, 'Figure_1.png'), pef_exemplars);
 fprintf('   Figure 1 saved.\n');
 
-figure_2_info_surface(fullfile(FIG_DIR, 'Figure_2.png'));
+figure_2_info_surface(pef_2s, domain_summary, fullfile(FIG_DIR, 'Figure_2.png'));
 fprintf('   Figure 2 saved.\n');
 
 figure_3_ml_mapping(ml_all, ml_surface, fullfile(FIG_DIR, 'Figure_3.png'));
@@ -620,172 +621,7 @@ function surf = build_ml_surface()
     surf  = struct('eta', eta_g, 'ml_improvement', ml_g);
 end
 
-% ---- FIGURE 1: PEF landscape — curated exemplars --------------------
-function figure_1_landscape(pef_2s, ~, domain_summary, fpath, ~)
-%FIGURE_1_LANDSCAPE  Exemplar-based PEF landscape.
-%  Shows four curated rugby exemplars (one per quadrant) and four football
-%  exemplars (one per quadrant) on the eta heatmap, plus non-sports domain
-%  mean markers.  All positions verified against pef_landscape_2season.csv.
-
-    fig = figure('Color','w','Position',[100 100 1050 780]);
-    hold on;
-
-    % ---- Background eta heatmap -----------------------------------------
-    r_g = linspace(-0.95, 0.95, 400);
-    k_g = linspace(0.05,  5.0,  400);
-    [R, K] = meshgrid(r_g, k_g);
-    eta_s = (1 + K) ./ (1 + K - 2*sqrt(K).*R);
-    eta_s(eta_s <= 0 | eta_s > 10) = NaN;
-    imagesc(r_g, k_g, log2(eta_s), 'AlphaData', 0.4);
-    set(gca,'YDir','normal');
-    colormap(redblue_local(256));
-    cb = colorbar;  cb.Label.String = 'log_2(\eta)';  caxis([-1.5 1.5]);
-
-    % ---- Iso-eta contours -----------------------------------------------
-    [C,h] = contour(R, K, eta_s, [0.5 0.75 1 1.25 1.5 2 3], 'k-','LineWidth',0.7);
-    clabel(C, h, 'FontSize', 8, 'Color',[0.25 0.25 0.25]);
-
-    % ---- Quadrant boundaries --------------------------------------------
-    plot([-1 1],[1 1],'k--','LineWidth',1.5,'HandleVisibility','off');
-    plot([0 0],[0.05 5],'k--','LineWidth',1.5,'HandleVisibility','off');
-
-    % ---- Curated exemplars (8 sports + non-sports domains) --------------
-    % Columns: display label | sport key | kpi key | rho fallback | kappa fallback
-    %          rho label offset | kappa label offset | text HorizontalAlignment
-    % Fallbacks verified against outputs/pef_landscape_2season.csv.
-    rugby_clr = [0.12 0.47 0.71];
-    foot_clr  = [0.90 0.40 0.05];
-
-    rugby_spec = { ...
-        'Kick metres',     'kick_metres',           +0.649, 1.059,  +0.05, +0.22, 'left';  % Q1
-        'Rucks won',       'rucks_won',             +0.818, 0.820,  -0.21, -0.30, 'left';  % Q2 — below/left of point to avoid Long balls
-        'Lineout throws',  'lineout_throws_won',    -0.224, 0.918,  +0.05, -0.22, 'left';  % Q3 — below/right of point
-        'Missed tackles',  'missed_tackles',        -0.043, 1.183,  -0.40, +0.16, 'left';  % Q4 — left of point
-    };
-    foot_spec = { ...
-        'Yellow cards',    'yellow_cards',          +0.161, 1.098,  +0.05, +0.22, 'left';  % Q1 — above/right of point
-        'Long balls',      'long_balls',            +0.233, 0.911,  +0.05, +0.16, 'left';  % Q2 — above/right (towards Q1 boundary)
-        'Passes',          'passes',                -0.649, 0.839,  +0.05, -0.22, 'left';  % Q3 — below point (far left, room below)
-        'GK long balls',   'goalkeeper_long_balls', -0.241, 1.001,  -0.07, +0.22, 'right'; % Q4 — above/left of point
-    };
-
-    % ---- Plot sport exemplars -------------------------------------------
-    scatter(NaN, NaN, 80, rugby_clr, 'o', 'filled', ...
-        'MarkerEdgeColor','k','LineWidth',0.5, 'DisplayName','Rugby (exemplar)');
-    for i = 1:size(rugby_spec,1)
-        [xp, yp, ep] = lookup_pef(pef_2s, "rugby", rugby_spec{i,2}, ...
-                                   rugby_spec{i,3}, rugby_spec{i,4});
-        scatter(xp, yp, 110, rugby_clr, 'o', 'filled', ...
-            'MarkerEdgeColor','k','LineWidth',1.0, 'HandleVisibility','off');
-        text(xp + rugby_spec{i,5}, yp + rugby_spec{i,6}, ...
-            sprintf('%s\n\\eta = %.2f', rugby_spec{i,1}, ep), ...
-            'FontSize', 7.5, 'Color', rugby_clr * 0.70, 'FontWeight','bold', ...
-            'HorizontalAlignment', rugby_spec{i,7}, ...
-            'BackgroundColor', [1 1 1], 'EdgeColor','none', ...
-            'Interpreter','tex', 'HandleVisibility','off');
-    end
-
-    scatter(NaN, NaN, 80, foot_clr, 's', 'filled', ...
-        'MarkerEdgeColor','k','LineWidth',0.5, 'DisplayName','Football (exemplar)');
-    for i = 1:size(foot_spec,1)
-        [xp, yp, ep] = lookup_pef(pef_2s, "football", foot_spec{i,2}, ...
-                                   foot_spec{i,3}, foot_spec{i,4});
-        scatter(xp, yp, 110, foot_clr, 's', 'filled', ...
-            'MarkerEdgeColor','k','LineWidth',1.0, 'HandleVisibility','off');
-        text(xp + foot_spec{i,5}, yp + foot_spec{i,6}, ...
-            sprintf('%s\n\\eta = %.2f', foot_spec{i,1}, ep), ...
-            'FontSize', 7.5, 'Color', foot_clr * 0.75, 'FontWeight','bold', ...
-            'HorizontalAlignment', foot_spec{i,7}, ...
-            'BackgroundColor', [1 1 1], 'EdgeColor','none', ...
-            'Interpreter','tex', 'HandleVisibility','off');
-    end
-
-    % ---- Non-sports domain triangles ------------------------------------
-    if ~isempty(domain_summary) && height(domain_summary) > 0 && ...
-       all(ismember({'rho_mean','kappa_mean'}, domain_summary.Properties.VariableNames))
-        dom_pal = lines(height(domain_summary));
-        for di = 1:height(domain_summary)
-            rd = domain_summary.rho_mean(di); kd = domain_summary.kappa_mean(di);
-            if isnan(rd) || isnan(kd), continue; end
-            scatter(rd, kd, 110, dom_pal(di,:), '^', 'filled', ...
-                'MarkerEdgeColor','k','LineWidth',0.8, ...
-                'DisplayName', domain_summary.domain{di});
-        end
-    end
-
-    % ---- Quadrant labels ------------------------------------------------
-    text( 0.82, 4.5,  'Q1','FontSize',13,'FontWeight','bold','Color',[0.2 0.2 0.2]);
-    text( 0.82, 0.12, 'Q2','FontSize',13,'FontWeight','bold','Color',[0.2 0.2 0.2]);
-    text(-0.97, 0.12, 'Q3','FontSize',13,'FontWeight','bold','Color',[0.2 0.2 0.2]);
-    text(-0.97, 4.5,  'Q4','FontSize',13,'FontWeight','bold','Color',[0.2 0.2 0.2]);
-
-    xlim([-1 1]); ylim([0.05 5]);
-    xlabel('Pairwise correlation \rho',                      'FontSize',12);
-    ylabel('Variance ratio \kappa = \sigma_B^2/\sigma_A^2', 'FontSize',12);
-    title({'PEF landscape: representative exemplars'; ...
-           'rugby URC + football Championship (23/24–24/25)'}, 'FontSize',11);
-    legend('Location','northeastoutside','Box','off','FontSize',9);
-    set(gca,'FontSize',11); grid on; box on; hold off;
-
-    if nargin >= 4 && ~isempty(fpath)
-        exportgraphics(fig, fpath, 'Resolution',200);
-    end
-    close(fig);
-end
-
-% ---- Helper: look up (rho, kappa, eta) from pef table or use fallback --
-function [rp, kp, ep] = lookup_pef(pef_tbl, sport_str, kpi_str, fb_rho, fb_kap)
-    rp = fb_rho; kp = fb_kap;
-    fb_eta = (1 + fb_kap) / (1 + fb_kap - 2*sqrt(fb_kap)*fb_rho);
-    ep = fb_eta;
-    if isempty(pef_tbl), return; end
-    m = pef_tbl.sport == sport_str & pef_tbl.kpi == kpi_str;
-    if any(m)
-        idx = find(m,1);
-        rp  = pef_tbl.rho(idx);
-        kp  = pef_tbl.kappa(idx);
-        ep  = pef_tbl.eta(idx);
-    end
-end
-
-function map = redblue_local(n)
-    if mod(n,2)==1, n=n+1; end
-    h=n/2;
-    map = [[linspace(0.05,1,h)' linspace(0.30,1,h)' linspace(0.55,1,h)']; ...
-           [linspace(1,0.65,h)' linspace(1,0.05,h)' linspace(1,0.10,h)']];
-end
-
-% ---- FIGURE 2: I(X;Y) information surface (theoretical) -------------
-function figure_2_info_surface(fpath)
-    fig = figure('Color','w','Position',[100 100 900 700]);
-    r_g = linspace(-0.95, 0.95, 300);
-    k_g = linspace(0.05, 5,    300);
-    [R, K] = meshgrid(r_g, k_g);
-    delta  = 1.0; sigma_a = 1.0;
-    eta_s  = (1+K) ./ (1+K - 2*sqrt(K).*R);
-    eta_s(eta_s <= 0 | eta_s > 20) = NaN;
-    sep    = normcdf(delta ./ (2*sigma_a*sqrt((1+K) ./ max(eta_s,1e-6))));
-    sep    = min(max(sep, 1e-9), 1-1e-9);
-    I_xy   = 1 - (-sep.*log2(sep) - (1-sep).*log2(1-sep));
-
-    imagesc(r_g, k_g, I_xy, 'AlphaData', 0.5);
-    set(gca,'YDir','normal'); hold on;
-    colormap(parula);
-    cb = colorbar; cb.Label.String = 'I(X;Y)  (bits)';
-    [C,h] = contour(R, K, I_xy, [0.01 0.02 0.05 0.1 0.15 0.2], 'k-','LineWidth',0.75);
-    clabel(C, h, 'FontSize',8);
-    plot([-1 1],[1 1],'k--','LineWidth',1.5);
-    plot([0 0],[0.05 5],'k--','LineWidth',1.5);
-    xlim([-1 1]); ylim([0.05 5]);
-    xlabel('Pairwise correlation \rho',                'FontSize',12);
-    ylabel('Variance ratio \kappa = \sigma_B^2/\sigma_A^2','FontSize',12);
-    title('Information content I(X;Y) [\delta/\sigma_A = 1]','FontSize',12);
-    set(gca,'FontSize',11); grid on; box on; hold off;
-    if nargin >= 1 && ~isempty(fpath)
-        exportgraphics(fig, fpath, 'Resolution',200);
-    end
-    close(fig);
-end
+% figure_1_landscape.m and figure_2_info_surface.m live in THIS_DIR
 
 % ---- FIGURE 3: PEF-to-ML surface + empirical overlay ----------------
 function figure_3_ml_mapping(ml_all, ~, fpath)

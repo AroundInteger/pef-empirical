@@ -72,22 +72,35 @@
 \begin{figure}[p]
   \centering
   \includegraphics[width=0.95\linewidth]{figures/Figure_1.png}
-  \caption{PEF landscape, $\eta$ as a function of $\rho$ and $\kappa$, with four quadrants labelled.
-    \textbf{Sports KPIs} (rugby union URC, circles; football Championship, squares): each KPI is represented by a
-    short segment whose endpoints are the season~23/24 and season~24/25 estimates of $(\kappa,\rho)$,
-    with the two-season mean shown as a filled marker.  Segments therefore convey both the central
-    tendency and the year-on-year stability of each KPI's position in the landscape.
-    \textbf{Supporting domains} (triangles): mean $(\kappa,\rho)$ for healthcare, clinical genomics, finance,
-    and manufacturing (see Supplementary Information).
-    All markers are coloured by the corresponding $\eta$ on a $\log_{10}$ scale.
-    Individual KPI labels and per-season arrows are shown in Supplementary~\cref{fig:si_kpi_labelled}.}
+  \caption{PEF landscape: $\eta$ as a function of $\rho$ and $\kappa$, with four quadrants labelled.
+    Background shading uses a $\log_{10}$ colour mapping of $\eta$ (tick labels show $\eta$) so that
+    the admissibility blow-up as $\rho\to +1$ (Appendix boundary analysis) remains visible; contour
+    lines are in raw $\eta$.
+    The dotted curve marks the admissibility boundary $1+\kappa-2\sqrt{\kappa}\,\rho=0$, beyond which
+    $\eta$ is undefined.
+    \textbf{Sports exemplars} (rugby union {URC}, numbered circles; football Championship, numbered
+    squares): four curated KPIs per sport, one per quadrant (\cref{tab:exemplars}); marker numbers
+    are keyed in the legend.
+    \textbf{Supporting domains} (triangles): mean $(\kappa,\rho)$ for healthcare, clinical genomics,
+    finance, and manufacturing.
+    The full KPI cloud, per-season positions, and connecting segments appear in
+    Supplementary~\cref{fig:si_kpi_labelled}.}
   \label{fig:pef_landscape}
 \end{figure}
 
 \begin{figure}[p]
   \centering
   \includegraphics[width=0.95\linewidth]{figures/Figure_2.png}
-  \caption{Information-theoretic surface, $I(X;Y)$ as a function of $\kappa$ and $\rho$ (\cref{eq:mi_closed}), computed with $\delta/\sigma_{\mathrm{A}}=1$. Sensitivity of the surface to $\delta/\sigma_{\mathrm{A}}\in\{0.5,1.0,2.0\}$ is shown in Supplementary~\cref{fig:si_info_sensitivity}.}
+  \caption{Information-theoretic surface $I(X;Y)$ as a function of $\rho$ and $\kappa$
+    (\cref{eq:mi_closed}), computed with nominal signal strength $\delta/\sigma_{\mathrm{A}}=1$.
+    Layout matches \cref{fig:pef_landscape}: numbered sports exemplars (circles, rugby; squares,
+    football; \cref{tab:exemplars}), supporting-domain triangles, quadrant boundaries, and the
+    admissibility boundary (dotted curve).
+    Background shading uses a \emph{sequential} colour scale over $I(X;Y)\in[0,0.3]$~bits
+    (low to high information); \cref{fig:pef_landscape} uses a \emph{diverging}
+    $\log_{10}$ scale of $\eta$ centred on the efficiency boundary $\eta=1$.
+    Sensitivity to $\delta/\sigma_{\mathrm{A}}\in\{0.5,1.0,2.0\}$ appears in
+    Supplementary~\cref{fig:si_info_sensitivity}.}
   \label{fig:info_surface}
 \end{figure}
 
