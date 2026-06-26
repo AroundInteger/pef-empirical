@@ -1,32 +1,7 @@
 \section{Mathematical Appendix}
+\label{sec:appendix}
 
-\subsection{Full PEF Derivation}
-
-\subsubsection{Variance of Correlated Differences}
-
-For random variables $X_{\mathrm{A}}$, $X_{\mathrm{B}}$ with $\Var(X_{\mathrm{A}})=\sigma^{2}_{\mathrm{A}}$, $\Var(X_{\mathrm{B}})=\sigma^{2}_{\mathrm{B}}$, and $\Cov(X_{\mathrm{A}},X_{\mathrm{B}})=\rho\sigma_{\mathrm{A}}\sigma_{\mathrm{B}}$,
-\begin{equation}
-  \Var(X_{\mathrm{A}} - X_{\mathrm{B}}) = \sigma^{2}_{\mathrm{A}} + \sigma^{2}_{\mathrm{B}} - 2\rho\sigma_{\mathrm{A}}\sigma_{\mathrm{B}}.
-\end{equation}
-
-\subsubsection{Introducing the Variance Ratio}
-
-With $\kappa=\sigma^{2}_{\mathrm{B}}/\sigma^{2}_{\mathrm{A}}$, hence $\sigma_{\mathrm{B}}=\sqrt{\kappa}\,\sigma_{\mathrm{A}}$,
-\begin{equation}
-  \Var(X_{\mathrm{A}} - X_{\mathrm{B}}) = \sigma^{2}_{\mathrm{A}}\bigl(1 + \kappa - 2\sqrt{\kappa}\,\rho\bigr).
-\end{equation}
-
-\subsubsection{Efficiency Ratio}
-
-Unpaired variance ($\rho=0$): $\sigma^{2}_{\mathrm{A}}(1+\kappa)$. Thus
-\begin{equation}
-  \eta = \frac{\sigma^{2}_{\mathrm{A}}(1+\kappa)}{\sigma^{2}_{\mathrm{A}}(1+\kappa-2\sqrt{\kappa}\,\rho)}
-       = \frac{1+\kappa}{1+\kappa-2\sqrt{\kappa}\,\rho}.
-\end{equation}
-
-\subsubsection{Classical Verification}
-
-Setting $\kappa=1$: $\eta=2/(2-2\rho)=1/(1-\rho)$, recovering Fisher's formula.
+\noindent The algebraic derivation of the PEF formula (\cref{eq:pef}) from the variance of correlated differences, together with its reduction to Fisher's classical case at $\kappa=1$, is given in full in \cref{sec:theory} (\S2.1). This appendix records the material not reproduced in the main text: the step-by-step information content derivation, the boundary analysis, the statistical properties of the PEF estimator, and the Pitman asymptotic relative efficiency proof.
 
 \subsection{Information Content Derivation}
 

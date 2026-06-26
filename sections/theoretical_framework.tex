@@ -55,7 +55,7 @@ recovering Fisher's classical paired efficiency formula \parencite{fisher1935}.
 
 \subsubsection{Provenance and Scope of Contribution}
 
-The algebraic steps from \cref{eq:var_sum} to \cref{eq:pef} are elementary consequences of the bivariate variance formula, and related expressions for paired margins with unequal variances appear in the experimental-design literature \parencite{fisher1935,pitman1939,morgan1939}. We do not claim priority for the formula itself. The contributions of this paper are:
+The algebraic derivation of \cref{eq:pef} via \cref{eq:var_sum,eq:var_factored} involves only elementary consequences of the bivariate variance formula, and related expressions for paired margins with unequal variances appear in the experimental-design literature \parencite{fisher1935,pitman1939,morgan1939}. We do not claim priority for the formula itself. The contributions of this paper are:
 
 \begin{enumerate}
   \item the explicit $(\kappa,\rho)$ parameterisation, which separates variance asymmetry from correlation and makes the two-dimensional dependence tractable;
@@ -65,7 +65,7 @@ The algebraic steps from \cref{eq:var_sum} to \cref{eq:pef} are elementary conse
   \item the formal identification of the formula as the Pitman ARE of the paired versus independent $t$-test under normality \parencite{lehmann1999} (\cref{sec:pitman}), providing a testing-theory anchor absent from prior treatments.
 \end{enumerate}
 
-Readers familiar with design efficiency will recognise \cref{eq:pef} as a variance ratio; the framework built around it, and its consequences for feature engineering and machine learning, are the primary contributions.  The geometric structure underlying the $(\kappa,\rho)$ taxonomy---the $\kappa\leftrightarrow 1/\kappa$ involution, the Fisher--Rao $\psi$ scale, distribution-free cumulant identities, and the predicted regime change in predictive residuals at $\rho=0$---is established in the companion mathematics paper \parencite{brownPEFmath}.
+Readers familiar with design efficiency will recognise \cref{eq:pef} as a variance ratio; the framework built around it, and its consequences for feature engineering and machine learning, are the primary contributions of this paper.
 
 \subsection{The PEF--Information Content Relationship}
 
@@ -88,7 +88,7 @@ We now impose distributional assumptions to connect PEF with predictive power. L
 Under (A2), $Y$ is \emph{not} a deterministic function of $X$: the outcome depends on many factors beyond the single observed KPI difference, so $H(Y\mid X)>0$. The Gaussian discriminant model is the natural linear classifier for normally distributed features and is consistent with (A1) when the within-class variance equals the marginal $\Var(X)$.
 
 \medskip
-\noindent\textbf{Remark.} Assumption (A1) is required for the PEF formula and the information content derivation. Assumption (A2) is an additional approximation for the predictive setting; it is not required for the PEF formula itself.
+\noindent\textbf{Remark.} Assumption (A1) is empirically reasonable for the present data: the within-match KPI difference series $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ in professional rugby and football are approximately normal (mean Shapiro--Wilk $W$ of $0.94$--$0.95$, near-zero skewness), consistent with the central-limit behaviour of paired differences even where the individual team series are mildly skewed (Supplementary Information). Note that (A1) is required only for the information content derivation; the PEF formula itself (\cref{eq:pef}) is distribution-free. Assumption (A2) is an additional approximation for the predictive setting and is likewise not required for the PEF formula.
 
 \subsubsection{Derivation}
 
