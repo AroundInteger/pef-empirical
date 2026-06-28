@@ -55,17 +55,9 @@ recovering Fisher's classical paired efficiency formula \parencite{fisher1935}.
 
 \subsubsection{Provenance and Scope of Contribution}
 
-The variance-of-difference identity for unequal variances (\cref{eq:var_sum,eq:var_factored}) is a standard second-moment result, and the efficiency-of-pairing argument under equal variances is due to Fisher \parencite{fisher1935}; the same paired-margin machinery underlies the Pitman--Morgan test for equality of correlated variances \parencite{pitman1939,morgan1939}. Our contribution is not this algebra but its reframing: we collect it into a single closed-form efficiency ratio (\cref{eq:pef}), parameterised by $(\kappa,\rho)$, and repurpose it from an inferential setting toward feature construction and predictive information in competitive measurement. Conceptualising PEF as a formalisation built on these seminal results, rather than as a new identity, is a deliberate strength of the framework. We do not claim priority for the underlying algebra. The contributions of this paper are:
+The variance-of-difference identity for unequal variances (\cref{eq:var_sum,eq:var_factored}) is a standard second-moment result, and the efficiency-of-pairing argument under equal variances is due to Fisher \parencite{fisher1935}; the same paired-margin machinery underlies the Pitman--Morgan test for equality of correlated variances \parencite{pitman1939,morgan1939}. Our contribution is not this algebra but its reframing: we collect it into a single closed-form efficiency ratio (\cref{eq:pef}), parameterised by $(\kappa,\rho)$, and repurpose it from an inferential setting toward feature construction and predictive information in competitive measurement. Conceptualising PEF as a formalisation built on these seminal results, rather than as a new identity, is a deliberate strength of the framework. We do not claim priority for the underlying algebra.
 
-\begin{enumerate}
-  \item the explicit $(\kappa,\rho)$ parameterisation, which separates variance asymmetry from correlation and makes the two-dimensional dependence tractable;
-  \item the four-quadrant taxonomy of the $(\kappa,\rho)$ parameter space and the corresponding feature-engineering guidance;
-  \item the derivation of the PEF--information content relationship (\cref{eq:mi_closed}), which connects the variance-ratio formula to predictive power under the Gaussian discriminant model;
-  \item empirical quadrant exemplars demonstrating that the $(\kappa,\rho)$ taxonomy correctly predicts the direction of machine learning gain when signal strength (the standardised mean separation $\delta/\sigma_{\mathrm{A}}$, defined in \cref{sec:mi_setup}) is controlled (\cref{sec:exemplars});
-  \item the formal identification of the formula as the Pitman ARE of the paired versus independent $t$-test under normality \parencite{lehmann1999} (\cref{sec:pitman}), providing a testing-theory anchor absent from prior treatments.
-\end{enumerate}
-
-Readers familiar with design efficiency will recognise \cref{eq:pef} as a variance ratio; the framework built around it, and its consequences for feature engineering and machine learning, are the primary contributions of this paper.
+Readers familiar with design efficiency will recognise \cref{eq:pef} as a variance ratio; the framework built around it---the $(\kappa,\rho)$ taxonomy, its link to predictive information, and the resulting feature-engineering guidance (enumerated in \S1.4)---is the primary contribution of this paper. One further anchor specific to the variance-ratio formula is established here: under normality, $\eta$ coincides with the Pitman asymptotic relative efficiency of the paired versus independent $t$-test \parencite{lehmann1999} (\cref{sec:pitman}), a testing-theory characterisation absent from prior treatments.
 
 \subsection{The PEF--Information Content Relationship}
 
