@@ -57,7 +57,8 @@ cd /Users/rowanbrown/Documents/GitHub/pef-empirical/scripts/paper_pipeline
 
 **Key outputs:**
 
-- `outputs/numbers.tex` — included in `main.tex`
+- `outputs/numbers.tex` — included in `main.tex` (see README §LaTeX numeric inputs → Macro naming for letter-only rule)
+- `outputs/table_numbers.csv` — full metric table including companion-only rows (e.g. `n_l2_pass`, `n_l2p5_pass`) not always exported as LaTeX macros
 - `figures/Figure_1.png` … `Figure_3b.png`
 - §7 CSVs: `kappa_symmetry_*.csv`, `psi_*.csv`, `pef_landscape_2season_geometry.csv`
 

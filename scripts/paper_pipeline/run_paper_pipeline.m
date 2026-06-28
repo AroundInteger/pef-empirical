@@ -1089,6 +1089,13 @@ function write_numbers_tex(stats, fpath)
         mac  = lut{li,4};
         fmt  = lut{li,5};
 
+        % LaTeX control sequence names are letter-only; digits terminate the name
+        % (e.g. PEFkappaL2Pass -> \PEFkappaL + 2Pass). Skip invalid macro names.
+        if ~isempty(regexp(mac, '[0-9]', 'once'))
+            warning('write_numbers_tex: skipping macro %s (digits not allowed in LaTeX names).', mac);
+            continue;
+        end
+
         mask = strcmp(stats.table, tbl) & ...
                strcmp(stats.row_label, row) & ...
                strcmp(stats.metric, met);

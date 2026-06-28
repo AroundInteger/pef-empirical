@@ -72,10 +72,27 @@ cd scripts/paper_pipeline
 
 | File | Included in `main.tex` | Contents |
 |------|------------------------|----------|
-| `outputs/numbers.tex` | `\input` after fallbacks | Domain means, quadrant stats, η→ML metrics |
-| `outputs/finalize_correlations.tex` | `\input` after `numbers.tex` | `\PEFcorrIpredML`, `\PEFcorrEtaML`, `\PEFcorrEtaIpred`, `\PEFmedianDeltaRatio` |
+| `outputs/numbers.tex` | `\input` after fallbacks | Domain means, quadrant stats, companion-bridge audit metrics |
+| `outputs/finalize_correlations.tex` | `\input` after `numbers.tex` | `\PEFmedianDeltaRatio` (and internal diagnostics; most corr macros no longer cited in the manuscript) |
 
 Do **not** hand-edit these files; re-run the scripts above.
+
+#### Macro naming (pdfLaTeX)
+
+LaTeX control sequence names may contain **letters only** (`A`–`Z`, `a`–`z`). A digit ends the name. For example, `\PEFkappaL2Pass` is tokenised as `\PEFkappaL` followed by `2Pass`, which breaks `\providecommand{...}{...}` and fails to compile in Overleaf.
+
+**Pipeline rule:** every macro name in the `write_numbers_tex` lookup table in `run_paper_pipeline.m` must be letter-only. Do not embed level numbers (`L2`, `2p5`, etc.) in macro names.
+
+**Companion-only metrics:** some audit counts are written to `outputs/table_numbers.csv` for `pef-mathematics` §7 sync but are **not** exported as LaTeX macros. As of 2026-06-28:
+
+| `table_numbers.csv` metric | Value source | LaTeX macro |
+|----------------------------|--------------|-------------|
+| `AppendixC, audit, n_l2_pass` | Level-2 κ symmetry pass count | *(none — invalid name retired)* |
+| `AppendixC, audit, n_l2p5_pass` | Level-2.5 bootstrap pass count | *(none — invalid name retired)* |
+
+If the companion paper needs these as macros, use digit-free names (e.g. `\PEFkappaSymmetryPassLevelTwo`, `\PEFkappaSymmetryPassLevelTwoFive`) and add them only in that repo’s pipeline or preamble.
+
+Many other `AppendixC` macros in `numbers.tex` (ψ-scale, regime change, ML-residual diagnostics) are generated for reproducibility and companion sync; the empirical manuscript does not cite them in `sections/*.tex`.
 
 ### Standalone SI figures (S1–S2)
 
@@ -144,10 +161,21 @@ Entries in reverse-chronological order. Add a new entry here in the same commit 
 
 ---
 
-### `draft/strand2-reframe` branch — in progress
+### 2026-06-28 · `5f74d62` — LaTeX macro naming fix (κ audit pass counts)
 
-**Planned changes (Phases 1–4):**  
-Retire `eq:dml_poly` (polynomial η→ML mapping) from main text; replace §2.5 and Results §4.2 with a δ/σ_A framing and a four-exemplar table (one per quadrant: rugby `kick_metres` Q1, football `long_balls` Q2, football `passes` Q3, football `goalkeeper_long_balls` Q4). Drop legacy significance apparatus (Methods §4.5, Results §4.3, `tab:mc`). Compress `appendix_b_log_transform` into a brief SI note. Annotate four exemplar points on Figure 3. Target journal: **JQAS** (primary), JRSS Series C (backup).
+Documented and fixed invalid pdfLaTeX macro names: `\PEFkappaL2Pass` and `\PEFkappaL2pFivePass` break compilation because digits terminate control sequence names. Removed them from the `numbers.tex` export LUT in `run_paper_pipeline.m`; `n_l2_pass` and `n_l2p5_pass` remain in `table_numbers.csv` for companion §7 sync. See README §LaTeX numeric inputs → Macro naming.
+
+---
+
+### 2026-06-28 · `7088be6` — Introduction broad-to-sport funnel
+
+Opening paragraph cites cross-domain relative measures (finance, clinical pulse pressure, manufacturing control charts) before narrowing to sports KPI methodology and the central relativisation question.
+
+---
+
+### 2026-06-28 · `f7fa55a` — Narrative pass (question-first, standalone scope)
+
+Re-sequenced introduction (research question → Fisher → PEF → tension); empirical grounding for (A1); Discussion closes four study objectives; appendix de-duplication; removed companion-paper teaser sentences from main text.
 
 ---
 

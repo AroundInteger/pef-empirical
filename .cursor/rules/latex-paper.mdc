@@ -20,6 +20,7 @@ British English: recognised, behaviour, rigour, optimisation, generalised.
 
 - One `\section` per file under `sections/`; `main.tex` only inputs and preamble
 - Generated counts: `\input{scripts/paper_pipeline/outputs/numbers.tex}` (empirical) — never hand-edit macro values that pipeline owns
+- **Macro names:** letter-only after `\` (no embedded digits). `\PEFkappaL2Pass` is invalid (parsed as `\PEFkappaL` + `2Pass`). See `README.md` §LaTeX numeric inputs → Macro naming.
 
 ## Tone
 

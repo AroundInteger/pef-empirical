@@ -40,6 +40,8 @@ Do not assume `matlab` or `which matlab` works unless `PATH` has been set in tha
 | SI figures S1–S2 | `scripts/matlab_figures/` |
 | Generated numbers | `scripts/paper_pipeline/outputs/numbers.tex` |
 
+`numbers.tex` macro names must be **letter-only** (no embedded digits); see `README.md` §LaTeX numeric inputs. `write_numbers_tex` skips invalid names with a warning.
+
 Many scripts need the **Statistics and Machine Learning Toolbox** (`fitglm`, `cvpartition`, `perfcurve`, etc.).
 
 Companion §7 CSVs are copied to `pef-mathematics/validation_inputs/` — do not maintain a second pipeline there.
