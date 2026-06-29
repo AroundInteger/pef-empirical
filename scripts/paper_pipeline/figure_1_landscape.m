@@ -1,28 +1,24 @@
-function figure_1_landscape(pef_2s, ~, domain_summary, fpath, ~)
-%FIGURE_1_LANDSCAPE  Exemplar-based PEF landscape.
+function figure_1_landscape(pef_2s, pef_per_season, domain_summary, fpath, ~)
+%FIGURE_1_LANDSCAPE  PEF landscape with four confirmatory exemplars (tab:exemplars).
 %  Surface grid: rho in [-0.999, 0.999], kappa in [0.001, 3].
-%  Background colour uses log10(eta) to compress the admissibility blow-up
-%  (eta diverges as rho -> (1+kappa)/(2*sqrt(kappa))); contour lines are raw eta.
-%  Eight sports exemplars (numbered); KPI details in legend.
+%  Four quadrant exemplars with 23/24 -> 24/25 drift segments.
 
     RHO_MIN = -0.999;
     RHO_MAX =  0.999;
-    KAP_MIN =  0.001;   % variance ratio > 0; axis starts near zero
+    KAP_MIN =  0.001;
     KAP_MAX =  3.000;
 
     ETA_COLOR_LO = 0.4;
-    ETA_COLOR_HI = 10.0;   % saturate colour above this (eta still diverges beyond)
+    ETA_COLOR_HI = 10.0;
 
-    FS_LABEL  = 16;   % axis / colorbar labels (print)
-    FS_TICK   = 12;   % tick numerals, legend, contour labels
-    FS_QUAD   = 16;   % Q1--Q4 annotations
-    FS_MARKER = 12;   % numbered exemplar markers
+    FS_LABEL  = 16;
+    FS_TICK   = 12;
+    FS_QUAD   = 16;
 
     fig = figure('Color', 'w', 'Position', [100 100 1400 820]);
     ax  = axes('Parent', fig, 'Position', [0.07 0.10 0.46 0.84]);
     hold(ax, 'on');
 
-    % ---- PEF surface -------------------------------------------------------
     n_r = 500;
     n_k = 500;
     r_g = linspace(RHO_MIN, RHO_MAX, n_r);
@@ -34,7 +30,6 @@ function figure_1_landscape(pef_2s, ~, domain_summary, fpath, ~)
     bad    = ~isfinite(eta_s) | eta_s <= 0 | den <= 0;
     eta_s(bad) = NaN;
 
-    % log10(eta) colour field: compresses blow-up near admissibility boundary
     Z = log10(eta_s);
     Z(Z > log10(ETA_COLOR_HI)) = log10(ETA_COLOR_HI);
 
@@ -45,66 +40,24 @@ function figure_1_landscape(pef_2s, ~, domain_summary, fpath, ~)
     colormap(ax, redblue_local(256));
     caxis(ax, [log10(ETA_COLOR_LO) log10(ETA_COLOR_HI)]);
 
-    % ---- Iso-eta contours (raw eta, not log) -------------------------------
     eta_contour_levels = [0.5 0.75 1 1.25 1.5 2 3 5];
     [C, h] = contour(ax, R, K, eta_s, eta_contour_levels, ...
         'k-', 'LineWidth', 0.7);
     clabel(C, h, 'FontSize', FS_TICK, 'Color', [0.25 0.25 0.25]);
     h.HandleVisibility = 'off';
 
-    % ---- Admissibility boundary (den = 0; eta diverges) -------------------
     k_bnd = linspace(KAP_MIN, KAP_MAX, 300);
     rho_bnd = (1 + k_bnd) ./ (2 * sqrt(k_bnd));
     in_plot = rho_bnd >= RHO_MIN & rho_bnd <= RHO_MAX;
     plot(ax, rho_bnd(in_plot), k_bnd(in_plot), 'k:', 'LineWidth', 1.0, ...
         'HandleVisibility', 'off');
 
-    % ---- Quadrant boundaries -----------------------------------------------
     plot(ax, [RHO_MIN RHO_MAX], [1 1], 'k--', 'LineWidth', 1.5, ...
         'HandleVisibility', 'off');
     plot(ax, [0 0], [KAP_MIN KAP_MAX], 'k--', 'LineWidth', 1.5, ...
         'HandleVisibility', 'off');
 
-    % ---- Curated exemplars ---------------------------------------------------
-    rugby_clr = [0.12 0.47 0.71];
-    foot_clr  = [0.90 0.40 0.05];
-
-    rugby_spec = { ...
-        'Kick metres',    'kick_metres',        +0.649, 1.059, 'Q1'; ...
-        'Rucks won',      'rucks_won',          +0.818, 0.820, 'Q2'; ...
-        'Lineout throws', 'lineout_throws_won', -0.224, 0.918, 'Q3'; ...
-        'Missed tackles', 'missed_tackles',     -0.043, 1.183, 'Q4'; ...
-    };
-    foot_spec = { ...
-        'Yellow cards',  'yellow_cards',          +0.161, 1.098, 'Q1'; ...
-        'Long balls',    'long_balls',            +0.233, 0.911, 'Q2'; ...
-        'Passes',        'passes',                -0.649, 0.839, 'Q3'; ...
-        'GK long balls', 'goalkeeper_long_balls', -0.241, 1.001, 'Q4'; ...
-    };
-
-    for i = 1:size(rugby_spec, 1)
-        [xp, yp, ep] = lookup_pef(pef_2s, "rugby", rugby_spec{i, 2}, ...
-                                   rugby_spec{i, 3}, rugby_spec{i, 4});
-        leg_str = sprintf('R%d  %s  (\\eta=%.2f, %s)', i, rugby_spec{i, 1}, ep, rugby_spec{i, 5});
-        scatter(ax, xp, yp, 130, rugby_clr, 'o', 'filled', ...
-            'MarkerEdgeColor', 'k', 'LineWidth', 1.0, 'DisplayName', leg_str);
-        text(ax, xp, yp, sprintf('%d', i), ...
-            'HorizontalAlignment', 'center', 'VerticalAlignment', 'middle', ...
-            'FontSize', FS_MARKER, 'FontWeight', 'bold', 'Color', 'w', ...
-            'HandleVisibility', 'off');
-    end
-
-    for i = 1:size(foot_spec, 1)
-        [xp, yp, ep] = lookup_pef(pef_2s, "football", foot_spec{i, 2}, ...
-                                   foot_spec{i, 3}, foot_spec{i, 4});
-        leg_str = sprintf('F%d  %s  (\\eta=%.2f, %s)', i, foot_spec{i, 1}, ep, foot_spec{i, 5});
-        scatter(ax, xp, yp, 130, foot_clr, 's', 'filled', ...
-            'MarkerEdgeColor', 'k', 'LineWidth', 1.0, 'DisplayName', leg_str);
-        text(ax, xp, yp, sprintf('%d', i), ...
-            'HorizontalAlignment', 'center', 'VerticalAlignment', 'middle', ...
-            'FontSize', FS_MARKER, 'FontWeight', 'bold', 'Color', 'w', ...
-            'HandleVisibility', 'off');
-    end
+    figure_quad_exemplars(ax, pef_2s, pef_per_season, 'eta');
 
     if ~isempty(domain_summary) && height(domain_summary) > 0 && ...
        all(ismember({'rho_mean', 'kappa_mean'}, domain_summary.Properties.VariableNames))
@@ -119,7 +72,6 @@ function figure_1_landscape(pef_2s, ~, domain_summary, fpath, ~)
         end
     end
 
-    % ---- Quadrant labels ---------------------------------------------------
     text(ax,  0.88, 2.65, 'Q1', 'FontSize', FS_QUAD, 'FontWeight', 'bold', 'Color', [0.2 0.2 0.2]);
     text(ax,  0.88,  0.35, 'Q2', 'FontSize', FS_QUAD, 'FontWeight', 'bold', 'Color', [0.2 0.2 0.2]);
     text(ax, -0.92,  0.35, 'Q3', 'FontSize', FS_QUAD, 'FontWeight', 'bold', 'Color', [0.2 0.2 0.2]);
@@ -133,7 +85,6 @@ function figure_1_landscape(pef_2s, ~, domain_summary, fpath, ~)
     grid(ax, 'on');
     box(ax, 'on');
 
-    % ---- Colorbar: log-mapped field, eta tick labels -----------------------
     cb = colorbar(ax, 'Location', 'east');
     eta_ticks = [0.5 1 2 3 5 10];
     cb.Ticks      = log10(eta_ticks);
@@ -149,7 +100,6 @@ function figure_1_landscape(pef_2s, ~, domain_summary, fpath, ~)
         'FontSize', FS_LABEL, 'HorizontalAlignment', 'left', ...
         'VerticalAlignment', 'middle', 'Interpreter', 'tex');
 
-    % ---- Legend ------------------------------------------------------------
     lgd = legend(ax, 'Location', 'none', 'Box', 'off', 'FontSize', FS_TICK, ...
         'Interpreter', 'tex');
     lgd.Position = [0.60 0.05 0.38 0.90];
@@ -162,22 +112,6 @@ function figure_1_landscape(pef_2s, ~, domain_summary, fpath, ~)
     close(fig);
 end
 
-% ---- Helper: look up (rho, kappa, eta) from pef table or use fallback ----
-function [rp, kp, ep] = lookup_pef(pef_tbl, sport_str, kpi_str, fb_rho, fb_kap)
-    rp = fb_rho;
-    kp = fb_kap;
-    ep = (1 + fb_kap) / (1 + fb_kap - 2 * sqrt(fb_kap) * fb_rho);
-    if isempty(pef_tbl) || height(pef_tbl) == 0, return; end
-    m = pef_tbl.sport == sport_str & pef_tbl.kpi == kpi_str;
-    if any(m)
-        idx = find(m, 1);
-        rp  = pef_tbl.rho(idx);
-        kp  = pef_tbl.kappa(idx);
-        ep  = pef_tbl.eta(idx);
-    end
-end
-
-% ---- Diverging red-blue colourmap (local) ----------------------------------
 function map = redblue_local(n)
     if mod(n, 2) == 1, n = n + 1; end
     h = n / 2;

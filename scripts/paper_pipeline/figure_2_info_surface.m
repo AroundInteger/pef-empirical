@@ -1,6 +1,6 @@
-function figure_2_info_surface(pef_2s, domain_summary, fpath)
+function figure_2_info_surface(pef_2s, pef_per_season, domain_summary, fpath)
 %FIGURE_2_INFO_SURFACE  I(X;Y) surface with Figure-1 layout.
-%  Same axes, exemplars, domain markers, and typography as figure_1_landscape.
+%  Same four confirmatory exemplars and season drift as figure_1_landscape.
 %  Nominal signal strength delta/sigma_A = 1 (eq:mi_closed).
 
     RHO_MIN = -0.999;
@@ -54,46 +54,8 @@ function figure_2_info_surface(pef_2s, domain_summary, fpath)
     plot(ax, [0 0], [KAP_MIN KAP_MAX], 'k--', 'LineWidth', 1.5, ...
         'HandleVisibility', 'off');
 
-    % ---- Curated exemplars (same as Figure 1) ------------------------------
-    rugby_clr = [0.12 0.47 0.71];
-    foot_clr  = [0.90 0.40 0.05];
-
-    rugby_spec = { ...
-        'Kick metres',    'kick_metres',        +0.649, 1.059, 'Q1'; ...
-        'Rucks won',      'rucks_won',          +0.818, 0.820, 'Q2'; ...
-        'Lineout throws', 'lineout_throws_won', -0.224, 0.918, 'Q3'; ...
-        'Missed tackles', 'missed_tackles',     -0.043, 1.183, 'Q4'; ...
-    };
-    foot_spec = { ...
-        'Yellow cards',  'yellow_cards',          +0.161, 1.098, 'Q1'; ...
-        'Long balls',    'long_balls',            +0.233, 0.911, 'Q2'; ...
-        'Passes',        'passes',                -0.649, 0.839, 'Q3'; ...
-        'GK long balls', 'goalkeeper_long_balls', -0.241, 1.001, 'Q4'; ...
-    };
-
-    for i = 1:size(rugby_spec, 1)
-        [xp, yp, Ip] = lookup_exemplar(pef_2s, "rugby", rugby_spec{i, 2}, ...
-            rugby_spec{i, 3}, rugby_spec{i, 4}, DELTA, SIGMA_A);
-        leg_str = sprintf('R%d  %s  (I=%.3f, %s)', i, rugby_spec{i, 1}, Ip, rugby_spec{i, 5});
-        scatter(ax, xp, yp, 130, rugby_clr, 'o', 'filled', ...
-            'MarkerEdgeColor', 'k', 'LineWidth', 1.0, 'DisplayName', leg_str);
-        text(ax, xp, yp, sprintf('%d', i), ...
-            'HorizontalAlignment', 'center', 'VerticalAlignment', 'middle', ...
-            'FontSize', FS_MARKER, 'FontWeight', 'bold', 'Color', 'w', ...
-            'HandleVisibility', 'off');
-    end
-
-    for i = 1:size(foot_spec, 1)
-        [xp, yp, Ip] = lookup_exemplar(pef_2s, "football", foot_spec{i, 2}, ...
-            foot_spec{i, 3}, foot_spec{i, 4}, DELTA, SIGMA_A);
-        leg_str = sprintf('F%d  %s  (I=%.3f, %s)', i, foot_spec{i, 1}, Ip, foot_spec{i, 5});
-        scatter(ax, xp, yp, 130, foot_clr, 's', 'filled', ...
-            'MarkerEdgeColor', 'k', 'LineWidth', 1.0, 'DisplayName', leg_str);
-        text(ax, xp, yp, sprintf('%d', i), ...
-            'HorizontalAlignment', 'center', 'VerticalAlignment', 'middle', ...
-            'FontSize', FS_MARKER, 'FontWeight', 'bold', 'Color', 'w', ...
-            'HandleVisibility', 'off');
-    end
+    % ---- Confirmatory exemplars (same four as Figure 1 / tab:exemplars) ----
+    figure_quad_exemplars(ax, pef_2s, pef_per_season, 'I', DELTA, SIGMA_A);
 
     if ~isempty(domain_summary) && height(domain_summary) > 0 && ...
        all(ismember({'rho_mean', 'kappa_mean'}, domain_summary.Properties.VariableNames))
@@ -143,7 +105,7 @@ function figure_2_info_surface(pef_2s, domain_summary, fpath)
 
     hold(ax, 'off');
 
-    if nargin >= 3 && ~isempty(fpath)
+    if nargin >= 4 && ~isempty(fpath)
         exportgraphics(fig, fpath, 'Resolution', 200);
     end
     close(fig);
@@ -161,31 +123,4 @@ function I_xy = compute_mi_grid(K, R, delta, sigmaA)
     H   = -sep .* log2(sep) - (1 - sep) .* log2(1 - sep);
     I_xy = 1 - H;
     I_xy(bad) = NaN;
-end
-
-% ---- Exemplar (rho, kappa) + I at nominal delta/sigma_A -------------------
-function [rp, kp, Ip] = lookup_exemplar(pef_tbl, sport_str, kpi_str, fb_rho, fb_kap, delta, sigmaA)
-    rp = fb_rho;
-    kp = fb_kap;
-    Ip = mi_at_point(fb_kap, fb_rho, delta, sigmaA);
-    if isempty(pef_tbl) || height(pef_tbl) == 0, return; end
-    m = pef_tbl.sport == sport_str & pef_tbl.kpi == kpi_str;
-    if any(m)
-        idx = find(m, 1);
-        rp  = pef_tbl.rho(idx);
-        kp  = pef_tbl.kappa(idx);
-        Ip  = mi_at_point(kp, rp, delta, sigmaA);
-    end
-end
-
-function Ixy = mi_at_point(kappa, rho, delta, sigmaA)
-    den = 1 + kappa - 2 * sqrt(kappa) * rho;
-    if den <= 0
-        Ixy = NaN;
-        return
-    end
-    eta = (1 + kappa) / den;
-    sep = normcdf(delta / (2 * sigmaA * sqrt((1 + kappa) / eta)));
-    sep = min(max(sep, 1e-12), 1 - 1e-12);
-    Ixy = 1 - (-sep * log2(sep) - (1 - sep) * log2(1 - sep));
 end

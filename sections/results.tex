@@ -28,38 +28,11 @@ The theoretical relationship between $\eta$ and information content (\cref{eq:mi
 
 On the admissible $(\kappa,\rho)$ grid at fixed $\delta/\sigma_{\mathrm{A}}=1$, analytic $\eta$ and $I(X;Y)$ from \cref{eq:mi_closed} are strongly correlated ($r\approx 0.87$ across 16 grid cells in the idealised simulation). The four scenarios in \cref{tab:scenarios} span the quadrant space under controlled (A1)--(A2) conditions; the first two illustrate the efficiency--power tension ($\eta<1$ with positive mean ML improvement), consistent with \cref{sec:eff_power_theory}.
 
-\subsection{Primary Analysis: Sports KPIs}
+\subsection{Sports KPI Landscape}
 
-The sports KPIs span all four quadrants (\cref{fig:pef_landscape}). Rugby yielded mean $\eta=\PEFrugbyMeanEta$ (95\% CI: $[\PEFrugbyCIlo,\PEFrugbyCIhi]$, \PEFrugbySuccess\% success rate across \PEFrugbyNkpis{} KPI studies). Football yielded mean $\eta=\PEFfootMeanEta$ (95\% CI: $[\PEFfootCIlo,\PEFfootCIhi]$, \PEFfootSuccess\% success across \PEFfootNkpis{} KPI studies). Representative exemplars illustrate the quadrant distribution in \cref{fig:pef_landscape}; per-KPI season-to-season stability of $(\kappa,\rho)$ positions appears in Supplementary~\cref{fig:si_kpi_labelled}.
+The full sports inventory spans all four quadrants (\cref{fig:pef_landscape}; $\PEFtotalStudies{}$ KPI studies, \cref{sec:outcome_defs}). Rugby union ({URC}) contributes $\PEFrugbyNkpis{}$ KPIs and football (English Championship) $\PEFfootNkpis{}$; per-KPI $(\hat\kappa,\hat\rho,\hat\eta)$ estimates and season-to-season drift appear in Supplementary Figures~S2--S3. Domain-level landscape summaries are collected in \cref{tab:validation}: rugby mean $\hat\eta=\PEFrugbyMeanEta$ (95\% CI: $[\PEFrugbyCIlo,\PEFrugbyCIhi]$; $\PEFrugbySuccess\%$ of KPIs with $\hat\eta>1$), football mean $\hat\eta=\PEFfootMeanEta$ (95\% CI: $[\PEFfootCIlo,\PEFfootCIhi]$; $\PEFfootSuccess\%$ with $\hat\eta>1$). These figures characterise the empirical $(\kappa,\rho)$ distribution---notably the Q3-heavy structure of invasion-game KPIs (77 of 113 studies; 68\%)---rather than serving as the primary confirmatory test.
 
-KPIs with positive correlation (e.g., kicks from hand, carries) fell into Quadrants~1--2 and yielded $\eta>1$. KPIs with negative or near-zero correlation (e.g., turnovers won, penalties conceded) fell into Quadrants~3--4 and yielded $\eta\le 1$, yet several still showed positive ML improvement, consistent with the efficiency--power tension described in \cref{sec:eff_power_theory}.
-
-\subsection{Quadrant-Specific Performance}
-
-Empirical performance by quadrant:
-
-\begin{table}[t]
-  \centering
-  \caption{Empirical performance by quadrant.}
-  \label{tab:quad_perf}
-  \begin{tabular}{@{}lcccc@{}}
-    \toprule
-    \textbf{Quadrant} & \textbf{Mean $\eta$} & \textbf{95\% CI} & \textbf{Success$^{\dagger}$} & \textbf{Mean ML impr.} \\
-    \midrule
-    Q1 (high $\kappa$, positive $\rho$) & \PEFqOneMeanEta   & $[\PEFqOneCIlo,\PEFqOneCIhi]$   & 100\% & \PEFqOneMLimpr\% \\
-    Q2 (low $\kappa$, positive $\rho$)  & \PEFqTwoMeanEta   & ---                             & 95\%  & \PEFqTwoMLimpr\% \\
-    Q3 (low $\kappa$, negative $\rho$)  & \PEFqThreeMeanEta & ---                             & 45\%  & \PEFqThreeMLimpr\% \\
-    Q4 (high $\kappa$, negative $\rho$) & \PEFqFourMeanEta  & $[\PEFqFourCIlo,\PEFqFourCIhi]$ & 78\%$^{\ddagger}$  & \PEFqFourMLimpr\% \\
-    \bottomrule
-  \end{tabular}
-
-  \medskip
-  \begin{minipage}{0.95\linewidth}\small
-    $^{\dagger}$Success in Q1--Q3: proportion of KPI studies with $\eta>1$ and $p<0.05$ (two-sided). $^{\ddagger}$Success in Q4 is redefined as observed ML improvement~$>0$, since $\eta>1$ is structurally impossible in this regime ($\kappa>1$, $\rho<0$); the 78\% figure reflects the proportion of Q4 KPI studies for which relative features yielded a positive accuracy gain.
-  \end{minipage}
-\end{table}
-
-In Quadrant~4, mean $\eta=\PEFqFourMeanEta$ (indicating increased variance from pairing) yet mean ML improvement was \PEFqFourMLimpr\%, consistent with the analysis in \cref{sec:eff_power_theory}.
+KPIs with positive correlation (e.g., kicks from hand, carries) concentrate in Quadrants~1--2 and typically yield $\hat\eta>1$; KPIs with negative or near-zero correlation (e.g., turnovers won, penalties conceded) fall predominantly in Quadrants~3--4 with $\hat\eta\le 1$, yet several still show positive ML improvement in the full scatter (\cref{fig:pef_ml}), consistent with the efficiency--power tension (\cref{sec:eff_power_theory}). Mechanistic confirmation of the taxonomy's directional predictions is assessed through the four quadrant exemplars below (\cref{sec:exemplars}), not through pooled success rates over the Q3-dominated inventory.
 
 \subsection{Efficiency--Power Alignment Across Quadrants}
 \label{sec:eff_power}
@@ -68,14 +41,14 @@ The four quadrants differ not only in mean $\eta$ but in the relationship betwee
 
 \textbf{Idealised simulation under (A1)--(A2).} On the theory-aligned probit grid (Supplementary~\cref{fig:si_idealised_stratified}; $n=5{,}000$, 50 trials, five-fold CV), all 16 out of 16 Quadrant~4 cells with $\eta<1$ produced positive mean ML improvement. At fixed $\delta/\sigma_{\mathrm{A}}$, $\eta$ and $I(X;Y)$ are strongly correlated (within-slice $r\approx0.87$ at the empirical median $\delta/\sigma_{\mathrm{A}}=\PEFmedianDeltaRatio$). However, the pooled-across-$\delta/\sigma_{\mathrm{A}}$ correlation is negative ($r=-0.70$), because signal strength shifts the $I(X;Y)$ level independently of the $(\kappa,\rho)$ position. The practical consequence is that iso-$\eta$ and iso-$I(X;Y)$ contours diverge once $\delta/\sigma_{\mathrm{A}}$ varies across KPIs (Supplementary~\cref{fig:si_iso_eta_I}).
 
-\textbf{Quadrant distribution.} Of the \PEFtotalStudies{} sports KPI studies, 77 (68\%) lie in Q3 --- the negative-correlation regime where competitive dynamics dominate and absolute features are typically preferred. This reflects a structural feature of professional invasion-game sport: high-volume counts (passes, pressures, duels) are anti-correlated across opponents. Because the dataset is Q3-heavy, any aggregate statistic pooled across all KPIs primarily characterises this dominant regime rather than the mechanism across the full quadrant space. The exemplar approach (\cref{tab:exemplars}) directly addresses this by selecting one KPI per quadrant, allowing the taxonomy's directional predictions to be assessed without the distributional confound.
+\textbf{Quadrant distribution.} Of the \PEFtotalStudies{} sports KPI studies, 77 (68\%) lie in Q3 --- the negative-correlation regime where competitive dynamics dominate and absolute features are typically preferred. This reflects a structural feature of professional invasion-game sport: high-volume counts (passes, pressures, duels) are anti-correlated across opponents. Because the dataset is Q3-heavy, any aggregate statistic pooled across all KPIs primarily characterises this dominant regime rather than the mechanism across the full quadrant space (Supplementary Table~S1). The exemplar approach (\cref{tab:exemplars}) directly addresses this by selecting one KPI per quadrant, allowing the taxonomy's directional predictions to be assessed without the distributional confound.
 
 \textbf{Quadrant~4 and the Bayes bound.} Bootstrap confidence intervals on exemplar KPIs confirm that $\eta<1$ is estimated with low uncertainty for the Quadrant~4 sports KPIs studied (Supplementary~\cref{fig:si_bootstrap_exemplars}). Despite this, several Quadrant~4 KPIs yielded five-fold CV accuracy for relative features that exceeded the Gaussian Bayes-optimal bound on absolute features alone---a pattern consistent with the information content not being fully captured by the absolute-feature classifier (Supplementary~\cref{fig:si_q4_bayes_gap}). Together, these results support the interpretation in \cref{sec:eff_power_theory}: statistical efficiency and information content are related but distinct quantities, and the practical value of relativisation in competitive settings cannot be determined from $\eta$ alone.
 
 \subsection{Quadrant Exemplars and Signal-Strength Context}
 \label{sec:exemplars}
 
-\Cref{fig:pef_ml} shows the empirical $\eta$--$\Delta\mathrm{ML}$ scatter for all \PEFtotalStudies{} sports KPI studies, with four annotated exemplars---one per quadrant---selected to illustrate how the $(\kappa,\rho)$ taxonomy predicts the direction of ML gain when signal strength is held approximately constant (\cref{tab:exemplars}).
+\Cref{fig:pef_ml} places the full KPI inventory ($N=\PEFtotalStudies{}$) in landscape context: an $\hat\eta$--$\Delta\mathrm{ML}$ scatter with four annotated exemplars---one per quadrant---selected to test directional predictions when signal strength is held approximately constant (\cref{tab:exemplars}).
 
 \begin{table}[t]
   \centering
@@ -102,11 +75,11 @@ The Q4 exemplar (goalkeeper long balls, $\eta=0.81$) shows that relativisation c
 
 \subsection{Supporting Validation: Cross-Domain Results}
 
-Having established the mechanism in sports, where the single-KPI exemplars confirm the taxonomy's directional predictions, we now assess whether the same $(\kappa,\rho)$ structure recurs beyond sport. \Cref{tab:validation} summarises results across all six domains. The supporting domains illustrate how empirical $(\kappa,\rho)$ structures propagate into $\eta$ and success rates (here, proportion of units with $\eta>1$ and $p<0.05$ where hypothesis tests apply):
+Having established the mechanism through the idealised simulation and single-KPI exemplars, we assess whether the same $(\kappa,\rho)$ structure recurs beyond sport. \Cref{tab:validation} summarises results across all six domains. The supporting domains illustrate how empirical $(\kappa,\rho)$ structures propagate into $\hat\eta$ and landscape efficiency rates (proportion with $\hat\eta>1$; \cref{sec:outcome_defs}):
 \begin{itemize}
   \item \textbf{Healthcare} \parencite{nhanes2017pbxo}: pooled $\eta=\PEFhealthMeanEta$ (bootstrap 95\% CI: $[2.448,2.622]$) across $N=\PEFhealthN$ {NHANES} participants pairing systolic and diastolic blood pressure from the same oscillometric measurement (Quadrant~2). Pulse pressure ($\mathrm{SBP}-\mathrm{DBP}$) is the clinically established relative feature.
   \item \textbf{Clinical genomics} \parencite{brunner2014earlybreast,geoGSE47462}: mean $\eta=\PEFgenomicsMeanEta$ ({SD} $=\PEFgenomicsSdEta$) across $\PEFgenomicsN$ genes ranked by paired-differential signal in {GSE47462}; $\PEFgenomicsSuccess\%$ of genes yielded $\eta>1$.
-  \item \textbf{Finance}: mean $\eta=\PEFfinanceMeanEta$ ({SD} $=\PEFfinanceSdEta$) across $\PEFfinanceN$ {S\&P}~100 stocks relativised to daily {S\&P}~500 returns (2020--2023 pinned snapshot); $\PEFfinanceSuccess\%$ success rate.
+  \item \textbf{Finance}: mean $\eta=\PEFfinanceMeanEta$ ({SD} $=\PEFfinanceSdEta$) across $\PEFfinanceN$ {S\&P}~100 stocks relativised to daily {S\&P}~500 returns (2020--2023 pinned snapshot); $\PEFfinanceSuccess\%$ with $\hat\eta>1$.
   \item \textbf{Manufacturing} \parencite{openml752bosch}: mean $\eta=\PEFmfgMeanEta$ ({SD} $=\PEFmfgSdEta$) on {Bosch} {OpenML} 752 {CNC} cycles ($N=\PEFmfgN$ axis-wise pairings). Approximately $\PEFmfgSuccess\%$ of pairings yielded $\eta>1$.
 \end{itemize}
 Summary statistics for all six domains are collected in \cref{tab:validation}; the sports landscape with supporting-domain overlay markers appears in \cref{fig:pef_landscape}. Detailed per-study breakdowns for the non-sports domains are not separately visualised given the cross-sectional nature of those datasets.

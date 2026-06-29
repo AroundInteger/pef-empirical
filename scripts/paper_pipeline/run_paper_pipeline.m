@@ -304,7 +304,7 @@ figure_1_landscape(pef_2s, pef_per_season, domain_summary, ...
                    fullfile(FIG_DIR, 'Figure_1.png'), pef_exemplars);
 fprintf('   Figure 1 saved.\n');
 
-figure_2_info_surface(pef_2s, domain_summary, fullfile(FIG_DIR, 'Figure_2.png'));
+figure_2_info_surface(pef_2s, pef_per_season, domain_summary, fullfile(FIG_DIR, 'Figure_2.png'));
 fprintf('   Figure 2 saved.\n');
 
 figure_3_ml_mapping(ml_all, ml_surface, fullfile(FIG_DIR, 'Figure_3.png'));
