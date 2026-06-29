@@ -19,7 +19,7 @@ The cross term $-2\rho\sigma_{\mathrm{A}}\sigma_{\mathrm{B}}$ is where correlati
 \end{equation}
 The variance ratio $\kappa$ separates \emph{how unequal} the two entity variances are from \emph{how correlated} their measurements are; holding $\kappa$ fixed, $\rho$ alone determines whether differencing helps or harms efficiency.
 
-\noindent For unpaired measurements ($\rho=0$), this variance is $\sigma^{2}_{\mathrm{A}}(1+\kappa)$. The Paired Efficiency Factor is the ratio of unpaired to paired variance, i.e.\ the expression in~\cref{eq:pef}:
+The efficiency question is how this paired variance compares with treating the two measurements as independent. For unpaired measurements ($\rho=0$), the baseline variance is $\sigma^{2}_{\mathrm{A}}(1+\kappa)$. The Paired Efficiency Factor is their ratio, i.e.\ the expression in~\cref{eq:pef}:
 \begin{equation*}
   \eta = \frac{1+\kappa}{1+\kappa-2\sqrt{\kappa}\,\rho}.
 \end{equation*}
@@ -40,7 +40,7 @@ and convex in $\rho$,
   \frac{\partial^{2} \eta}{\partial \rho^{2}} = \frac{8\kappa(1+\kappa)}{\bigl(1+\kappa-2\sqrt{\kappa}\,\rho\bigr)^{3}} > 0.
   \label{eq:d2etadrho2}
 \end{equation}
-Three regimes arise:
+The sign of $\eta$ relative to unity partitions pairing into three interpretable regimes:
 \begin{itemize}
   \item $\eta>1$: pairing reduces variance (positive correlation dominates);
   \item $\eta=1$: pairing provides no efficiency change (Fisher baseline);
@@ -87,7 +87,7 @@ Under (A2), $Y$ is \emph{not} a deterministic function of $X$: the outcome depen
 
 \subsubsection{Derivation}
 
-The mutual information \parencite{shannon1948,cover2006} between $X$ and $Y$ is
+Under (A1) and (A2), predictive information is quantified as the mutual information between the relative feature $X$ and the outcome $Y$. The mutual information \parencite{shannon1948,cover2006} between $X$ and $Y$ is
 \begin{equation}
   I(X;Y) = H(Y) - H(Y\mid X).
   \label{eq:mi_def}
@@ -102,9 +102,7 @@ where $\Phi$ is the standard normal CDF. The Bayes error rate is accordingly $\P
   H(Y\mid X) = H\!\left(\Phi\!\left(\frac{\delta}{2\sqrt{\Var(X)}}\right)\right),
   \label{eq:hygx}
 \end{equation}
-where $H(p)=-p\log_{2}p-(1-p)\log_{2}(1-p)$ is the binary entropy function. (Full derivation in \cref{sec:appendix}.)
-
-Substituting $\Var(X)=\sigma^{2}_{\mathrm{A}}(1+\kappa)/\eta$ from the rearranged PEF formula,
+where $H(p)=-p\log_{2}p-(1-p)\log_{2}(1-p)$ is the binary entropy function. (Full derivation in \cref{sec:appendix}.) The PEF formula rearranges to $\Var(X)=\sigma^{2}_{\mathrm{A}}(1+\kappa)/\eta$, linking variance geometry directly to $\eta$. Substituting into \cref{eq:hygx} yields
 \begin{equation}
   I(X;Y) = 1 - H\!\left(\Phi\!\left(\frac{\delta}{2\sigma_{\mathrm{A}}\sqrt{(1+\kappa)/\eta}}\right)\right).
   \label{eq:mi_closed}
@@ -124,7 +122,7 @@ Predictive power depends on $I(X;Y)$, not $\eta$ alone. When $\delta$ is suffici
 
 \subsection{Sources of Correlation in Paired Comparisons}
 
-Paired measurements acquire correlation through three generic mechanisms, each of which appears across competitive and non-competitive domains:
+Having linked $\eta$ to predictive information, we turn to the origins of $\rho$ itself. Paired measurements acquire correlation through three generic mechanisms, each of which appears across competitive and non-competitive domains:
 \begin{itemize}
   \item \textbf{Shared exogenous factors.} Conditions common to both entities move their measurements together, inducing positive correlation. Examples include market-wide movements in finance, batch, instrument, or site effects in manufacturing and clinical measurement, and weather, venue, or officiating in sport.
   \item \textbf{Zero-sum interaction.} When one entity's gain is the other's loss, their measurements move oppositely, inducing negative correlation. Examples include rivals competing for a fixed market share, and head-to-head contests in which possession or territory ceded by one competitor accrues directly to the other.
@@ -134,7 +132,7 @@ The sign and magnitude of $\rho$ therefore reflect which mechanism dominates in 
 
 \subsection{Quadrant Taxonomy}
 
-The $(\kappa,\rho)$ parameter space divides naturally into four quadrants with distinct statistical and predictive properties (\cref{tab:quadrants}):
+Each KPI occupies a position in the $(\kappa,\rho)$ plane shaped by these mechanisms. Dividing that plane at $\kappa=1$ and $\rho=0$ yields four quadrants with distinct statistical and predictive properties (\cref{tab:quadrants}):
 
 \textbf{Quadrant 1 ($\kappa>1$, $\rho>0$): High efficiency, high information.} Positive correlation combined with variance asymmetry produces $\eta>1$ with high information content. Relative features outperform absolute features in this regime. Exemplified by market-adjusted returns and paired clinical trials.
 
@@ -147,7 +145,7 @@ The $(\kappa,\rho)$ parameter space divides naturally into four quadrants with d
 \subsection{Signal Strength and the Limits of \texorpdfstring{$\eta$}{eta} as a Predictor}
 \label{sec:signal_strength}
 
-The PEF--information content relationship (\cref{eq:mi_closed}) shows that $\eta$ is not the sole determinant of predictive gain. The mutual information $I(X;Y)$ depends on $\eta$ through the denominator $\sqrt{(1+\kappa)/\eta}$, but also on the signal-to-noise ratio
+Quadrant position fixes the directional regime; signal strength fixes the magnitude of predictive gain within that regime. The PEF--information content relationship (\cref{eq:mi_closed}) shows that $\eta$ is not the sole determinant of predictive gain. The mutual information $I(X;Y)$ depends on $\eta$ through the denominator $\sqrt{(1+\kappa)/\eta}$, but also on the signal-to-noise ratio
 \begin{equation}
   \frac{\delta}{\sigma_{\mathrm{A}}} = \frac{\mu_{\mathrm{A}} - \mu_{\mathrm{B}}}{\sigma_{\mathrm{A}}},
   \label{eq:delta_ratio}
@@ -160,7 +158,7 @@ The practical implication is that the four-quadrant taxonomy and the $I(X;Y)$ fo
 
 \subsection{Cross-Domain Connections}
 
-Under the PEF framework, established practices across disciplines can be viewed as instances of a common principle:
+The quadrant logic applies uniformly across fields; the table below shows where familiar practices sit on the $(\kappa,\rho)$ plane:
 
 \begin{center}
 \begin{tabular}{@{}llll@{}}
