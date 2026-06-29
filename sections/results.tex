@@ -1,13 +1,13 @@
 \section{Results}
 \label{sec:results}
 
-\subsection{PEF--Information Content Validation}
+\subsection{Theoretical Foundation: PEF--Information Content}
 
-The theoretical relationship between $\eta$ and information content (\cref{eq:mi_closed}) was examined in four named scenarios from the theory-aligned idealised probit simulation (\cref{fig:si_idealised_stratified}; \texttt{run\_pef\_idealised\_probit\_sim.m}) under assumptions (A1)--(A2), with $n=5{,}000$ per cell, 50 Monte Carlo trials, and five-fold logistic cross-validation matching the empirical protocol.
+The theoretical relationship between $\eta$ and information content (\cref{eq:mi_closed}) was examined in four named scenarios from the theory-aligned idealised probit simulation (\cref{fig:si_idealised_stratified}; \texttt{run\_pef\_idealised\_probit\_sim.m}) under assumptions (A1)--(A2), with $n=5{,}000$ per cell, 50 Monte Carlo trials, and five-fold logistic cross-validation matching the empirical protocol. The simulation's data-generating process, estimands, and parameter-recovery checks are specified in full in Supplementary~Note~S2.
 
 \begin{table}[t]
   \centering
-  \caption{Scenario-level validation from the idealised probit simulation (A1)--(A2).}
+  \caption{Scenario-level confirmation from the idealised probit simulation (A1)--(A2).}
   \label{tab:scenarios}
   \begin{tabular}{@{}lccccc@{}}
     \toprule
@@ -33,17 +33,6 @@ On the admissible $(\kappa,\rho)$ grid at fixed $\delta/\sigma_{\mathrm{A}}=1$, 
 The sports KPIs span all four quadrants (\cref{fig:pef_landscape}). Rugby yielded mean $\eta=\PEFrugbyMeanEta$ (95\% CI: $[\PEFrugbyCIlo,\PEFrugbyCIhi]$, \PEFrugbySuccess\% success rate across \PEFrugbyNkpis{} KPI studies). Football yielded mean $\eta=\PEFfootMeanEta$ (95\% CI: $[\PEFfootCIlo,\PEFfootCIhi]$, \PEFfootSuccess\% success across \PEFfootNkpis{} KPI studies). Representative exemplars illustrate the quadrant distribution in \cref{fig:pef_landscape}; per-KPI season-to-season stability of $(\kappa,\rho)$ positions appears in Supplementary~\cref{fig:si_kpi_labelled}.
 
 KPIs with positive correlation (e.g., kicks from hand, carries) fell into Quadrants~1--2 and yielded $\eta>1$. KPIs with negative or near-zero correlation (e.g., turnovers won, penalties conceded) fell into Quadrants~3--4 and yielded $\eta\le 1$, yet several still showed positive ML improvement, consistent with the efficiency--power tension described in \cref{sec:eff_power_theory}.
-
-\subsection{Supporting Validation: Cross-Domain Results}
-
-\Cref{tab:validation} summarises results across all six domains. Supporting domains illustrate how empirical $(\kappa,\rho)$ structures propagate into $\eta$ and success rates (here, proportion of units with $\eta>1$ and $p<0.05$ where hypothesis tests apply):
-\begin{itemize}
-  \item \textbf{Healthcare} \parencite{nhanes2017pbxo}: pooled $\eta=\PEFhealthMeanEta$ (bootstrap 95\% CI: $[2.448,2.622]$) across $N=\PEFhealthN$ {NHANES} participants pairing systolic and diastolic blood pressure from the same oscillometric measurement (Quadrant~2). Pulse pressure ($\mathrm{SBP}-\mathrm{DBP}$) is the clinically established relative feature.
-  \item \textbf{Clinical genomics} \parencite{brunner2014earlybreast,geoGSE47462}: mean $\eta=\PEFgenomicsMeanEta$ ({SD} $=\PEFgenomicsSdEta$) across $\PEFgenomicsN$ genes ranked by paired-differential signal in {GSE47462}; $\PEFgenomicsSuccess\%$ of genes yielded $\eta>1$.
-  \item \textbf{Finance}: mean $\eta=\PEFfinanceMeanEta$ ({SD} $=\PEFfinanceSdEta$) across $\PEFfinanceN$ {S\&P}~100 stocks relativised to daily {S\&P}~500 returns (2020--2023 pinned snapshot); $\PEFfinanceSuccess\%$ success rate.
-  \item \textbf{Manufacturing} \parencite{openml752bosch}: mean $\eta=\PEFmfgMeanEta$ ({SD} $=\PEFmfgSdEta$) on {Bosch} {OpenML} 752 {CNC} cycles ($N=\PEFmfgN$ axis-wise pairings). Approximately $\PEFmfgSuccess\%$ of pairings yielded $\eta>1$.
-\end{itemize}
-Summary statistics for all six domains are collected in \cref{tab:validation}; the sports landscape with supporting-domain overlay markers appears in \cref{fig:pef_landscape}. Detailed per-study breakdowns for the non-sports domains are not separately visualised given the cross-sectional nature of those datasets.
 
 \subsection{Quadrant-Specific Performance}
 
@@ -109,4 +98,15 @@ The four quadrants differ not only in mean $\eta$ but in the relationship betwee
   \end{minipage}
 \end{table}
 
-The Q4 exemplar (goalkeeper long balls, $\eta=0.81$) shows that relativisation can deliver a net ML benefit even when it statistically increases variance. The Q3 exemplar (passes, football; $\rho=-0.65$, $\eta=0.61$) shows the complementary case: strong negative correlation places this KPI deep in the low-efficiency regime, and $\Delta\mathrm{ML}=-0.5\%$ confirms that absolute features are preferred, consistent with the taxonomy. Rucks won (rugby; Q2: $\kappa=0.82$, $\rho=+0.82$, $\eta=5.38$, $\delta/\sigma_{\mathrm{A}}=0.08$) provides a useful boundary illustration: despite the highest $\eta$ in the dataset, $\Delta\mathrm{ML}=0\%$ because the two teams are almost equally matched on average (negligible $\delta/\sigma_{\mathrm{A}}$). This confirms that even very high pairing efficiency confers no ML gain without sufficient signal strength.
+The Q4 exemplar (goalkeeper long balls, $\eta=0.81$) shows that relativisation can deliver a net ML benefit even when it statistically increases variance; here $\kappa\approx1.00$, so $\eta<1$ is driven by the negative correlation ($\rho=-0.24$) rather than by variance asymmetry, placing this KPI on the boundary between Quadrants~3 and~4. The Q3 exemplar (passes, football; $\rho=-0.65$, $\eta=0.61$) shows the complementary case: strong negative correlation places this KPI deep in the low-efficiency regime, and $\Delta\mathrm{ML}=-0.5\%$ confirms that absolute features are preferred, consistent with the taxonomy. Rucks won (rugby; Q2: $\kappa=0.82$, $\rho=+0.82$, $\eta=5.38$, $\delta/\sigma_{\mathrm{A}}=0.08$) provides a useful boundary illustration: despite the highest $\eta$ in the dataset, $\Delta\mathrm{ML}=0\%$ because the two teams are almost equally matched on average (negligible $\delta/\sigma_{\mathrm{A}}$). This confirms that even very high pairing efficiency confers no ML gain without sufficient signal strength.
+
+\subsection{Supporting Validation: Cross-Domain Results}
+
+Having established the mechanism in sports, where the single-KPI exemplars confirm the taxonomy's directional predictions, we now assess whether the same $(\kappa,\rho)$ structure recurs beyond sport. \Cref{tab:validation} summarises results across all six domains. The supporting domains illustrate how empirical $(\kappa,\rho)$ structures propagate into $\eta$ and success rates (here, proportion of units with $\eta>1$ and $p<0.05$ where hypothesis tests apply):
+\begin{itemize}
+  \item \textbf{Healthcare} \parencite{nhanes2017pbxo}: pooled $\eta=\PEFhealthMeanEta$ (bootstrap 95\% CI: $[2.448,2.622]$) across $N=\PEFhealthN$ {NHANES} participants pairing systolic and diastolic blood pressure from the same oscillometric measurement (Quadrant~2). Pulse pressure ($\mathrm{SBP}-\mathrm{DBP}$) is the clinically established relative feature.
+  \item \textbf{Clinical genomics} \parencite{brunner2014earlybreast,geoGSE47462}: mean $\eta=\PEFgenomicsMeanEta$ ({SD} $=\PEFgenomicsSdEta$) across $\PEFgenomicsN$ genes ranked by paired-differential signal in {GSE47462}; $\PEFgenomicsSuccess\%$ of genes yielded $\eta>1$.
+  \item \textbf{Finance}: mean $\eta=\PEFfinanceMeanEta$ ({SD} $=\PEFfinanceSdEta$) across $\PEFfinanceN$ {S\&P}~100 stocks relativised to daily {S\&P}~500 returns (2020--2023 pinned snapshot); $\PEFfinanceSuccess\%$ success rate.
+  \item \textbf{Manufacturing} \parencite{openml752bosch}: mean $\eta=\PEFmfgMeanEta$ ({SD} $=\PEFmfgSdEta$) on {Bosch} {OpenML} 752 {CNC} cycles ($N=\PEFmfgN$ axis-wise pairings). Approximately $\PEFmfgSuccess\%$ of pairings yielded $\eta>1$.
+\end{itemize}
+Summary statistics for all six domains are collected in \cref{tab:validation}; the sports landscape with supporting-domain overlay markers appears in \cref{fig:pef_landscape}. Detailed per-study breakdowns for the non-sports domains are not separately visualised given the cross-sectional nature of those datasets.
