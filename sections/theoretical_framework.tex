@@ -158,20 +158,23 @@ The practical implication is that the four-quadrant taxonomy and the $I(X;Y)$ fo
 
 \subsection{Cross-Domain Connections}
 
-The quadrant logic applies uniformly across fields; the table below shows where familiar practices sit on the $(\kappa,\rho)$ plane:
+The quadrant logic applies uniformly across fields. \Cref{tab:cross_domain} situates familiar methods on the $(\kappa,\rho)$ plane.
 
-\begin{center}
-\begin{tabular}{@{}llll@{}}
-\toprule
-\textbf{Field} & \textbf{Method} & \textbf{Correlation source} & \textbf{Typical PEF regime} \\
-\midrule
-Statistics & Paired $t$-test & Repeated measures & $\eta=1/(1-\rho)$ when $\kappa=1$ \\
-Finance & Market-adjusted returns & Market factors & Q1: $\eta>1$, high $\rho$ \\
-Healthcare & Paired clinical trials & Temporal/biological & Q1--Q2: $\eta\gg 1$ \\
-Manufacturing & Control charts & Process dynamics & Q2: $\eta>1$, moderate $\rho$ \\
-Sports & Relative metrics & Environmental/competitive & Q4: $\eta$ variable \\
-\bottomrule
-\end{tabular}
-\end{center}
+\begin{table}[t]
+  \centering
+  \caption{Cross-domain mapping of familiar methods to typical PEF regimes.}
+  \label{tab:cross_domain}
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    \textbf{Field} & \textbf{Method} & \textbf{Correlation source} & \textbf{Typical PEF regime} \\
+    \midrule
+    Statistics & Paired $t$-test & Repeated measures & $\eta=1/(1-\rho)$ when $\kappa=1$ \\
+    Finance & Market-adjusted returns & Market factors & Q1: $\eta>1$, high $\rho$ \\
+    Healthcare & Paired clinical trials & Temporal/biological & Q1--Q2: $\eta\gg 1$ \\
+    Manufacturing & Control charts & Process dynamics & Q2: $\eta>1$, moderate $\rho$ \\
+    Sports & Relative metrics & Environmental/competitive & Q4: $\eta$ variable \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 When two domains share similar $(\kappa,\rho)$ values, techniques from one may transfer to the other, for example, methods from healthcare (high-$\rho$ settings) to manufacturing contexts with similar correlation structures.
