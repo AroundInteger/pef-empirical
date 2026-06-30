@@ -21,6 +21,9 @@ pef-empirical/
 │   │   ├── sync_to_companion.sh
 │   │   ├── lib/pef_theory_helpers.m
 │   │   └── outputs/                 numbers.tex, CSVs, SI diagnostics
+│   ├── practitioner/                Standalone PEF quadrant diagnostic (Note S4)
+│   │   ├── run_pef_diagnostic.m
+│   │   └── examples/                Long- and wide-format CSV templates
 │   ├── PEF_Normality_4seasons/      KPI loaders, compute_pef, normality
 │   └── matlab_figures/              Supplementary figures S1–S2 (standalone)
 └── .cursor/rules/                   MATLAB path, companion scope, Git workflow
@@ -67,6 +70,19 @@ cd scripts/paper_pipeline
 # 3. Pre-submission diagnostics: S3–S8 figures + finalize_*.csv
 /Applications/MATLAB_R2025b.app/bin/matlab -batch "run('run_pef_finalize_diagnostics.m')"
 ```
+
+### Practitioner diagnostic (Discussion §Practical Guidance)
+
+Lightweight script for steps 1--6 from paired CSV data (no sports loaders or ML). Schema and examples: Supplementary Note S4.
+
+```bash
+cd scripts/practitioner
+/Applications/MATLAB_R2025b.app/bin/matlab -batch "run('run_pef_diagnostic.m')"
+```
+
+Custom input: `matlab -batch "run_pef_diagnostic('path/to/pairs.csv','path/to/output.csv')"`
+
+Long format: `feature_id`, `x_a`, `x_b`. Wide format: `*_home`/`*_away` or `*_a`/`*_b` column pairs. Examples in `scripts/practitioner/examples/`.
 
 ### LaTeX numeric inputs
 

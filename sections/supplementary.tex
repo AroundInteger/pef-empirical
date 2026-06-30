@@ -2,7 +2,7 @@
 %
 % Appears after the bibliography in the compiled PDF.  Subsection order follows
 % first citation in the main text: Note S2 → Figures S2--S8 → Figure S1 →
-% Note S1.  Each figure sets \setcounter{figure}{...} so printed S-numbers
+% Note S1 → Note S4.  Each figure sets \setcounter{figure}{...} so printed S-numbers
 % match the manuscript labels despite the reordered placement.
 %
 
@@ -283,3 +283,29 @@ A logarithmic transformation $Z=\log(X+1)$ was applied to all \PEFrugbyNkpis{} r
 \textbf{KPI-type dependence.} The greatest gains accrued to count-based KPIs: rucks won ($+37\%$), kick metres ($+23\%$), kicks from hand ($+20\%$), offloads ($+16\%$). These KPIs exhibit approximate Poisson-like variance-to-mean structure for which the log transformation acts as a variance-stabilising function. Percentage-based and binary/rare-event KPIs showed negligible change ($\eta_{\log}/\eta \approx 1.00$).
 
 \textbf{Practical guidance.} Apply $Z=\log(X+1)$ only to KPIs that (a)~reject approximate normality at $\alpha=0.05$ and (b)~exhibit positive skewness. Recompute $\eta$ on the transformed pairs and compare; if the improvement ratio exceeds unity the transformed PEF provides a more reliable basis for the information content estimate (\cref{eq:mi_closed}). The transformation is unnecessary for KPIs that are already approximately symmetric.
+
+\clearpage
+
+\subsection*{Supplementary Note S4 --- Practitioner Diagnostic (Input Schema and Usage)}
+
+\textbf{Purpose.} The six-step procedure in \cref{sec:practical_guidance} is implemented as a lightweight script separate from the full sports pipeline. It estimates $(\hat\kappa,\hat\rho,\hat\eta)$, classifies the quadrant, computes $\hat\delta/\hat\sigma_{\mathrm{A}}$ and $I(X;Y)$ under (A1)--(A2), and returns a text recommendation per feature. It does \emph{not} run machine-learning cross-validation; $\Delta\mathrm{ML}$ validation remains optional and is documented in Methods.
+
+\textbf{Location.} \texttt{scripts/practitioner/run\_pef\_diagnostic.m} (repository \texttt{pef-empirical}). Depends on \texttt{scripts/paper\_pipeline/lib/pef\_theory\_helpers.m} only.
+
+\textbf{Input formats (CSV).}
+\begin{itemize}
+  \item \textbf{Long (preferred):} columns \texttt{feature\_id}, \texttt{x\_a}, \texttt{x\_b}; one row per paired observation. Optional \texttt{unit\_id} for traceability.
+  \item \textbf{Wide:} paired columns per feature with suffixes \texttt{\_a}/\texttt{\_b} or \texttt{\_home}/\texttt{\_away} (e.g.\ \texttt{passes\_home}, \texttt{passes\_away}).
+\end{itemize}
+Entity~A defines $\kappa=s^{2}_{\mathrm{B}}/s^{2}_{\mathrm{A}}$; document which entity is~A (home team, patient, test arm, etc.) when interpreting $\kappa$.
+
+\textbf{Output.} CSV with one row per \texttt{feature\_id}: \texttt{n}, \texttt{kappa}, \texttt{rho}, \texttt{eta}, \texttt{quadrant}, \texttt{delta}, \texttt{sigma\_a}, \texttt{delta\_sigma\_a}, \texttt{I\_bits}, \texttt{recommendation}, \texttt{admissible}. Quadrant~4 rows report both $\hat\eta<1$ and $I(X;Y)$ for manual assessment; no automated threshold replaces judgment.
+
+\textbf{Example run.}
+\begin{verbatim}
+cd scripts/practitioner
+matlab -batch "run('run_pef_diagnostic.m')"
+\end{verbatim}
+Default input: \texttt{examples/pef\_diagnostic\_long.csv} (synthetic paired counts for three features). Wide-format example: \texttt{examples/pef\_diagnostic\_wide.csv}.
+
+\textbf{Minimum sample size.} Features with $n<8$ or zero variance in either arm receive an error recommendation rather than estimates. Bootstrap intervals (team-stratified resampling as in Supplementary Figure~S6) are not included in this release; use the full pipeline for publication-grade uncertainty quantification on sports KPIs.

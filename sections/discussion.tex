@@ -22,6 +22,7 @@ Practices that appear domain-specific, market-adjusted returns, paired clinical 
 The framework also accounts for why certain practices succeed in some domains but not others. Healthcare (Quadrant~2, high $\rho$) consistently benefits from pairing. Sports KPIs span all four quadrants, with the balance between regimes depending on the specific KPI type: kicking and set-piece KPIs tend toward positive correlation (Quadrant~1--2), whilst defensive and discipline KPIs sit predominantly in Quadrants~3--4, requiring explicit analysis of both $\eta$ and $I(X;Y)$ to guide relativisation decisions.
 
 \subsection{Practical Guidance}
+\label{sec:practical_guidance}
 
 The framework suggests the following procedure:
 \begin{enumerate}
@@ -32,7 +33,7 @@ The framework suggests the following procedure:
   \item For Quadrant~3, prefer absolute features.
   \item For Quadrant~4, additionally estimate $\delta/\sigma_{\mathrm{A}}$ and compute $I(X;Y)$ using \cref{eq:mi_closed,eq:delta_ratio} to determine whether information content justifies relativisation despite $\eta<1$.
 \end{enumerate}
-This reduces reliance on trial-and-error cross-validation to determine feature strategy; the decision logic is fully determined by $(\kappa,\rho,\delta/\sigma_{\mathrm{A}})$. The wider significance is twofold. For practitioners, it converts feature engineering from search into prediction: the relative-versus-absolute decision becomes a calculation from estimable quantities rather than an empirical sweep. For the research literature on the predictability of competitive outcomes---where debate persists over how much of a result is skill versus chance---the framework offers a principled, per-feature account of which measurements carry decision-relevant information and why.
+This reduces reliance on trial-and-error cross-validation to determine feature strategy; the decision logic is fully determined by $(\kappa,\rho,\delta/\sigma_{\mathrm{A}})$. A standalone {MATLAB} script (\texttt{scripts/practitioner/run\_pef\_diagnostic.m}) implements steps 1--6 from paired CSV inputs; input schema, output fields, and worked examples are given in Supplementary~Note~S4. The wider significance is twofold. For practitioners, it converts feature engineering from search into prediction: the relative-versus-absolute decision becomes a calculation from estimable quantities rather than an empirical sweep. For the research literature on the predictability of competitive outcomes---where debate persists over how much of a result is skill versus chance---the framework offers a principled, per-feature account of which measurements carry decision-relevant information and why.
 
 \subsection{Limitations}
 
