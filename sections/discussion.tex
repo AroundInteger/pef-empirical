@@ -50,11 +50,14 @@ This reduces reliance on trial-and-error cross-validation to determine feature s
 
 \subsection{Future Directions}
 
-Several extensions are worth investigating:
-\begin{itemize}
-  \item \textbf{Non-parametric PEF.} Rank-based correlation measures and permutation-based inference could yield distribution-free analogues of the information content relationship.
-  \item \textbf{Multivariate generalisation.} PEF matrices characterising joint efficiency of multiple correlated feature pairs.
-  \item \textbf{Time-varying PEF.} Incorporating temporal dynamics through rolling-window or state-space estimation.
-  \item \textbf{Causal inference connections.} Clarifying when correlation-based variance reduction preserves or distorts causal estimates.
-  \item \textbf{Additional domain validation.} Extending to social sciences, environmental studies, and engineering systems.
-\end{itemize}
+The present analysis establishes the per-KPI mechanism under fixed $(\kappa,\rho)$; several extensions follow naturally from the limitations above and from the multivariate gap noted in the theoretical implications.
+
+The information-content mapping (\cref{eq:mi_closed}) rests on bivariate normality, whilst the efficiency formula (\cref{eq:pef}) does not. A priority is therefore to develop \emph{distribution-free} analogues of the predictive-power side---for example, rank-based correlation measures or permutation-based inference---so that Quadrant~4 decisions can be guided without relying on Gaussian approximations when skewness or heavy tails are material (Supplementary~Note~S1).
+
+At the single-feature level, the quadrant taxonomy is validated; prior sports work that motivated this study combined many KPIs in one classifier \parencite{bennett2019descriptive,bennett2021predicting,scott2023urc,scott2023womens}, where inter-feature correlations and joint decision boundaries are not captured by univariate $\eta$. Multivariate generalisations---PEF-style matrices or joint summaries of efficiency across several paired features---would clarify how per-KPI relativisation gains compound, cancel, or interact when features enter a model together.
+
+Parameter drift between seasons (\cref{fig:si_season_drift}) also motivates \emph{time-varying} formulations: rolling-window or state-space estimates of $(\kappa,\rho)$ could track regime change in financial markets, clinical cohorts, or competition structure, and indicate when pooled calibration is misleading.
+
+Separately, relativisation is often justified as baseline cancellation rather than variance reduction alone; connecting PEF geometry to causal estimands would clarify when correlation-based differencing preserves interpretable treatment or exposure effects and when it introduces collider or selection bias.
+
+Finally, the supporting-domain checks here are cross-sectional and shallower than the sports tier (\cref{tab:validation}). Replication in social-science panel designs, environmental paired measurements, and engineering telemetry---with the same per-unit ML scrutiny applied to rugby and football---would test whether the $(\kappa,\rho)$ taxonomy transfers before the practical guidance is adopted outside invasion-game sport.
