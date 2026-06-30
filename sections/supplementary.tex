@@ -1,9 +1,7 @@
 %% Supplementary Information
 %
-% Appears after the bibliography in the compiled PDF.  Subsection order follows
-% first citation in the main text: Note S2 → Figures S2--S8 → Figure S1 →
-% Note S1 → Note S4.  Each figure sets \setcounter{figure}{...} so printed S-numbers
-% match the manuscript labels despite the reordered placement.
+% Appears after the bibliography in the compiled PDF.  Figures, tables, and
+% notes are numbered S1, S2, ... in document order (standard SI layout).
 %
 
 \clearpage
@@ -14,46 +12,32 @@
 
 \section*{Supplementary Information}
 
-\subsection*{Supplementary Note S2 --- Idealised Probit Simulation: Model Specification and Validation}
+\subsection*{Figure S1 --- Information-Content Surface: Sensitivity to Signal-to-Noise Ratio}
 
-\textbf{Purpose.} The first validation tier (\cref{sec:methods}) isolates the PEF--information content relationship (\cref{eq:mi_closed}) from the finite-sample noise, mild non-normality, and team-level clustering present in the empirical KPIs. By generating data that satisfy assumptions (A1)--(A2) exactly, the simulation verifies that (i)~the closed-form mapping is reproduced by an end-to-end machine-learning pipeline identical to the empirical one, and (ii)~the efficiency--power tension (\cref{sec:eff_power_theory}) arises as predicted. It is a confirmation of internal consistency under the model's own assumptions, not an independent empirical test; the empirical tiers (\cref{sec:results}) provide the latter.
-
-\textbf{Data-generating process (A1).} For each grid cell $(\kappa,\rho,\delta/\sigma_{\mathrm{A}})$ we draw $n$ independent pairs from the bivariate normal
-\begin{equation}
-  \begin{pmatrix}X_{\mathrm{A}}\\[2pt] X_{\mathrm{B}}\end{pmatrix}
-  \sim \mathcal{N}\!\left(
-  \begin{pmatrix}\delta/2\\[2pt] -\delta/2\end{pmatrix},\;
-  \sigma_{\mathrm{A}}^{2}
-  \begin{pmatrix}1 & \rho\sqrt{\kappa}\\[2pt] \rho\sqrt{\kappa} & \kappa\end{pmatrix}
-  \right),
-  \label{eq:si_dgp}
-\end{equation}
-with $\sigma_{\mathrm{A}}=1$. This parameterisation fixes $\Var(X_{\mathrm{A}})=\sigma_{\mathrm{A}}^{2}$, $\Var(X_{\mathrm{B}})=\kappa\sigma_{\mathrm{A}}^{2}$, and $\Corr(X_{\mathrm{A}},X_{\mathrm{B}})=\rho$, so the variance ratio and correlation match their targets by construction. The relative feature $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ then has mean $\delta$ and variance $\Var(X)=\sigma_{\mathrm{A}}^{2}(1+\kappa-2\sqrt{\kappa}\,\rho)$, exactly the denominator of \cref{eq:pef}.
-
-\textbf{Outcome model (A2).} Binary outcomes are drawn from the probit link consistent with \cref{eq:hygx}:
-\begin{equation}
-  Y_{i} \sim \mathrm{Bernoulli}\!\left(\Phi\!\left(\frac{X_{i}}{\sqrt{\Var(X)}}\right)\right),
-  \label{eq:si_outcome}
-\end{equation}
-which makes $X$ the Bayes-sufficient statistic for $Y$ and yields analytic information content $I(X;Y)$ as in \cref{eq:mi_closed} and Bayes error $\Phi\!\bigl(-\delta/(2\sqrt{\Var(X)})\bigr)$.
-
-\textbf{Grid and Monte Carlo design.} The factorial grid is $\kappa\in\{0.8,1.0,1.2,2.0\}$, $\rho\in\{-0.3,-0.15,0,0.4\}$, and $\delta/\sigma_{\mathrm{A}}\in\{0.3,0.5,1.0,2.0\}$ (64 admissible cells; the admissibility constraint $1+\kappa-2\sqrt{\kappa}\,\rho>0$ holds throughout). Each cell uses $n=5{,}000$ pairs and is repeated over $50$ Monte Carlo trials with deterministic per-cell seeds (base seed $20{,}260{,}520$). The four named scenarios of \cref{tab:scenarios} are simulated identically.
-
-\textbf{Estimands.} For each cell we record (a)~the analytic quantities $\eta$, $\Var(X)$, $I(X;Y)$, and the Bayes accuracy bound, computed directly from $(\kappa,\rho,\delta,\sigma_{\mathrm{A}})$; and (b)~Monte Carlo estimates from the machine-learning protocol used throughout the paper, namely five-fold cross-validated logistic-regression accuracy for absolute features ($X_{\mathrm{A}}$ only), relative features ($X=X_{\mathrm{A}}-X_{\mathrm{B}}$), and the full pair $(X_{\mathrm{A}},X_{\mathrm{B}})$. The headline machine-learning improvement is the relative-minus-absolute accuracy difference, matching \cref{sec:methods}.
-
-\textbf{Validation 1 (parameter recovery).} From each simulated sample we re-estimate $\hat{\kappa}=s_{\mathrm{B}}^{2}/s_{\mathrm{A}}^{2}$, $\hat{\rho}$, and $\hat{\eta}$ using the same sample estimators as the empirical analysis (\cref{sec:methods}). Recovered means track the target values along the identity line across the grid (generated output \texttt{idealised\_probit\_recovery.png}; \texttt{idealised\_probit\_grid.csv}), confirming that the sampler reproduces the intended $(\kappa,\rho)$ geometry and that $\hat{\eta}$ is approximately unbiased over the admissible range.
-
-\textbf{Validation 2 (PEF--information mapping).} At fixed signal strength, analytic $\eta$ and $I(X;Y)$ are strongly positively correlated ($r\approx0.87$ within the $\delta/\sigma_{\mathrm{A}}$ slice nearest the empirical median; \cref{sec:results}). Pooled across $\delta/\sigma_{\mathrm{A}}$ the correlation reverses sign ($r\approx-0.70$), because signal strength shifts $I(X;Y)$ independently of the $(\kappa,\rho)$ position---the iso-$\eta$ versus iso-$I$ divergence shown in \cref{fig:si_idealised_stratified,fig:si_iso_eta_I}. This confirms the manuscript's central caveat that $\eta$ alone does not determine predictive gain.
-
-\textbf{Validation 3 (efficiency--power tension).} All 16 Quadrant~4 grid cells with $\eta<1$ produced positive mean machine-learning improvement (\cref{fig:si_idealised_stratified}), reproducing the predicted tension (\cref{sec:eff_power_theory}) in a setting free of empirical confounds.
-
-\textbf{Reproducibility.} The simulation is implemented in \texttt{scripts/paper\_pipeline/run\_pef\_idealised\_probit\_sim.m}, with theory helpers in \texttt{scripts/paper\_pipeline/lib/pef\_theory\_helpers.m}. The locked configuration (grid, $n$, trials, folds, base seed) is recorded in the script's \texttt{PRODUCTION\_CONFIG} block; outputs (\texttt{idealised\_probit\_grid.csv}, \texttt{idealised\_probit\_scenarios.csv}, \texttt{idealised\_probit\_summary.txt}, and the diagnostic figures) are written to \texttt{scripts/paper\_pipeline/outputs/}. A \texttt{SMOKE\_TEST} flag runs a one-cell sanity check before a full execution.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{figures/Figure_1_SI.png}
+  \caption{Sensitivity of the information-content surface $I(X;Y)$ to the
+    signal-to-noise ratio $\delta/\sigma_{\mathrm{A}}$.
+    \textbf{Panel A (left):} $\delta/\sigma_{\mathrm{A}}=0.5$ (weak signal).
+    \textbf{Panel B (centre):} $\delta/\sigma_{\mathrm{A}}=1.0$ (nominal case;
+    identical parameterisation to \cref{fig:info_surface} in the main text).
+    \textbf{Panel C (right):} $\delta/\sigma_{\mathrm{A}}=2.0$ (strong signal).
+    All panels share identical colour scaling ($I(X;Y)\in[0,1]$~bits) and axis
+    limits.  Sports KPI positions (rugby URC circles, football Championship
+    squares) are overlaid using the two-season segment representation of
+    Supplementary~\cref{fig:si_kpi_labelled}.
+    The qualitative structure of the surface is robust across this range: the
+    high-information region in Quadrants~1 and~2 persists in all three panels,
+    though its spatial extent expands markedly with increasing signal strength.
+    Generated by \texttt{Matlab/generate\_figure\_S1\_info\_sensitivity.m}.}
+  \label{fig:si_info_sensitivity}
+\end{figure}
 
 \clearpage
 
 \subsection*{Figure S2 --- Labelled KPI Maps: Per-Season Positions (23/24 and 24/25)}
 
-\setcounter{figure}{1}
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{figures/Figure_2_SI.png}
@@ -78,29 +62,6 @@ which makes $X$ the Bayes-sufficient statistic for $Y$ and yields analytic infor
     \texttt{ml\_empirical\_results.csv}).  Generated by
     \texttt{Matlab/generate\_figure\_S2\_labelled\_kpis.m}.}
   \label{fig:si_kpi_labelled}
-\end{figure}
-
-\clearpage
-
-\subsection*{Figure S3 --- Predicted Information Content vs.\ Machine-Learning Improvement}
-
-\setcounter{figure}{2}
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.85\linewidth]{figures/Figure_S3_Ipred_vs_dML.png}
-  \caption{Predicted information content $I_{\mathrm{pred}}(X;Y)$ (bits,
-    \cref{eq:mi_closed} evaluated at per-KPI $\delta/\sigma_{\mathrm{A}}$)
-    versus five-fold cross-validated logistic improvement from relativisation
-    ($X_{\mathrm{A}}{-}X_{\mathrm{B}}$ vs.\ $X_{\mathrm{A}}$ only) across
-    $N=\PEFtotalStudies$ sports KPIs (rugby URC and football Championship,
-    seasons 23/24--24/25 pooled).
-    Points are coloured by PEF quadrant.
-    $I_{\mathrm{pred}}$ additionally conditions on $\delta/\sigma_{\mathrm{A}}$
-    and therefore outperforms $\eta$ as a predictor of $\Delta\mathrm{ML}$,
-    though both statistics are poor scalar predictors under the full
-    Q3-dominated KPI heterogeneity (\cref{sec:outcome_defs}; see \cref{sec:signal_strength}).
-    Per-KPI values: Supplementary Table~S1.  Generated by \texttt{scripts/paper\_pipeline/run\_pef\_finalize\_diagnostics.m}.}
-  \label{fig:si_ipred_vs_dml}
 \end{figure}
 
 \clearpage
@@ -140,9 +101,30 @@ Quadrant-level aggregates appear in Table~S1 above; the labelled maps and $\Delt
 
 \clearpage
 
+\subsection*{Figure S3 --- Predicted Information Content vs.\ Machine-Learning Improvement}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.85\linewidth]{figures/Figure_S3_Ipred_vs_dML.png}
+  \caption{Predicted information content $I_{\mathrm{pred}}(X;Y)$ (bits,
+    \cref{eq:mi_closed} evaluated at per-KPI $\delta/\sigma_{\mathrm{A}}$)
+    versus five-fold cross-validated logistic improvement from relativisation
+    ($X_{\mathrm{A}}{-}X_{\mathrm{B}}$ vs.\ $X_{\mathrm{A}}$ only) across
+    $N=\PEFtotalStudies$ sports KPIs (rugby URC and football Championship,
+    seasons 23/24--24/25 pooled).
+    Points are coloured by PEF quadrant.
+    $I_{\mathrm{pred}}$ additionally conditions on $\delta/\sigma_{\mathrm{A}}$
+    and therefore outperforms $\eta$ as a predictor of $\Delta\mathrm{ML}$,
+    though both statistics are poor scalar predictors under the full
+    Q3-dominated KPI heterogeneity (\cref{sec:outcome_defs}; see \cref{sec:signal_strength}).
+    Per-KPI values: Supplementary Table~S1.  Generated by \texttt{scripts/paper\_pipeline/run\_pef\_finalize\_diagnostics.m}.}
+  \label{fig:si_ipred_vs_dml}
+\end{figure}
+
+\clearpage
+
 \subsection*{Figure S4 --- Idealised Probit Simulation: Information vs.\ ML Gain (Stratified by $\delta/\sigma_{\mathrm{A}}$)}
 
-\setcounter{figure}{3}
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{figures/Figure_S4_idealised_I_vs_dML_stratified.png}
@@ -172,7 +154,6 @@ Quadrant-level aggregates appear in Table~S1 above; the labelled maps and $\Delt
 
 \subsection*{Figure S5 --- Iso-$\eta$ vs.\ Iso-$I$ Tension at Median Empirical Signal Strength}
 
-\setcounter{figure}{4}
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\linewidth]{figures/Figure_S5_iso_eta_I_tension.png}
@@ -191,7 +172,6 @@ Quadrant-level aggregates appear in Table~S1 above; the labelled maps and $\Delt
 
 \subsection*{Figure S6 --- Bootstrap Uncertainty on $\eta$ and $I_{\mathrm{pred}}$ (Exemplar KPIs)}
 
-\setcounter{figure}{5}
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\linewidth]{figures/Figure_finalize_bootstrap_exemplars.png}
@@ -210,7 +190,6 @@ Quadrant-level aggregates appear in Table~S1 above; the labelled maps and $\Delt
 
 \subsection*{Figure S7 --- Quadrant~4 Exemplars: ML Accuracy vs.\ Bayes Bound}
 
-\setcounter{figure}{6}
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\linewidth]{figures/Figure_S6_q4_bayes_gap.png}
@@ -230,7 +209,6 @@ Quadrant-level aggregates appear in Table~S1 above; the labelled maps and $\Delt
 
 \subsection*{Figure S8 --- Season-to-Season Landscape Drift and Information Gradient Alignment}
 
-\setcounter{figure}{7}
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\linewidth]{figures/Figure_S7_season_drift_alignment.png}
@@ -247,31 +225,6 @@ Quadrant-level aggregates appear in Table~S1 above; the labelled maps and $\Delt
 
 \clearpage
 
-\subsection*{Figure S1 --- Information-Content Surface: Sensitivity to Signal-to-Noise Ratio}
-
-\setcounter{figure}{0}
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\linewidth]{figures/Figure_1_SI.png}
-  \caption{Sensitivity of the information-content surface $I(X;Y)$ to the
-    signal-to-noise ratio $\delta/\sigma_{\mathrm{A}}$.
-    \textbf{Panel A (left):} $\delta/\sigma_{\mathrm{A}}=0.5$ (weak signal).
-    \textbf{Panel B (centre):} $\delta/\sigma_{\mathrm{A}}=1.0$ (nominal case;
-    identical parameterisation to \cref{fig:info_surface} in the main text).
-    \textbf{Panel C (right):} $\delta/\sigma_{\mathrm{A}}=2.0$ (strong signal).
-    All panels share identical colour scaling ($I(X;Y)\in[0,1]$~bits) and axis
-    limits.  Sports KPI positions (rugby URC circles, football Championship
-    squares) are overlaid using the two-season segment representation of
-    Supplementary~\cref{fig:si_kpi_labelled}.
-    The qualitative structure of the surface is robust across this range: the
-    high-information region in Quadrants~1 and~2 persists in all three panels,
-    though its spatial extent expands markedly with increasing signal strength.
-    Generated by \texttt{Matlab/generate\_figure\_S1\_info\_sensitivity.m}.}
-  \label{fig:si_info_sensitivity}
-\end{figure}
-
-\clearpage
-
 \subsection*{Supplementary Note S1 --- Log-Transformation: Correlation Preservation and KPI-Type Dependence}
 
 A logarithmic transformation $Z=\log(X+1)$ was applied to all \PEFrugbyNkpis{} rugby union KPIs from the primary dataset ($n=\PEFrugbyNgames$ games, seasons 23/24--24/25 pooled) to assess whether variance stabilisation improves PEF estimation for right-skewed count-based KPIs.
@@ -283,6 +236,43 @@ A logarithmic transformation $Z=\log(X+1)$ was applied to all \PEFrugbyNkpis{} r
 \textbf{KPI-type dependence.} The greatest gains accrued to count-based KPIs: rucks won ($+37\%$), kick metres ($+23\%$), kicks from hand ($+20\%$), offloads ($+16\%$). These KPIs exhibit approximate Poisson-like variance-to-mean structure for which the log transformation acts as a variance-stabilising function. Percentage-based and binary/rare-event KPIs showed negligible change ($\eta_{\log}/\eta \approx 1.00$).
 
 \textbf{Practical guidance.} Apply $Z=\log(X+1)$ only to KPIs that (a)~reject approximate normality at $\alpha=0.05$ and (b)~exhibit positive skewness. Recompute $\eta$ on the transformed pairs and compare; if the improvement ratio exceeds unity the transformed PEF provides a more reliable basis for the information content estimate (\cref{eq:mi_closed}). The transformation is unnecessary for KPIs that are already approximately symmetric.
+
+\clearpage
+
+\subsection*{Supplementary Note S2 --- Idealised Probit Simulation: Model Specification and Validation}
+
+\textbf{Purpose.} The first validation tier (\cref{sec:methods}) isolates the PEF--information content relationship (\cref{eq:mi_closed}) from the finite-sample noise, mild non-normality, and team-level clustering present in the empirical KPIs. By generating data that satisfy assumptions (A1)--(A2) exactly, the simulation verifies that (i)~the closed-form mapping is reproduced by an end-to-end machine-learning pipeline identical to the empirical one, and (ii)~the efficiency--power tension (\cref{sec:eff_power_theory}) arises as predicted. It is a confirmation of internal consistency under the model's own assumptions, not an independent empirical test; the empirical tiers (\cref{sec:results}) provide the latter.
+
+\textbf{Data-generating process (A1).} For each grid cell $(\kappa,\rho,\delta/\sigma_{\mathrm{A}})$ we draw $n$ independent pairs from the bivariate normal
+\begin{equation}
+  \begin{pmatrix}X_{\mathrm{A}}\\[2pt] X_{\mathrm{B}}\end{pmatrix}
+  \sim \mathcal{N}\!\left(
+  \begin{pmatrix}\delta/2\\[2pt] -\delta/2\end{pmatrix},\;
+  \sigma_{\mathrm{A}}^{2}
+  \begin{pmatrix}1 & \rho\sqrt{\kappa}\\[2pt] \rho\sqrt{\kappa} & \kappa\end{pmatrix}
+  \right),
+  \label{eq:si_dgp}
+\end{equation}
+with $\sigma_{\mathrm{A}}=1$. This parameterisation fixes $\Var(X_{\mathrm{A}})=\sigma_{\mathrm{A}}^{2}$, $\Var(X_{\mathrm{B}})=\kappa\sigma_{\mathrm{A}}^{2}$, and $\Corr(X_{\mathrm{A}},X_{\mathrm{B}})=\rho$, so the variance ratio and correlation match their targets by construction. The relative feature $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ then has mean $\delta$ and variance $\Var(X)=\sigma_{\mathrm{A}}^{2}(1+\kappa-2\sqrt{\kappa}\,\rho)$, exactly the denominator of \cref{eq:pef}.
+
+\textbf{Outcome model (A2).} Binary outcomes are drawn from the probit link consistent with \cref{eq:hygx}:
+\begin{equation}
+  Y_{i} \sim \mathrm{Bernoulli}\!\left(\Phi\!\left(\frac{X_{i}}{\sqrt{\Var(X)}}\right)\right),
+  \label{eq:si_outcome}
+\end{equation}
+which makes $X$ the Bayes-sufficient statistic for $Y$ and yields analytic information content $I(X;Y)$ as in \cref{eq:mi_closed} and Bayes error $\Phi\!\bigl(-\delta/(2\sqrt{\Var(X)})\bigr)$.
+
+\textbf{Grid and Monte Carlo design.} The factorial grid is $\kappa\in\{0.8,1.0,1.2,2.0\}$, $\rho\in\{-0.3,-0.15,0,0.4\}$, and $\delta/\sigma_{\mathrm{A}}\in\{0.3,0.5,1.0,2.0\}$ (64 admissible cells; the admissibility constraint $1+\kappa-2\sqrt{\kappa}\,\rho>0$ holds throughout). Each cell uses $n=5{,}000$ pairs and is repeated over $50$ Monte Carlo trials with deterministic per-cell seeds (base seed $20{,}260{,}520$). The four named scenarios of \cref{tab:scenarios} are simulated identically.
+
+\textbf{Estimands.} For each cell we record (a)~the analytic quantities $\eta$, $\Var(X)$, $I(X;Y)$, and the Bayes accuracy bound, computed directly from $(\kappa,\rho,\delta,\sigma_{\mathrm{A}})$; and (b)~Monte Carlo estimates from the machine-learning protocol used throughout the paper, namely five-fold cross-validated logistic-regression accuracy for absolute features ($X_{\mathrm{A}}$ only), relative features ($X=X_{\mathrm{A}}-X_{\mathrm{B}}$), and the full pair $(X_{\mathrm{A}},X_{\mathrm{B}})$. The headline machine-learning improvement is the relative-minus-absolute accuracy difference, matching \cref{sec:methods}.
+
+\textbf{Validation 1 (parameter recovery).} From each simulated sample we re-estimate $\hat{\kappa}=s_{\mathrm{B}}^{2}/s_{\mathrm{A}}^{2}$, $\hat{\rho}$, and $\hat{\eta}$ using the same sample estimators as the empirical analysis (\cref{sec:methods}). Recovered means track the target values along the identity line across the grid (generated output \texttt{idealised\_probit\_recovery.png}; \texttt{idealised\_probit\_grid.csv}), confirming that the sampler reproduces the intended $(\kappa,\rho)$ geometry and that $\hat{\eta}$ is approximately unbiased over the admissible range.
+
+\textbf{Validation 2 (PEF--information mapping).} At fixed signal strength, analytic $\eta$ and $I(X;Y)$ are strongly positively correlated ($r\approx0.87$ within the $\delta/\sigma_{\mathrm{A}}$ slice nearest the empirical median; \cref{sec:results}). Pooled across $\delta/\sigma_{\mathrm{A}}$ the correlation reverses sign ($r\approx-0.70$), because signal strength shifts $I(X;Y)$ independently of the $(\kappa,\rho)$ position---the iso-$\eta$ versus iso-$I$ divergence shown in \cref{fig:si_idealised_stratified,fig:si_iso_eta_I}. This confirms the manuscript's central caveat that $\eta$ alone does not determine predictive gain.
+
+\textbf{Validation 3 (efficiency--power tension).} All 16 Quadrant~4 grid cells with $\eta<1$ produced positive mean machine-learning improvement (\cref{fig:si_idealised_stratified}), reproducing the predicted tension (\cref{sec:eff_power_theory}) in a setting free of empirical confounds.
+
+\textbf{Reproducibility.} The simulation is implemented in \texttt{scripts/paper\_pipeline/run\_pef\_idealised\_probit\_sim.m}, with theory helpers in \texttt{scripts/paper\_pipeline/lib/pef\_theory\_helpers.m}. The locked configuration (grid, $n$, trials, folds, base seed) is recorded in the script's \texttt{PRODUCTION\_CONFIG} block; outputs (\texttt{idealised\_probit\_grid.csv}, \texttt{idealised\_probit\_scenarios.csv}, \texttt{idealised\_probit\_summary.txt}, and the diagnostic figures) are written to \texttt{scripts/paper\_pipeline/outputs/}. A \texttt{SMOKE\_TEST} flag runs a one-cell sanity check before a full execution.
 
 \clearpage
 

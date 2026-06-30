@@ -46,7 +46,7 @@ pef-empirical/
 | `Figure_S6_q4_bayes_gap.png` | Q4 Bayes gap (S7) | `run_pef_finalize_diagnostics.m` |
 | `Figure_S7_season_drift_alignment.png` | Season drift (S8) | `run_pef_finalize_diagnostics.m` |
 
-Captions for S1–S8 are in `sections/supplementary.tex` (subsection order follows main-text first citation; figure counters are set explicitly so S-labels stay S1–S8).
+Captions for S1–S8 are in `sections/supplementary.tex` (figures S1–S8 and notes S1, S2, S4 in numerical document order).
 
 ## Requirements
 
