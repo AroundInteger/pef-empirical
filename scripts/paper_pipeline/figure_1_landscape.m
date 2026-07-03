@@ -37,7 +37,7 @@ function figure_1_landscape(pef_2s, pef_per_season, domain_summary, fpath, ~)
     set(ax, 'YDir', 'normal');
     set(h_img, 'AlphaData', double(~isnan(Z)) * 0.55);
 
-    colormap(ax, redblue_local(256));
+    colormap(ax, pef_figure_style.redblue_map(256));
     caxis(ax, [log10(ETA_COLOR_LO) log10(ETA_COLOR_HI)]);
 
     eta_contour_levels = [0.5 0.75 1 1.25 1.5 2 3 5];
@@ -107,14 +107,7 @@ function figure_1_landscape(pef_2s, pef_per_season, domain_summary, fpath, ~)
     hold(ax, 'off');
 
     if nargin >= 4 && ~isempty(fpath)
-        exportgraphics(fig, fpath, 'Resolution', 200);
+        pef_figure_style.export_figure(fig, fpath);
     end
     close(fig);
-end
-
-function map = redblue_local(n)
-    if mod(n, 2) == 1, n = n + 1; end
-    h = n / 2;
-    map = [[linspace(0.05, 1, h)' linspace(0.30, 1, h)' linspace(0.55, 1, h)']; ...
-           [linspace(1, 0.65, h)' linspace(1, 0.05, h)' linspace(1, 0.10, h)']];
 end

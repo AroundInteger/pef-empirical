@@ -250,23 +250,19 @@ end
 
 % =========================================================================
 function plot_Ipred_vs_dML(tbl, valid, fpath)
-    qcol = quadrant_colours();
-    fig = figure('Color', 'w', 'Position', [100 100 700 550], 'Visible', 'off');
-    hold on;
-    quads = ["Q1","Q2","Q3","Q4"];
-    for qi = 1:numel(quads)
-        qm = valid & tbl.quadrant == quads(qi);
-        if ~any(qm), continue; end
-        c = qcol(char(quads(qi)));
-        scatter(tbl.I_pred(qm), tbl.acc_improvement(qm), 40, 'filled', ...
-            'MarkerFaceColor', c, 'DisplayName', char(quads(qi)));
-    end
-    xlabel('I_{pred}(X;Y)  (bits, eq. mi\_closed)');
-    ylabel('ML improvement  (%, A vs A-B)');
-    title('Predicted information vs relativisation gain');
-    legend('Location', 'best');
-    grid on; box on; hold off;
-    exportgraphics(fig, fpath, 'Resolution', 200);
+    ST = pef_figure_style.config();
+    fig = pef_figure_style.new_figure(750, 580);
+    ax = axes('Parent', fig);
+    pef_figure_style.scatter_by_quadrant(ax, tbl.I_pred(valid), ...
+        tbl.acc_improvement(valid), tbl.quadrant(valid), ST, 48);
+    xlabel(ax, 'I_{pred}(X;Y)  [bits]', 'FontSize', ST.fs_label);
+    ylabel(ax, '\DeltaML improvement  (%, relative minus absolute)', ...
+        'FontSize', ST.fs_label);
+    title(ax, 'Predicted information vs relativisation gain', ...
+        'FontSize', ST.fs_title, 'FontWeight', 'bold');
+    legend(ax, 'Location', 'northwest', 'Box', 'off', 'FontSize', ST.fs_panel);
+    pef_figure_style.style_scatter_axes(ax, ST);
+    pef_figure_style.export_figure(fig, fpath);
     close(fig);
 end
 
@@ -298,35 +294,30 @@ end
 
 % =========================================================================
 function plot_idealised_stratified(ideal, fpath)
+    ST = pef_figure_style.config();
     dr_u = unique(ideal.delta_ratio);
     dr_u = sort(dr_u);
     nP = numel(dr_u);
-    fig = figure('Color', 'w', 'Position', [50 50  350*nP 400], 'Visible', 'off');
-    qcol = quadrant_colours();
+    fig = pef_figure_style.new_figure(380 * nP, 420);
     for pi = 1:nP
         dr = dr_u(pi);
         sl = abs(ideal.delta_ratio - dr) < 1e-9;
         sub = ideal(sl, :);
         ax = subplot(1, nP, pi);
-        hold(ax, 'on');
-        quads = ["Q1","Q2","Q3","Q4"];
-        for qi = 1:numel(quads)
-            qm = sub.quadrant == quads(qi);
-            if ~any(qm), continue; end
-            c = qcol(char(quads(qi)));
-            scatter(ax, sub.Ixy(qm), sub.acc_impr_pct_mean(qm), 36, 'filled', ...
-                'MarkerFaceColor', c, 'DisplayName', char(quads(qi)));
-        end
-        xlabel(ax, 'I(X;Y)');
-        ylabel(ax, 'Mean ML impr. (%)');
-        title(ax, sprintf('\\delta/\\sigma_A = %.1f', dr));
-        grid(ax, 'on');
+        pef_figure_style.scatter_by_quadrant(ax, sub.Ixy, ...
+            sub.acc_impr_pct_mean, sub.quadrant, ST, 40);
+        xlabel(ax, 'I(X;Y)  [bits]', 'FontSize', ST.fs_label);
+        ylabel(ax, 'Mean \DeltaML  (%)', 'FontSize', ST.fs_label);
+        title(ax, sprintf('\\delta/\\sigma_A = %.1f', dr), ...
+            'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
+        pef_figure_style.style_scatter_axes(ax, ST);
         if pi == 1
-            legend(ax, 'Location', 'best');
+            legend(ax, 'Location', 'best', 'Box', 'off', 'FontSize', ST.fs_panel);
         end
     end
-    sgtitle('Idealised probit: I vs ML gain by fixed \delta/\sigma_A');
-    exportgraphics(fig, fpath, 'Resolution', 200);
+    sgtitle(fig, 'Idealised probit: I vs ML gain by fixed \delta/\sigma_A', ...
+        'FontSize', ST.fs_label, 'FontWeight', 'bold', 'Interpreter', 'tex');
+    pef_figure_style.export_figure(fig, fpath);
     close(fig);
 end
 
@@ -339,35 +330,37 @@ function write_iso_delta_sidecar(fpath, iso_dr, median_dr)
 end
 
 % =========================================================================
-function plot_iso_eta_I_tension(kpi_tbl, deltaRatio, H, fpath)
-    r_g = linspace(-0.95, 0.95, 300);
-    k_g = linspace(0.05, 5, 300);
-    [R, K] = meshgrid(r_g, k_g);
-    eta_s = (1 + K) ./ (1 + K - 2 * sqrt(K) .* R);
-    eta_s(eta_s <= 0 | eta_s > 20) = NaN;
+function plot_iso_eta_I_tension(kpi_tbl, deltaRatio, ~, fpath)
+    ST = pef_figure_style.config();
+    [r_g, k_g, R, K] = pef_figure_style.landscape_grid(400, 400);
+    eta_s = pef_figure_style.compute_eta(R, K);
+    Ixy = pef_figure_style.compute_mi_grid(K, R, deltaRatio, 1.0);
 
-    sep = normcdf(deltaRatio ./ (2 * sqrt((1 + K) ./ max(eta_s, 1e-6))));
-    sep = min(max(sep, 1e-12), 1 - 1e-12);
-    Ixy = 1 - (-sep .* log2(sep) - (1 - sep) .* log2(1 - sep));
-
-    fig = figure('Color', 'w', 'Position', [100 100 900 700], 'Visible', 'off');
-    imagesc(r_g, k_g, Ixy, 'AlphaData', 0.55);
-    set(gca, 'YDir', 'normal');
-    hold on;
-    colormap(parula);
-    colorbar;
-    [Ce, he] = contour(R, K, eta_s, [0.5 0.75 1 1.25 1.5 2], 'Color', [0.3 0.3 0.3], 'LineWidth', 1.2);
-    clabel(Ce, he, 'FontSize', 8, 'Color', [0.2 0.2 0.2]);
-    [Ci, hi] = contour(R, K, Ixy, [0.02 0.05 0.1 0.15 0.2], 'w--', 'LineWidth', 0.9);
-    clabel(Ci, hi, 'FontSize', 8, 'Color', 'w');
-    plot([-1 1], [1 1], 'k--', 'LineWidth', 1.2, 'HandleVisibility', 'off');
-    plot([0 0], [0.05 5], 'k--', 'LineWidth', 1.2, 'HandleVisibility', 'off');
-    scatter(kpi_tbl.rho, kpi_tbl.kappa, 24, 'w', 'filled', 'MarkerFaceAlpha', 0.5);
-    xlim([-1 1]); ylim([0.05 5]);
-    xlabel('\rho'); ylabel('\kappa');
-    title(sprintf('Iso-\\eta (solid) vs iso-I (dashed) at \\delta/\\sigma_A = %.2f', deltaRatio));
-    hold off;
-    exportgraphics(fig, fpath, 'Resolution', 200);
+    fig = pef_figure_style.new_figure(950, 720);
+    ax = axes('Parent', fig);
+    h_img = imagesc(ax, r_g, k_g, Ixy);
+    set(ax, 'YDir', 'normal');
+    set(h_img, 'AlphaData', double(~isnan(Ixy)) * ST.surface_alpha);
+    colormap(ax, parula(256));
+    caxis(ax, ST.I_caxis);
+    hold(ax, 'on');
+    pef_figure_style.draw_admissibility_boundary(ax, ST);
+    pef_figure_style.draw_quadrant_boundaries(ax, ST);
+    pef_figure_style.draw_quadrant_labels(ax, ST);
+    [Ce, he] = contour(ax, R, K, eta_s, [0.5, 0.75, 1, 1.25, 1.5, 2], ...
+        'Color', [0.15, 0.15, 0.15], 'LineWidth', 1.1);
+    clabel(Ce, he, 'FontSize', ST.fs_panel, 'Color', [0.15, 0.15, 0.15]);
+    [Ci, hi] = contour(ax, R, K, Ixy, [0.02, 0.05, 0.1, 0.15, 0.20], ...
+        'w--', 'LineWidth', 0.9);
+    clabel(Ci, hi, 'FontSize', ST.fs_panel, 'Color', 'w');
+    scatter(ax, kpi_tbl.rho, kpi_tbl.kappa, 28, 'w', 'filled', ...
+        'MarkerEdgeColor', [0.2, 0.2, 0.2], 'LineWidth', 0.4, ...
+        'MarkerFaceAlpha', 0.65);
+    pef_figure_style.style_landscape_axes(ax, ST);
+    pef_figure_style.add_I_colorbar(ax, ST);
+    title(ax, sprintf('Iso-\\eta (solid) vs iso-I (dashed) at \\delta/\\sigma_A = %.2f', ...
+        deltaRatio), 'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
+    pef_figure_style.export_figure(fig, fpath);
     close(fig);
 end
 
@@ -423,37 +416,56 @@ end
 
 % =========================================================================
 function plot_bootstrap_exemplars(boot_tbl, ex_top, fpath)
-    fig = figure('Color', 'w', 'Position', [100 100 900 500], 'Visible', 'off');
-    tiledlayout(2, 1);
-
-    nexttile;
-    hold on;
+    ST = pef_figure_style.config();
+    labels = strings(height(ex_top), 1);
+    colors = zeros(height(ex_top), 3);
     for i = 1:height(ex_top)
-        m = boot_tbl.sport == string(ex_top.sport(i)) & boot_tbl.kpi == string(ex_top.kpi(i));
+        labels(i) = pef_figure_style.exemplar_label( ...
+            ex_top.sport(i), ex_top.kpi(i), ex_top.quadrant(i));
+        colors(i, :) = pef_figure_style.quadrant_color(ex_top.quadrant(i));
+    end
+
+    fig = pef_figure_style.new_figure(980, 560);
+    tiledlayout(2, 1, 'Padding', 'compact', 'TileSpacing', 'compact');
+
+    ax1 = nexttile;
+    hold(ax1, 'on');
+    for i = 1:height(ex_top)
+        m = boot_tbl.sport == string(ex_top.sport(i)) & ...
+            boot_tbl.kpi == string(ex_top.kpi(i));
         if ~any(m), continue; end
         row = boot_tbl(find(m, 1), :);
-        errorbar(i, row.eta_med, row.eta_med - row.eta_lo, row.eta_hi - row.eta_med, 'o');
+        errorbar(ax1, i, row.eta_med, row.eta_med - row.eta_lo, ...
+            row.eta_hi - row.eta_med, 'o', 'Color', colors(i, :), ...
+            'MarkerFaceColor', colors(i, :), 'LineWidth', 1.2, 'CapSize', 8);
     end
-    yline(1, 'k--');
-    xlabel('Exemplar index');
-    ylabel('\eta');
-    title('Bootstrap 95% CI on \eta (exemplars)');
-    grid on;
+    yline(ax1, 1, 'k--', 'LineWidth', 1.0, 'HandleVisibility', 'off');
+    set(ax1, 'XTick', 1:height(ex_top), 'XTickLabel', labels, ...
+        'XTickLabelRotation', 25, 'FontSize', ST.fs_panel);
+    ylabel(ax1, '\eta', 'FontSize', ST.fs_label);
+    title(ax1, 'Bootstrap 95% CI on \eta  (exemplars)', ...
+        'FontSize', ST.fs_title, 'FontWeight', 'bold');
+    pef_figure_style.style_scatter_axes(ax1, ST);
 
-    nexttile;
-    hold on;
+    ax2 = nexttile;
+    hold(ax2, 'on');
     for i = 1:height(ex_top)
-        m = boot_tbl.sport == string(ex_top.sport(i)) & boot_tbl.kpi == string(ex_top.kpi(i));
+        m = boot_tbl.sport == string(ex_top.sport(i)) & ...
+            boot_tbl.kpi == string(ex_top.kpi(i));
         if ~any(m), continue; end
         row = boot_tbl(find(m, 1), :);
-        errorbar(i, row.I_med, row.I_med - row.I_lo, row.I_hi - row.I_med, 'o');
+        errorbar(ax2, i, row.I_med, row.I_med - row.I_lo, ...
+            row.I_hi - row.I_med, 'o', 'Color', colors(i, :), ...
+            'MarkerFaceColor', colors(i, :), 'LineWidth', 1.2, 'CapSize', 8);
     end
-    xlabel('Exemplar index');
-    ylabel('I_{pred}  (bits)');
-    title('Bootstrap 95% CI on I_{pred} (exemplars)');
-    grid on;
+    set(ax2, 'XTick', 1:height(ex_top), 'XTickLabel', labels, ...
+        'XTickLabelRotation', 25, 'FontSize', ST.fs_panel);
+    ylabel(ax2, 'I_{pred}  [bits]', 'FontSize', ST.fs_label);
+    title(ax2, 'Bootstrap 95% CI on I_{pred}  (exemplars)', ...
+        'FontSize', ST.fs_title, 'FontWeight', 'bold');
+    pef_figure_style.style_scatter_axes(ax2, ST);
 
-    exportgraphics(fig, fpath, 'Resolution', 200);
+    pef_figure_style.export_figure(fig, fpath);
     close(fig);
 end
 
@@ -480,20 +492,29 @@ function plot_q4_bayes_gap(q4, fpath)
     if isempty(q4) || height(q4) == 0
         return
     end
-    fig = figure('Color', 'w', 'Position', [100 100 900 450], 'Visible', 'off');
-    labels = strcat(string(q4.sport), ': ', string(q4.kpi));
-    labels = cellstr(labels);
-    for i = 1:numel(labels)
-        labels{i} = strrep(labels{i}, '_', ' ');
+    ST = pef_figure_style.config();
+    labels = strings(height(q4), 1);
+    for i = 1:height(q4)
+        labels(i) = pef_figure_style.exemplar_label(q4.sport(i), q4.kpi(i), 'Q4');
     end
     Y = [100 * q4.acc_abs, 100 * q4.acc_rel, 100 * q4.bayes_acc];
-    bar(Y, 'grouped');
-    set(gca, 'XTickLabel', labels, 'XTickLabelRotation', 25);
-    legend({'acc A (%)', 'acc A-B (%)', 'Bayes on X (%)'}, 'Location', 'northwest');
-    title('Q4 exemplars: absolute vs relative vs Bayes bound');
-    ylabel('Accuracy (%)');
-    grid on;
-    exportgraphics(fig, fpath, 'Resolution', 200);
+
+    fig = pef_figure_style.new_figure(920, 480);
+    ax = axes('Parent', fig);
+    bh = bar(ax, Y, 'grouped');
+    for bi = 1:numel(bh)
+        bh(bi).FaceColor = ST.bar_series(bi, :);
+        bh(bi).EdgeColor = [0.15, 0.15, 0.15];
+        bh(bi).LineWidth = 0.6;
+    end
+    set(ax, 'XTickLabel', labels, 'XTickLabelRotation', 20, 'FontSize', ST.fs_panel);
+    legend(ax, {'Accuracy A (%)', 'Accuracy A-B (%)', 'Bayes bound on A (%)'}, ...
+        'Location', 'northwest', 'Box', 'off', 'FontSize', ST.fs_panel);
+    title(ax, 'Quadrant~4 exemplars: absolute vs relative vs Bayes bound', ...
+        'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
+    ylabel(ax, 'Accuracy (%)', 'FontSize', ST.fs_label);
+    pef_figure_style.style_scatter_axes(ax, ST);
+    pef_figure_style.export_figure(fig, fpath);
     close(fig);
 end
 
@@ -560,32 +581,31 @@ function plot_season_drift(drift, fpath)
     if isempty(drift) || height(drift) == 0
         return
     end
-    fig = figure('Color', 'w', 'Position', [100 100 700 450], 'Visible', 'off');
-    hold on;
+    ST = pef_figure_style.config();
+    fig = pef_figure_style.new_figure(760, 480);
+    ax = axes('Parent', fig);
+    hold(ax, 'on');
     al = drift.alignment;
     ok = isfinite(al);
-    histogram(al(ok), 20, 'FaceColor', [0.3 0.5 0.75]);
+    histogram(ax, al(ok), 18, 'FaceColor', pef_figure_style.quadrant_color('Q2'), ...
+        'EdgeColor', [0.15, 0.15, 0.15], 'FaceAlpha', 0.75, ...
+        'DisplayName', 'All KPIs');
     xc = drift.alignment(drift.quadrant_crossed & isfinite(drift.alignment));
     if ~isempty(xc)
         for j = 1:numel(xc)
-            xline(xc(j), 'Color', [0.85 0.2 0.15], 'LineWidth', 1.5, ...
+            xline(ax, xc(j), 'Color', ST.migrate, 'LineWidth', 1.4, ...
                 'HandleVisibility', 'off');
         end
-        plot(nan, nan, 'Color', [0.85 0.2 0.15], 'LineWidth', 2, ...
+        plot(ax, nan, nan, 'Color', ST.migrate, 'LineWidth', 2, ...
             'DisplayName', 'Quadrant-crossing KPIs');
     end
-    xlabel('Alignment: season drift \cdot \nabla I / (|\Delta| |\nabla I|)');
-    ylabel('Count');
-    title('Season-to-season drift vs local information gradient');
-    legend('Location', 'best');
-    grid on;
-    exportgraphics(fig, fpath, 'Resolution', 200);
+    xlabel(ax, 'Alignment:  season drift \cdot \nabla I / (|\Delta| |\nabla I|)', ...
+        'FontSize', ST.fs_label);
+    ylabel(ax, 'Count', 'FontSize', ST.fs_label);
+    title(ax, 'Season-to-season drift vs local information gradient', ...
+        'FontSize', ST.fs_title, 'FontWeight', 'bold');
+    legend(ax, 'Location', 'best', 'Box', 'off', 'FontSize', ST.fs_panel);
+    pef_figure_style.style_scatter_axes(ax, ST);
+    pef_figure_style.export_figure(fig, fpath);
     close(fig);
-end
-
-% =========================================================================
-function qcol = quadrant_colours()
-    qcol = containers.Map( ...
-        {'Q1', 'Q2', 'Q3', 'Q4'}, ...
-        {[0.20 0.63 0.17], [0.12 0.47 0.71], [0.89 0.47 0.07], [0.77 0.15 0.16]});
 end

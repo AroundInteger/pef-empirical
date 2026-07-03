@@ -49,6 +49,8 @@ pef-empirical/
 
 Captions for S1--S8 are in `sections/supplementary.tex`. Structure: `documentation/SUPPLEMENTARY_STRUCTURE.md` (six thematic SI blocks; stable figure/note labels).
 
+**Shared figure style:** all main and SI landscape/scatter plots use `scripts/paper_pipeline/lib/pef_figure_style.m` (axis limits, colormaps, quadrant colours, 300 dpi export). Regenerate S1--S8 via `scripts/matlab_figures/generate_all_si_figures.m` (requires pipeline outputs for S3--S8).
+
 ## Requirements
 
 - MATLAB R2019b+ with **Statistics and Machine Learning Toolbox** (`fitglm`, `cvpartition`, etc.)

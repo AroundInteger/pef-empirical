@@ -106,7 +106,7 @@ function figure_2_info_surface(pef_2s, pef_per_season, domain_summary, fpath)
     hold(ax, 'off');
 
     if nargin >= 4 && ~isempty(fpath)
-        exportgraphics(fig, fpath, 'Resolution', 200);
+        pef_figure_style.export_figure(fig, fpath);
     end
     close(fig);
 end
