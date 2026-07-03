@@ -151,15 +151,35 @@ function boot = bootstrap_pef_table(paired, kpiName, nBoot)
         return
     end
 
+    use_team_boot = ismember('home_team', paired.Properties.VariableNames);
+    if use_team_boot
+        ht = string(paired.home_team(ok));
+        teams = unique(ht, 'stable');
+        n_teams = numel(teams);
+    end
+
     eta_s = nan(nBoot, 1);
     I_s   = nan(nBoot, 1);
     k_s   = nan(nBoot, 1);
     r_s   = nan(nBoot, 1);
 
     for b = 1:nBoot
-        idx = randi(n, n, 1);
-        Ab = A(idx);
-        Bb = B(idx);
+        if use_team_boot
+            draw = teams(randi(n_teams, n_teams, 1));
+            idx = [];
+            for t = 1:n_teams
+                idx = [idx; find(ht == draw(t))]; %#ok<AGROW>
+            end
+            if numel(idx) < 8
+                continue
+            end
+            Ab = A(idx);
+            Bb = B(idx);
+        else
+            idx = randi(n, n, 1);
+            Ab = A(idx);
+            Bb = B(idx);
+        end
         vA = var(Ab, 0);
         vB = var(Bb, 0);
         if vA <= 0 || vB <= 0

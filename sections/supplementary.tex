@@ -184,7 +184,7 @@ which makes $X$ the Bayes-sufficient statistic for $Y$ and yields analytic infor
 
   \medskip
   \begin{minipage}{0.95\linewidth}\small
-    Mean $\Delta\mathrm{ML}$: five-fold cross-validated accuracy improvement (relative minus absolute features), pooled across KPIs in the quadrant. Landscape characterisation only; mechanistic confirmation uses \cref{tab:exemplars}.
+    Mean $\Delta\mathrm{ML}$: team-blocked five-fold cross-validated accuracy improvement (relative minus absolute features), pooled across KPIs in the quadrant (\cref{sec:ml_cv}). Landscape characterisation only; mechanistic confirmation uses \cref{tab:exemplars}.
   \end{minipage}
 \end{table}
 
@@ -193,7 +193,7 @@ which makes $X$ the Bayes-sufficient statistic for $Y$ and yields analytic infor
 Per-KPI estimates from the canonical pipeline outputs:
 \begin{itemize}
   \item \texttt{scripts/paper\_pipeline/outputs/pef\_landscape\_2season.csv} --- $(\hat\kappa,\hat\rho,\hat\eta)$, quadrant label, and match count $n$;
-  \item \texttt{scripts/paper\_pipeline/outputs/ml\_empirical\_results.csv} --- five-fold $\Delta\mathrm{ML}$;
+  \item \texttt{scripts/paper\_pipeline/outputs/ml\_empirical\_results.csv} --- team-blocked five-fold $\Delta\mathrm{ML}$;
   \item \texttt{scripts/paper\_pipeline/outputs/pef\_landscape\_per\_season.csv} --- season-specific $(\hat\kappa,\hat\rho)$ for \cref{fig:si_kpi_labelled}.
 \end{itemize}
 
@@ -235,7 +235,7 @@ Per-KPI estimates from the canonical pipeline outputs:
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\linewidth]{figures/Figure_S6_q4_bayes_gap.png}
-  \caption{Quadrant~4 exemplars ($\eta<1$): five-fold CV accuracy for absolute
+  \caption{Quadrant~4 exemplars ($\eta<1$): team-blocked five-fold CV accuracy for absolute
     vs.\ relative features and the Gaussian Bayes bound on $X_{\mathrm{A}}$ under
     (A1)--(A2). Relative features can exceed the absolute-feature Bayes bound when
     $\delta/\sigma_{\mathrm{A}}$ is small.

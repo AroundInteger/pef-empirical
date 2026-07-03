@@ -66,7 +66,6 @@ from run_pef_normality_analysis import (
 try:
     from statsmodels.stats.diagnostic import lilliefors as _lilliefors
     from sklearn.linear_model import LogisticRegression
-    from sklearn.model_selection import StratifiedKFold
     from sklearn.metrics import roc_auc_score
     _HAS_SK = True
 except ImportError:
@@ -95,6 +94,7 @@ FIG_DIR.mkdir(exist_ok=True)
 SEASONS_PRI = {"23/24", "24/25"}
 ALPHA       = 0.05
 N_CV_FOLDS  = 5
+CV_SEED     = 20260511
 
 print("=" * 60)
 print(" PEF paper pipeline  (primary: 23/24 + 24/25)")
@@ -194,10 +194,10 @@ for _, row in domain_summary.iterrows():
 print("\n[6/7] ML validation...")
 if _HAS_SK:
     print("   Empirical: rugby 5-fold CV...")
-    ml_rugby = ml_empirical(rugby_2s, rugby_kpis, "home_win", N_CV_FOLDS)
+    ml_rugby = ml_empirical(rugby_2s, rugby_kpis, "home_win", N_CV_FOLDS, CV_SEED)
     ml_rugby["sport"] = "rugby"
     print("   Empirical: football 5-fold CV...")
-    ml_foot  = ml_empirical(foot_2s,  foot_kpis,  "home_win", N_CV_FOLDS)
+    ml_foot  = ml_empirical(foot_2s,  foot_kpis,  "home_win", N_CV_FOLDS, CV_SEED)
     ml_foot["sport"]  = "football"
     ml_all = pd.concat([ml_rugby, ml_foot], ignore_index=True)
     ml_all = join_pef_to_ml(ml_all, pef_2s_all)
@@ -370,14 +370,16 @@ def load_nonsports(ns_dir: Path) -> pd.DataFrame:
 
 
 def ml_empirical(paired: pd.DataFrame, kpis: list[str],
-                 outcome_col: str, k: int) -> pd.DataFrame:
-    """5-fold logistic CV: absolute vs relative feature per KPI."""
+                 outcome_col: str, k: int, cv_seed: int = 20260511) -> pd.DataFrame:
+    """Team-blocked k-fold logistic CV: absolute vs relative feature per KPI."""
     if outcome_col not in paired.columns:
         warnings.warn(f"ml_empirical: column '{outcome_col}' not found. Skipping.")
         return pd.DataFrame()
+    if "home_team" not in paired.columns:
+        warnings.warn("ml_empirical: home_team column required for team-blocked CV.")
+        return pd.DataFrame()
 
     y_all = pd.to_numeric(paired[outcome_col], errors="coerce").values
-    cv    = StratifiedKFold(n_splits=k, shuffle=True, random_state=20260511)
     rows  = []
 
     for kpi in kpis:
@@ -388,10 +390,11 @@ def ml_empirical(paired: pd.DataFrame, kpis: list[str],
         ok = ~np.isnan(A) & ~np.isnan(B) & ~np.isnan(y_all)
         A, B, y = A[ok], B[ok], y_all[ok].astype(int)
         if len(y) < 20 or len(np.unique(y)) < 2: continue
+        groups = assign_team_cv_folds(paired.loc[ok, "home_team"], k, cv_seed)
         D = A - B   # relative feature
 
-        acc_a, auc_a = _cv_logistic(A.reshape(-1,1), y, cv)
-        acc_r, auc_r = _cv_logistic(D.reshape(-1,1), y, cv)
+        acc_a, auc_a = _cv_logistic_grouped(A.reshape(-1, 1), y, groups, k)
+        acc_r, auc_r = _cv_logistic_grouped(D.reshape(-1, 1), y, groups, k)
         rows.append(dict(kpi=kpi, n=len(y),
                          acc_abs=acc_a, acc_rel=acc_r,
                          acc_improvement=100*(acc_r - acc_a) / max(acc_a, 0.01),
@@ -400,17 +403,27 @@ def ml_empirical(paired: pd.DataFrame, kpis: list[str],
     return pd.DataFrame(rows)
 
 
-def _cv_logistic(X: np.ndarray, y: np.ndarray, cv) -> tuple[float, float]:
-    """Return mean accuracy and AUC across CV folds."""
+def assign_team_cv_folds(home_team: pd.Series, k: int, seed: int) -> np.ndarray:
+    rng = np.random.default_rng(seed)
+    teams = pd.unique(home_team.astype(str))
+    perm = rng.permutation(len(teams))
+    fold_of_team = {teams[perm[i]]: (i % k) + 1 for i in range(len(teams))}
+    return np.array([fold_of_team[str(t)] for t in home_team.astype(str)], dtype=int)
+
+
+def _cv_logistic_grouped(X: np.ndarray, y: np.ndarray, groups: np.ndarray,
+                         k: int) -> tuple[float, float]:
+    """Return mean accuracy and AUC across team-blocked CV folds."""
     accs, aucs = [], []
     clf = LogisticRegression(max_iter=500, solver="lbfgs")
-    for tr, te in cv.split(X, y):
-        if len(np.unique(y[tr])) < 2:
+    for f in range(1, k + 1):
+        te = groups == f
+        tr = ~te
+        if not np.any(te) or np.sum(tr) < 10 or len(np.unique(y[tr])) < 2:
             continue
         clf.fit(X[tr], y[tr])
         proba = clf.predict_proba(X[te])[:, 1]
-        accs.append(float((proba >= 0.5).astype(int) == y[te]).mean() if False
-                    else np.mean((proba >= 0.5).astype(int) == y[te]))
+        accs.append(float(np.mean((proba >= 0.5).astype(int) == y[te])))
         if len(np.unique(y[te])) > 1:
             aucs.append(roc_auc_score(y[te], proba))
     return (float(np.mean(accs)) if accs else np.nan,

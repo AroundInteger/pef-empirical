@@ -78,6 +78,7 @@ end
 
 ALPHA       = 0.05;
 N_CV_FOLDS  = 5;
+CV_SEED     = 20260511;   % team-blocked fold assignment (reproducible)
 LILL_MCTOL  = 1e-2;       % Lilliefors MC tolerance (1e-3 = stricter but slower)
 SEASONS_PRI = ["23/24","24/25"];   % primary paper seasons
 
@@ -229,11 +230,11 @@ end
 fprintf('\n[6/9] ML validation...\n');
 
 fprintf('   Empirical: rugby 5-fold CV...\n');
-ml_rugby = ml_empirical(rugby_2s, rugby_kpis, 'home_win', N_CV_FOLDS);
+ml_rugby = ml_empirical(rugby_2s, rugby_kpis, 'home_win', N_CV_FOLDS, CV_SEED);
 ml_rugby.sport = repmat("rugby", height(ml_rugby), 1);
 
 fprintf('   Empirical: football 5-fold CV...\n');
-ml_foot  = ml_empirical(foot_2s,  foot_kpis,  'home_win', N_CV_FOLDS);
+ml_foot  = ml_empirical(foot_2s,  foot_kpis,  'home_win', N_CV_FOLDS, CV_SEED);
 ml_foot.sport = repmat("football", height(ml_foot), 1);
 
 ml_all = [ml_rugby; ml_foot];
@@ -528,8 +529,11 @@ function c = first_match(t, candidates)
     end
 end
 
-% ---- Empirical ML validation via 5-fold logistic CV -----------------
-function ml_tbl = ml_empirical(paired, kpis, outcome_col, k)
+% ---- Empirical ML validation via team-blocked k-fold logistic CV ------
+function ml_tbl = ml_empirical(paired, kpis, outcome_col, k, cv_seed)
+    if nargin < 5 || isempty(cv_seed)
+        cv_seed = 20260511;
+    end
     ML_VARS  = {'kpi','n','acc_abs','acc_rel','acc_improvement', ...
                 'auc_abs','auc_rel','auc_improvement'};
     ML_TYPES = {'string','double','double','double','double', ...
@@ -541,6 +545,10 @@ function ml_tbl = ml_empirical(paired, kpis, outcome_col, k)
         warning('ml_empirical: outcome column "%s" not found. Skipping.', outcome_col);
         ml_tbl = empty_ml(); return
     end
+    if ~ismember('home_team', paired.Properties.VariableNames)
+        warning('ml_empirical: home_team column required for team-blocked CV. Skipping.');
+        ml_tbl = empty_ml(); return
+    end
     y_all = double(paired.(outcome_col));
     rows  = {};
     for ki = 1:numel(kpis)
@@ -550,10 +558,11 @@ function ml_tbl = ml_empirical(paired, kpis, outcome_col, k)
         A   = paired.(ch); B = paired.(ca);
         ok  = ~isnan(A) & ~isnan(B) & ~isnan(y_all);
         A   = A(ok); B = B(ok); y = y_all(ok);
+        fold = assign_team_cv_folds(paired.home_team(ok), k, cv_seed);
         if numel(y) < 20 || numel(unique(y)) < 2, continue; end
         D   = A - B;   % relative (difference) feature
-        [acc_a, auc_a] = cv_logistic(A, y, k);
-        [acc_r, auc_r] = cv_logistic(D, y, k);
+        [acc_a, auc_a] = cv_logistic(A, y, k, fold);
+        [acc_r, auc_r] = cv_logistic(D, y, k, fold);
         acc_impr = 100 * (acc_r - acc_a) / max(acc_a, 0.01);
         auc_impr = 100 * (auc_r - auc_a) / max(auc_a, 0.01);
         rows(end+1,:) = {string(kpi), numel(y), ...
@@ -566,12 +575,41 @@ function ml_tbl = ml_empirical(paired, kpis, outcome_col, k)
     end
 end
 
-function [acc, auc] = cv_logistic(X, y, k)
+function fold = assign_team_cv_folds(home_team, k, seed)
+%ASSIGN_TEAM_CV_FOLDS  Partition teams into k folds; match fold = home team.
+    rng(seed);
+    teams = unique(string(home_team(:)), 'stable');
+    n_teams = numel(teams);
+    perm = randperm(n_teams);
+    team_fold = zeros(n_teams, 1);
+    for i = 1:n_teams
+        team_fold(i) = mod(i - 1, k) + 1;
+    end
+    fold_map = containers.Map('KeyType', 'char', 'ValueType', 'double');
+    for i = 1:n_teams
+        fold_map(char(teams(perm(i)))) = team_fold(i);
+    end
+    ht = string(home_team(:));
+    fold = zeros(numel(ht), 1);
+    for i = 1:numel(ht)
+        key = char(ht(i));
+        if isKey(fold_map, key)
+            fold(i) = fold_map(key);
+        else
+            fold(i) = mod(i - 1, k) + 1;
+        end
+    end
+end
+
+function [acc, auc] = cv_logistic(X, y, k, fold)
     n     = numel(X);
-    idx   = mod(randperm(n)-1, k) + 1;
-    preds = zeros(n,1);
+    if nargin < 4 || isempty(fold)
+        fold = mod(randperm(n, n) - 1, k) + 1;
+    end
+    preds = nan(n, 1);
     for f = 1:k
-        tr = idx ~= f; te = idx == f;
+        tr = fold ~= f; te = fold == f;
+        if ~any(te), continue; end
         if sum(tr) < 10 || numel(unique(y(tr))) < 2
             preds(te) = mean(y(tr));
         else
@@ -586,11 +624,12 @@ function [acc, auc] = cv_logistic(X, y, k)
             warning(w1); warning(w2);
         end
     end
-    acc = mean((preds >= 0.5) == y);
-    % Trapezoidal AUC
-    [~, ord] = sort(preds, 'descend');
-    tp = cumsum( y(ord)) / sum(y);
-    fp = cumsum(~y(ord)) / sum(~y);
+    ok = ~isnan(preds);
+    acc = mean((preds(ok) >= 0.5) == y(ok));
+    [~, ord] = sort(preds(ok), 'descend');
+    yv = y(ok);
+    tp = cumsum( yv(ord)) / sum(yv);
+    fp = cumsum(~yv(ord)) / sum(~yv);
     auc = trapz(fp, tp);
 end
 
