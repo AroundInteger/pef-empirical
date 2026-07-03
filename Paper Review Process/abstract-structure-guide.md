@@ -70,14 +70,14 @@ Alternative: lead with the scope decision (“We analyse each KPI on its own …
 | $\eta$, $\kappa$, $\rho$, $\delta/\sigma_{\mathrm{A}}$ | variability, co-movement, variance increases, signal strength (or omit) |
 | Equations | None in JQAS-facing abstract |
 | (A1)–(A2), mutual information in symbols | “how much information its relative form carries about the outcome” |
-| “distribution-free diagnostic” without setup | “data-driven diagnostic” after PEF is defined in words |
-| Q1–Q4, quadrant taxonomy | “four regimes that predict whether relativisation should help” |
+| “distribution-free diagnostic” without setup | “data-informed diagnostic” after PEF is defined in words |
+| Q1–Q4, quadrant taxonomy | “four regimes that indicate whether relativisation should help” |
 
 Symbols and axioms belong in the **body**; the abstract sells the story.
 
 ### 2.5 Quantitative results: sparing but concrete
 
-- Include **study scale** (113 KPIs; match counts via `\PEF…` macros if pipeline-linked).
+- Include **study scale** (pooled KPI count via `\PEFtotalStudies`; sport names only—omit league and match totals).
 - Include **one headline pattern** (e.g. most KPIs anti-correlate → absolute usually preferable).
 - Include **one tension finding** (relative can help even when variance rises).
 - Do not reproduce tables, exemplar KPI names, or full cross-domain catalogue.
@@ -95,7 +95,7 @@ Symbols and axioms belong in the **body**; the abstract sells the story.
 **Example:**
 
 ```
-The PEF turns an ad hoc feature-engineering choice into a transparent, data-driven diagnostic for when to relativise performance metrics in competitive prediction.
+The PEF turns an ad hoc feature-engineering choice into a transparent, data-informed diagnostic for when to relativise performance metrics in competitive prediction.
 ```
 
 ---
