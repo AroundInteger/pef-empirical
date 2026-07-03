@@ -25,6 +25,8 @@ The abstract is the most-read part of any paper and the primary filter for revie
 - **Length:** Is it within the venue's word limit?
 - **No undefined abbreviations:** Every abbreviation in the abstract must be defined in the abstract itself
 
+**PEF empirical (`pef-empirical`):** Apply the five-part structure and sentence-level rules in `abstract-structure-guide.md` (JQAS-facing; canonical example in `sections/abstract.tex`). Flag equations, axiom labels, sentence-initial *Because*, and chained *which* clauses as [SIGNIFICANT] for submission drafts.
+
 ### 2.2 Introduction
 - **Funnel structure:** Does the introduction move from broad context → specific problem → gap in knowledge → this paper's approach → overview of contributions? Absence of this structure leads to introductions that fail to justify the work
 - **Problem motivation:** Is the problem clearly motivated? Does the reader understand why this problem matters?

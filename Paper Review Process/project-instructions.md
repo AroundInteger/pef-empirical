@@ -17,6 +17,7 @@ Six structured skill files are available in this project. **Read all applicable 
 | `review-orchestrator.md` | Workflow selection, bias principles, priority list management |
 | `review-calibration.md` | Field detection, venue/funder standards, domain-specific heuristics |
 | `review-pef-papers.md` | **PEF only:** split-publication scope, pipeline provenance, joint consistency (Mode D) |
+| `abstract-structure-guide.md` | **PEF empirical:** five-part abstract skeleton + sentence-level digestibility rules |
 | `review-science.md` | Scientific rigour audit + numerical/computational pipeline audit |
 | `review-communication.md` | Writing quality + visual communication audit |
 | `review-outputs.md` | Severity triage, report formats, iterative revision management |
