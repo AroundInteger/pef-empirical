@@ -37,7 +37,7 @@ For each dataset, the variance ratio and correlation were estimated using standa
        {\sqrt{\sum_{i=1}^{n}(X_{\mathrm{A},i}-\bar{X}_{\mathrm{A}})^{2}
               \sum_{i=1}^{n}(X_{\mathrm{B},i}-\bar{X}_{\mathrm{B}})^{2}}}.
 \end{equation}
-Under bivariate normality (Assumption~(A1)), these are maximum likelihood estimators. PEF was computed by substituting into \cref{eq:pef}.
+Under bivariate normality (Assumption~(A1)), these are maximum likelihood estimators. PEF was computed by substituting into \cref{eq:pef}. For sports KPIs, index $i$ runs over fixtures; $X_{\mathrm{A},i}$ and $X_{\mathrm{B},i}$ denote the home and away KPI counts from game~$i$, so $(\hat\kappa,\hat\rho)$ characterise the cross-fixture distribution of those paired observations rather than correlation within a single match or serial correlation of one team's time series.
 
 \subsection{Empirical Units and Outcome Definitions}
 \label{sec:outcome_defs}
@@ -83,7 +83,7 @@ We model game-level observations using a bivariate normal approximation
 \end{equation}
 treating games as conditionally independent. Three considerations justify this approximation for PEF analysis:
 \begin{enumerate}
-  \item \textbf{Target of inference.} PEF focuses on within-game correlation $\rho=\Corr(X_{\mathrm{A}},X_{\mathrm{B}})$, capturing shared environmental factors and competitive dynamics rather than between-game dependencies. Team quality primarily affects mean structure rather than the correlation structure driving PEF.
+  \item \textbf{Target of inference.} PEF focuses on cross-fixture (same-occasion) correlation $\rho=\Corr(X_{\mathrm{A},i},X_{\mathrm{B},i})$ summarised over fixtures $i=1,\ldots,n$, capturing shared environmental factors and competitive dynamics on each game occasion rather than serial dependence of a single team across games. Team quality primarily affects mean structure rather than the correlation structure driving PEF.
   \item \textbf{Variance estimation.} The total variance $\sigma^{2}_{\mathrm{A}}=\Var(\theta_{j})+\Var(\epsilon_{j,i})$ correctly reflects the observable variance relevant to feature engineering decisions.
   \item \textbf{Robustness checks.} For $(\hat\kappa,\hat\rho,\hat\eta)$, bootstrap confidence intervals resample \emph{teams} with replacement and retain all home-side matches for each drawn team (cluster bootstrap on the home-team index; Supplementary~\cref{fig:si_bootstrap_exemplars}). For predictive validation, team-blocked cross-validation (\cref{sec:ml_cv}) prevents home teams from appearing in both training and test folds. Together, these checks address the main dependence induced by recurring teams without altering the distribution-free PEF formula itself.
 \end{enumerate}

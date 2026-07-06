@@ -284,7 +284,7 @@ A logarithmic transformation $Z=\log(X+1)$ was applied to all \PEFrugbyNkpis{} r
   \item \textbf{Long (preferred):} \texttt{feature\_id}, \texttt{x\_a}, \texttt{x\_b}; optional \texttt{unit\_id}.
   \item \textbf{Wide:} paired columns \texttt{*\_home}/\texttt{*\_away} or \texttt{*\_a}/\texttt{*\_b}.
 \end{itemize}
-Entity~A defines $\kappa=s^{2}_{\mathrm{B}}/s^{2}_{\mathrm{A}}$; document which entity is~A when interpreting $\kappa$.
+Entity~A defines $\kappa=s^{2}_{\mathrm{B}}/s^{2}_{\mathrm{A}}$; document which entity is~A when interpreting $\kappa$.  Each row is one paired observation (e.g.\ one fixture in sports); $\hat\rho$ is the Pearson correlation between the two margin columns across those $n$ rows (cross-fixture in the sports application), not serial correlation within one margin.
 
 \textbf{Output.} One row per feature: \texttt{n}, \texttt{kappa}, \texttt{rho}, \texttt{eta}, \texttt{quadrant}, \texttt{delta}, \texttt{sigma\_a}, \texttt{delta\_sigma\_a}, \texttt{I\_bits}, \texttt{recommendation}, \texttt{admissible}. Quadrant~4 rows require manual assessment of $I(X;Y)$ alongside $\hat\eta<1$.
 
