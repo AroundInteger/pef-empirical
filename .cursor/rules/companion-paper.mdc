@@ -23,7 +23,8 @@ alwaysApply: true
 - \(\kappa \leftrightarrow 1/\kappa\) involution, Möbius linearisation, Chebyshev/Poisson series
 - Sphere \(\eta = 1/(1-\cos\sigma)\), partition function \(\log\eta = -\log(1-\rho\,\mathrm{sech}\,\tau)\)
 - Fisher–Rao coordinate \(\psi\), **regime change at \(\rho=0\)**, meta-analytic \(\psi\) scale
-- §7 numerical tests: symmetry, cumulant identity, \(\psi\)-stabilisation, regime LRT (CSV inputs from **this** pipeline)
+- §7 numerical tests: (i) half-strip geometry model in companion (`run_pef_geometry_numerical_model.m`); (ii) symmetry, cumulant, \(\psi\), regime LRT on CSV inputs from **this** pipeline
+- Idealised probit sim stays **here** (Gaussian MI + ML); half-strip model stays in companion (geometry, no outcome layer)
 
 ## Pipeline rule
 
