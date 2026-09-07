@@ -1,0 +1,64 @@
+---
+description: Sentence clarity and em-dash house style for PEF manuscript prose
+globs: "**/*.tex,Paper Review Process/**/*.md"
+alwaysApply: false
+---
+
+# Writing clarity — PEF empirical
+
+Applies when editing manuscript `.tex` (and review-process markdown). Use with `latex-paper.mdc` (British English, maths). Adapted from the Football-TDA / Paper A clarity ruleset that proved valuable on grant and journal prose.
+
+## Em dashes and asides
+
+- **Do not use em dashes as parenthetical asides.** In LaTeX that means avoid `---` (and Unicode `—`) for clause interruptions.
+- Prefer **commas**, a **colon**, or a **new sentence**.
+- Number ranges stay as en-dashes: `$0.94$--$0.95$`, `23/24--24/25` — those are not asides.
+- At most **one** aside (parenthesis *or* a short comma gloss) per sentence; **none** if the sentence already has a subordinate clause (*which*, *where*, *because*, *whilst*).
+
+**Avoid:**
+
+```latex
+Relativising a KPI---using the match-level difference---sometimes helps.
+```
+
+**Prefer:**
+
+```latex
+Relativisation sometimes sharpens match-outcome prediction and sometimes does not.
+```
+
+or, if a gloss is needed:
+
+```latex
+Relativisation, expressed as the match-level difference, sometimes helps and sometimes does not.
+```
+
+## One sentence, one message
+
+Write sentences a reader grasps in a single pass.
+
+1. One idea per sentence; split independent claims.
+2. Target **25–30 words**; rewrite anything over about **35**.
+3. At most one subordinate clause; do not stack *because…, which…, where…, aligning…*.
+4. Subject and main verb early; avoid long run-ups before the main clause.
+5. Do not parallel-load lists where each item carries example + rationale + citation — use separate sentences or an `itemize`/`enumerate`.
+6. Prefer full stops to semicolons; reserve a semicolon for a tight, symmetrical pair.
+7. One citation cluster per clause (`\parencite{…}`); do not interleave several cite commands through one argument.
+8. Read-aloud test: if you must re-read to find the main claim, split the sentence.
+
+## Section headings
+
+Every concept named in a heading should be addressed and evidenced in that section. Verbatim repetition of the heading word is not required; demonstrate the concept.
+
+Keep one section's job out of another (e.g. do not bury Results claims in Methods, or Discussion impact in the Introduction).
+
+## Tone (empirical paper)
+
+- Modest claims; statistics or citations for empirical statements.
+- Distribution-free $\eta$ in the main story; Gaussian MI link labelled (A1)–(A2).
+- Prefer *represent* / *formulate* over vague *model* when the choice is absolute vs relative features.
+- Abstract: follow `Paper Review Process/abstract-structure-guide.md` (five parts; no equations).
+
+## When editing
+
+Before finishing a prose edit, skim for `---` asides and sentences over ~35 words. Split or re-punctuate rather than packing more into the same clause.

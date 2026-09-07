@@ -26,6 +26,10 @@ British English: recognised, behaviour, rigour, optimisation, generalised.
 
 Modest claims; statistics or citations for empirical statements. Distribution-free η in empirical; Gaussian MI link labelled as (A1)–(A2).
 
+## Prose clarity
+
+Sentence length, em-dash ban (`---` asides), and one-idea-per-sentence rules: see `writing-clarity.mdc` (ported from Football-TDA Paper A house style).
+
 ## Reference
 
 Full checklist: `UP1_PEF/paper/draft_v13_comprehensive_theoretical/documentation/OVERLEAF_BEST_PRACTICES.md` (archive).
