@@ -34,7 +34,7 @@
     \toprule
     \textbf{Q} & \textbf{Parameters} & $\eta$ & $I(X;Y)$ & \textbf{Recommendation} \\
     \midrule
-    Q1 & $\kappa>1$, $\rho>0$  & $>1$  & High     & Always use relative features \\
+    Q1 & $\kappa>1$, $\rho>0$  & $>1$  & High     & Use relative features \\
     Q2 & $\kappa<1$, $\rho>0$  & $>1$  & Moderate & Use relative features \\
     Q3 & $\kappa<1$, $\rho<0$  & $<1$  & Low      & Prefer absolute features \\
     Q4 & $\kappa>1$, $\rho<0$  & $<1$  & Variable & Analyse both $\eta$ and $I(X;Y)$ \\
@@ -43,7 +43,7 @@
 
   \medskip
   \begin{minipage}{0.95\linewidth}\small
-    \textbf{Examples:} Q1, market-adjusted returns, paired clinical trials; Q2, control charts, quality metrics; Q3, independent measurements; Q4, competitive sports, head-to-head comparisons.
+    \textbf{Examples:} Q1, market-adjusted returns, paired clinical trials; Q2, control charts, quality metrics; Q3, high-volume anti-correlated sports KPIs; Q4, asymmetric head-to-head comparisons (some sports KPIs; competitive business).
   \end{minipage}
 \end{table}
 

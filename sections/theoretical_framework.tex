@@ -138,9 +138,9 @@ Each KPI occupies a position in the $(\kappa,\rho)$ plane shaped by these mechan
 
 \textbf{Quadrant 2 ($\kappa<1$, $\rho>0$): High efficiency, moderate information.} Positive correlation provides variance reduction even with low variance ratio, though information content is lower than Quadrant~1. Exemplified by manufacturing control charts.
 
-\textbf{Quadrant 3 ($\kappa<1$, $\rho<0$): Low efficiency, low information.} Negative correlation with low variance asymmetry amplifies variance without commensurate information gain. Absolute features are preferred. Exemplified by weakly competitive or uncorrelated independent measurements.
+\textbf{Quadrant 3 ($\kappa<1$, $\rho<0$): Low efficiency, low information.} Negative correlation with low variance asymmetry amplifies variance without commensurate information gain. Absolute features are preferred. Exemplified by high-volume invasion-game KPIs (passes, pressures, duels) and by weakly competitive or near-independent measurements.
 
-\textbf{Quadrant 4 ($\kappa>1$, $\rho<0$): Low efficiency, variable information.} This is where the efficiency--power tension is most pronounced. $\eta<1$ indicates statistical harm, yet information content may remain substantial when $\delta$ is large. The decision to relativise requires explicit analysis of both $\eta$ and $I(X;Y)$. Exemplified by competitive sports and head-to-head business comparisons.
+\textbf{Quadrant 4 ($\kappa>1$, $\rho<0$): Low efficiency, variable information.} This is where the efficiency--power tension is most pronounced. $\eta<1$ indicates statistical harm, yet information content may remain substantial when $\delta$ is large. The decision to relativise requires explicit analysis of both $\eta$ and $I(X;Y)$. Exemplified by asymmetric head-to-head pairings ($\kappa>1$ with $\rho<0$), including some sports KPIs and competitive business comparisons.
 
 \subsection{Signal Strength and the Limits of \texorpdfstring{$\eta$}{eta} as a Predictor}
 \label{sec:signal_strength}
@@ -172,7 +172,7 @@ The quadrant logic applies uniformly across fields. \Cref{tab:cross_domain} situ
     Finance & Market-adjusted returns & Market factors & Q1: $\eta>1$, high $\rho$ \\
     Healthcare & Paired clinical trials & Temporal/biological & Q1--Q2: $\eta\gg 1$ \\
     Manufacturing & Control charts & Process dynamics & Q2: $\eta>1$, moderate $\rho$ \\
-    Sports & Relative metrics & Environmental/competitive & Q4: $\eta$ variable \\
+    Sports & Relative metrics & Environmental/competitive & Q3-dominant; Q4 when $\kappa>1$ \\
     \bottomrule
   \end{tabular}
 \end{table}
