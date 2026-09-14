@@ -642,6 +642,10 @@ function ml_out = join_pef_to_ml(ml_tbl, pef_tbl)
     ml_out.quadrant = strings(height(ml_out),1);
     for r = 1:height(ml_out)
         match = pef_tbl.kpi == ml_out.kpi(r);
+        if ismember('sport', pef_tbl.Properties.VariableNames) && ...
+                ismember('sport', ml_out.Properties.VariableNames)
+            match = match & pef_tbl.sport == ml_out.sport(r);
+        end
         if any(match)
             idx = find(match,1);
             ml_out.kappa(r)    = pef_tbl.kappa(idx);
@@ -683,7 +687,7 @@ function figure_3_ml_mapping(ml_all, ~, fpath)
                             ml_all.acc_improvement > Y_LIM(2)));
 
     % ---- Left panel: empirical scatter per quadrant ----------------------
-    subplot(1,2,1); hold on;
+    ax1 = subplot(1,2,1); hold on;
     if any(valid)
         for qi = 1:4
             qm = valid & ml_all.quadrant == quads(qi);
@@ -728,8 +732,8 @@ function figure_3_ml_mapping(ml_all, ~, fpath)
     xlim(X_LIM); ylim(Y_LIM);
     xlabel('\eta (PEF)','FontSize',11);
     ylabel('\DeltaML accuracy (%)','FontSize',11);
-    title('ML improvement vs \eta  (annotated exemplars)','FontSize',11);
-    leg = legend('Location','northwest','Box','off','FontSize',8);
+    title('(A)  ML improvement vs \eta  (annotated exemplars)','FontSize',11);
+    legend('Location','northwest','Box','off','FontSize',8);
     % Clip note below legend if any points hidden
     if n_clip_x + n_clip_y > 0
         annotation('textbox',[0.09 0.04 0.36 0.04], ...
@@ -738,8 +742,10 @@ function figure_3_ml_mapping(ml_all, ~, fpath)
     end
     grid on; hold off;
 
-    % ---- Right panel: mean ± SE by quadrant bar --------------------------
-    subplot(1,2,2); hold on;
+    % ---- Right panel: mean + upper SE by quadrant --------------------------
+    % Upper-only SE: within-quadrant heterogeneity is large; symmetric bars through
+    % zero read as a logical failure rather than descriptive inventory spread.
+    ax2 = subplot(1,2,2); hold on;
     q_means = zeros(4,1); q_se = zeros(4,1); q_n = zeros(4,1);
     for qi = 1:4
         qm  = valid & ml_all.quadrant == quads(qi);
@@ -748,17 +754,23 @@ function figure_3_ml_mapping(ml_all, ~, fpath)
         q_means(qi) = mean(vals, 'omitnan');
         q_se(qi)    = std(vals, 'omitnan') / sqrt(max(q_n(qi), 1));
     end
-    bh = bar(q_means, 'FaceColor','flat');
+    bh = bar(1:4, q_means, 0.7, 'FaceColor','flat');
     for qi = 1:4, bh.CData(qi,:) = qcol(qi,:); end
-    % ±1 SE error bars
-    errorbar(1:4, q_means, q_se, 'k.', 'LineWidth', 1.2, 'CapSize', 6, ...
-        'HandleVisibility','off');
+    % Upper-only SE whiskers (avoid symmetric bars that read as spanning through zero).
+    for qi = 1:4
+        y0 = q_means(qi);
+        y1 = q_means(qi) + q_se(qi);
+        plot([qi, qi], [y0, y1], 'k-', 'LineWidth', 1.2, 'HandleVisibility','off');
+        plot([qi-0.08, qi+0.08], [y1, y1], 'k-', 'LineWidth', 1.2, 'HandleVisibility','off');
+    end
     yline(0, 'k-', 'LineWidth', 0.8, 'HandleVisibility','off');
-    xticklabels(cellstr(quads)); xlabel('Quadrant','FontSize',11);
+    xlim(ax2, [0.4, 4.6]);
+    xticks(1:4);
+    xticklabels(cellstr(quads));
+    xlabel('Quadrant','FontSize',11);
     ylabel('Mean \DeltaML accuracy (%)','FontSize',11);
-    title('Mean \pm 1 SE by quadrant','FontSize',11);
-    % n-labels inside bars
-    ax2 = gca; yl = ax2.YLim;
+    title('(B)  Mean + 1 SE by quadrant','FontSize',11);
+    yl = ax2.YLim;
     for qi = 1:4
         ty = q_means(qi) * 0.5;
         ty = max(min(ty, yl(2)-0.2), yl(1)+0.1);

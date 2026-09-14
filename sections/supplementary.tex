@@ -67,6 +67,40 @@ which makes $X$ the Bayes-sufficient statistic for $Y$ and yields analytic infor
 
 \textbf{Validation 3 (efficiency--power tension).} All 16 Quadrant~4 grid cells with $\eta<1$ produced positive mean machine-learning improvement (\cref{fig:si_idealised_stratified}), reproducing the predicted tension (\cref{sec:eff_power_theory}) in a setting free of empirical confounds.
 
+\textbf{Validation 4 (a master surface and its envelope).} Under (A1)--(A2) the relativisation gain is not merely correlated with the PEF geometry: it is an almost deterministic function of two canonical coordinates, with closed-form bounds. Because the outcome depends on the pair only through $X$ (\cref{eq:si_outcome}), the relative feature is Bayes-sufficient and its optimal rule is the sign of $X$. Writing the standardised relative signal
+\begin{equation}
+  d_{\mathrm{rel}} \;=\; \frac{\delta}{\sqrt{\Var(X)}} \;=\; \frac{\delta}{\sigma_{\mathrm{A}}}\sqrt{\frac{\eta}{1+\kappa}},
+  \qquad u \equiv \frac{X}{\sqrt{\Var(X)}} \sim \mathcal{N}(d_{\mathrm{rel}},1),
+  \label{eq:si_drel}
+\end{equation}
+the Bayes accuracy of the relative feature is a function of $d_{\mathrm{rel}}$ \emph{alone},
+\begin{equation}
+  \mathrm{acc}_{R}(d_{\mathrm{rel}}) \;=\; \mathbb{E}\bigl[\Phi(|u|)\bigr] \;=\; g(d_{\mathrm{rel}}),
+  \qquad g(d) \equiv \mathbb{E}_{u\sim\mathcal{N}(0,1)}\Phi(|d+u|).
+  \label{eq:si_accR}
+\end{equation}
+The absolute feature $A=X_{\mathrm{A}}$ is jointly Gaussian with $X$ with correlation
+\begin{equation}
+  r \;\equiv\; \Corr(A,X) \;=\; \frac{1-\rho\sqrt{\kappa}}{\sqrt{\,1+\kappa-2\sqrt{\kappa}\,\rho\,}} \;=\; (1-\rho\sqrt{\kappa})\sqrt{\frac{\eta}{1+\kappa}} ,
+  \label{eq:si_r}
+\end{equation}
+so, with $w=(A-\delta/2)/\sigma_{\mathrm{A}}\sim\mathcal{N}(0,1)$, the posterior $\mathbb{E}[Y\mid A]=\Phi\!\bigl((d_{\mathrm{rel}}+rw)/\sqrt{2-r^{2}}\bigr)$ is monotone in $A$ and the Bayes rule thresholds $A$, giving
+\begin{equation}
+  \mathrm{acc}_{A}(d_{\mathrm{rel}},r) \;=\; \mathbb{E}_{w}\!\left[\Phi\!\left(\frac{|d_{\mathrm{rel}}+rw|}{\sqrt{2-r^{2}}}\right)\right].
+  \label{eq:si_accA}
+\end{equation}
+The relativisation gain is therefore the two-parameter surface
+\begin{equation}
+  \Delta\mathrm{ML}(d_{\mathrm{rel}},r) \;=\; 100\,\frac{\mathrm{acc}_{R}(d_{\mathrm{rel}})-\mathrm{acc}_{A}(d_{\mathrm{rel}},r)}{\mathrm{acc}_{A}(d_{\mathrm{rel}},r)} .
+  \label{eq:si_surface}
+\end{equation}
+Across the 64 grid cells this analytic surface reproduces the simulated $\Delta\mathrm{ML}$ almost exactly ($r=0.9998$; \cref{eq:si_surface} versus five-fold logistic CV), confirming that the machine-learning pipeline attains the Bayes-optimal gain and that no third coordinate is needed. Since $\mathrm{acc}_{A}$ increases monotonically in $r$ from the majority-class baseline to $\mathrm{acc}_{R}$, the surface is bracketed by two closed-form envelopes at each $d_{\mathrm{rel}}$:
+\begin{equation}
+  \underbrace{0}_{\text{floor }(r\to1)} \;\le\; \Delta\mathrm{ML} \;\le\; \underbrace{100\left(\frac{g(d_{\mathrm{rel}})}{\Phi(d_{\mathrm{rel}}/\sqrt{2})}-1\right)}_{\text{ceiling }(r\to0)} .
+  \label{eq:si_envelope}
+\end{equation}
+The \emph{floor} is exact: with the relative feature Bayes-sufficient, relativisation can never reduce accuracy in this idealised setting, so $\Delta\mathrm{ML}\ge0$ throughout (it vanishes as $r\to1$, where the absolute feature coincides with $X$, and under signal saturation where both accuracies approach one). The \emph{ceiling} is attained as $r\to0$, where $A$ carries no outcome information and collapses to the marginal rate $\Phi(d_{\mathrm{rel}}/\sqrt{2})=\Pr(Y=1)$. This makes the efficiency--power tension quantitative: relativisation helps most when the relative signal is weak ($d_{\mathrm{rel}}$ small, i.e.\ $\eta$ large) \emph{and} the absolute feature is poorly aligned with the contrast ($r$ small). \Cref{fig:si_idealised_stratified}C shows the design points settling between these curves, coloured by $r$; the grid samples $r\in[0.32,0.83]$, so its visible upper edge is the $r=0.32$ contour rather than the $r\to0$ ceiling.
+
 \textbf{Reproducibility.} The simulation is implemented in \texttt{scripts/paper\_pipeline/run\_pef\_idealised\_probit\_sim.m}, with theory helpers in \texttt{scripts/paper\_pipeline/lib/pef\_theory\_helpers.m}. The locked configuration (grid, $n$, trials, folds, base seed) is recorded in the script's \texttt{PRODUCTION\_CONFIG} block; outputs (\texttt{idealised\_probit\_grid.csv}, \texttt{idealised\_probit\_scenarios.csv}, \texttt{idealised\_probit\_summary.txt}, and the diagnostic figures) are written to \texttt{scripts/paper\_pipeline/outputs/}. A \texttt{SMOKE\_TEST} flag runs a one-cell sanity check before a full execution.
 
 \clearpage
@@ -74,23 +108,36 @@ which makes $X$ the Bayes-sufficient statistic for $Y$ and yields analytic infor
 \setcounter{figure}{3}
 \begin{figure}[h]
   \centering
-  \includegraphics[width=\linewidth]{figures/Figure_S4_idealised_I_vs_dML_stratified.png}
-  \caption{Idealised probit simulation (Note~S2): information vs.\ ML gain, stratified by $\delta/\sigma_{\mathrm{A}}$.
-    Theory-aligned grid under (A1)--(A2) with $\kappa\in\{0.8,1.0,1.2,2.0\}$,
-    $\rho\in\{-0.3,-0.15,0,0.4\}$, and
-    $\delta/\sigma_{\mathrm{A}}\in\{0.3,0.5,1.0,2.0\}$ (64 admissible cells;
-    $n=5{,}000$ per cell, 50 Monte Carlo trials, five-fold logistic CV).
-    Each panel fixes $\delta/\sigma_{\mathrm{A}}$ and plots analytic
-    $I(X;Y)$ against mean ML improvement (\%).
-    Pooled across all cells,
-    $r=-0.71$ for $I$ vs.\ $\Delta\mathrm{ML}$ (misleading when $\delta$ varies).
-    Stratified: $r=+0.39$ at $\delta/\sigma_{\mathrm{A}}=0.3$,
-    $+0.31$ at $0.5$, $-0.18$ at $1.0$, $-0.87$ at $2.0$.
-    The $\delta/\sigma_{\mathrm{A}}=0.3$ slice is nearest the median
-    empirical KPI value ($0.28$; \cref{fig:si_iso_eta_I}).
-    All 16 Quadrant~4 cells with $\eta<1$ show positive mean ML gain.
-    Generated by \texttt{scripts/paper\_pipeline/run\_pef\_idealised\_probit\_sim.m}
-    and \texttt{run\_pef\_finalize\_diagnostics.m}.}
+  \includegraphics[width=\linewidth]{figures/Figure_S4b_idealised_I_vs_dML_overlay.png}
+  \caption{Idealised probit simulation (Note~S2) in canonical PEF coordinates.
+    Theory-aligned grid under (A1)--(A2): $\kappa\in\{0.8,1.0,1.2,2.0\}$,
+    $\rho\in\{-0.3,-0.15,0,0.4\}$, $\delta/\sigma_{\mathrm{A}}\in\{0.3,0.5,1.0,2.0\}$
+    (64 cells; $n=5{,}000$, 50 trials, five-fold logistic CV).
+    (A)~The 16 design points on $(\rho,\tau)$ with $\tau=\tfrac12\log\kappa$; dashed lines are
+    $\rho=0$ and $\tau=0$ ($\kappa=1$). Marker shape encodes the sign of $\rho$
+    (circle $\rho>0$, square $\rho=0$, triangle $\rho<0$), not quadrant labels;
+    several cells lie on the Fisher axes.
+    (B)~$I(X;Y)$ vs.\ mean $\Delta\mathrm{ML}$ (logarithmic $x$, shared $y$ $0$--$30\%$).
+    Colour is signal strength; grey trajectories join the same $(\kappa,\rho)$ across the
+    four $\delta/\sigma_{\mathrm{A}}$ values. The four colour bands are signal strata, not
+    four PEF regimes.
+    (C)~Master surface and its envelope. In the probit-regression model the
+    relative-feature accuracy depends on a single coordinate, the standardised signal
+    $d_{\mathrm{rel}}=\delta/\!\sqrt{\operatorname{Var}(X)}$, whereas the gain also depends on
+    $r=\operatorname{corr}(A,X)=(1-\rho\sqrt{\kappa})/\!\sqrt{\operatorname{Var}(X)}$. All
+    $64$ cells fall on the near-exact surface $\Delta\mathrm{ML}=F(d_{\mathrm{rel}},r)$
+    ($R^{2}\approx0.99$), which coincides with the Bayes-optimal gain (simulated vs.\ analytic
+    $\Delta\mathrm{ML}$: $r\!=\!0.9998$). Points are coloured by $r$; marker shape encodes
+    $\mathrm{sign}(\rho)$. The visible edges are the two limits of the surface: a hard
+    \emph{floor} $\Delta\mathrm{ML}=0$ as $r\!\to\!1$ (the relative feature is the
+    Bayes-sufficient statistic, so relativisation can never hurt in this idealised setting),
+    and a \emph{ceiling}
+    $\Delta\mathrm{ML}=100\,[\,g(d_{\mathrm{rel}})/\Phi(d_{\mathrm{rel}}/\!\sqrt{2})-1\,]$
+    as $r\!\to\!0$ (the absolute feature collapses to the majority-class baseline), where
+    $g(d)=\mathbb{E}_{u\sim N(0,1)}\Phi(|d+u|)$. The dashed curve is this ceiling; the grey
+    curve is the achieved grid edge at $r=0.32$. Low-$r$ cells ride the ceiling, high-$r$ cells
+    sink to the floor. Generated by
+    \texttt{scripts/matlab\_figures/regenerate\_figure\_S4\_overlay.m}.}
   \label{fig:si_idealised_stratified}
 \end{figure}
 
@@ -100,11 +147,12 @@ which makes $X$ the Bayes-sufficient statistic for $Y$ and yields analytic infor
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\linewidth]{figures/Figure_S5_iso_eta_I_tension.png}
-  \caption{Idealised probit companion (Note~S2): iso-$\eta$ vs.\ iso-$I(X;Y)$ at median empirical $\delta/\sigma_{\mathrm{A}}=0.28$.
-    Solid contours: $\eta$; dashed contours: $I(X;Y)$.
-    Sports KPI positions (white markers) illustrate that efficiency and
-    information content need not align when signal strength varies across KPIs
-    (\cref{sec:signal_strength,sec:eff_power}).
+  \caption{Idealised probit companion (Note~S2): iso-$\eta$ vs.\ iso-$I(X;Y)$.
+    (A)~Surface at median empirical $\delta/\sigma_{\mathrm{A}}=0.28$ (solid: $\eta$; dashed: $I$);
+    markers are factorial design points; yellow lines mark the cuts in (B)--(C).
+    (B)~Cut at $\kappa=1$: $\eta(\rho)$ is signal-invariant while $I(\rho)$ rises from the
+    empirical-median signal (solid) to the main-text Figure~2 nominal $\delta/\sigma_{\mathrm{A}}=1$ (dashed).
+    (C)~Cut at $\rho=0$: $\eta=1$ for all $\kappa$; again only $I$ moves with signal strength.
     Generated by \texttt{scripts/paper\_pipeline/run\_pef\_finalize\_diagnostics.m}.}
   \label{fig:si_iso_eta_I}
 \end{figure}
@@ -115,7 +163,7 @@ which makes $X$ the Bayes-sufficient statistic for $Y$ and yields analytic infor
 \section*{SI Section 2: Information Surface (Theory)}
 \label{sec:si_theory}
 
-\noindent Extends main-text Figure~2 (\cref{fig:info_surface}) and the signal-strength discussion (\cref{sec:signal_strength,sec:theory}). Figure~S1 examines sensitivity of the $I(X;Y)$ surface to $\delta/\sigma_{\mathrm{A}}$; KPI positions use the season-segment representation defined in \cref{sec:si_landscape}.
+\noindent Extends main-text Figure~2 (\cref{fig:info_surface}) and the signal-strength discussion (\cref{sec:signal_strength,sec:theory}). Figure~S1 examines sensitivity of the $I(X;Y)$ surface to $\delta/\sigma_{\mathrm{A}}$ on a controlled grid; empirical KPI positions appear separately in the landscape figures of \cref{sec:si_landscape}.
 
 \setcounter{figure}{0}
 \begin{figure}[h]
@@ -124,9 +172,8 @@ which makes $X$ the Bayes-sufficient statistic for $Y$ and yields analytic infor
   \caption{Sensitivity of the information-content surface $I(X;Y)$ to
     $\delta/\sigma_{\mathrm{A}}$ (panels at $0.5$, $1.0$, $2.0$; centre panel
     matches \cref{fig:info_surface}).
-    Sports KPI positions (rugby URC circles, football Championship squares) use
-    the two-season segments of \cref{fig:si_kpi_labelled}.
-    Generated by \texttt{Matlab/generate\_figure\_S1\_info\_sensitivity.m}.}
+    Markers are idealised factorial $(\kappa,\rho)$ design points; empirical KPI maps are in \cref{fig:si_kpi_labelled}.
+    Generated by \texttt{scripts/matlab\_figures/generate\_figure\_S1\_info\_sensitivity.m}.}
   \label{fig:si_info_sensitivity}
 \end{figure}
 
@@ -160,7 +207,8 @@ which makes $X$ the Bayes-sufficient statistic for $Y$ and yields analytic infor
   \includegraphics[width=0.85\linewidth]{figures/Figure_S3_Ipred_vs_dML.png}
   \caption{$I_{\mathrm{pred}}(X;Y)$ vs.\ five-fold $\Delta\mathrm{ML}$ across
     $N=\PEFtotalStudies$ sports KPIs (pooled seasons 23/24--24/25).
-    Points coloured by quadrant; see \cref{sec:signal_strength}.
+    Points coloured by quadrant; the five largest $|\Delta\mathrm{ML}|$ points are labelled
+    (typically outcome-adjacent features such as points or goals, not generic volume counts).
     Generated by \texttt{scripts/paper\_pipeline/run\_pef\_finalize\_diagnostics.m}.}
   \label{fig:si_ipred_vs_dml}
 \end{figure}

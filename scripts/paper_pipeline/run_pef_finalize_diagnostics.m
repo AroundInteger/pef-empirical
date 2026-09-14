@@ -23,6 +23,9 @@
 % Run:
 %   cd scripts/paper_pipeline
 %   /Applications/MATLAB_R2025b.app/bin/matlab -batch "run('run_pef_finalize_diagnostics.m')"
+%
+% Set THEORY_FIGURES_ONLY=true to regenerate S3--S5 (incl. controlled-grid S5)
+% without the bootstrap / Q4 / drift blocks.
 
 clear; clc; close all;
 rng(20260521, 'twister');
@@ -37,6 +40,7 @@ addpath(fullfile(THIS_DIR, 'lib'));
 
 N_BOOT    = 300;
 QUICK_MODE = false;   % set true for smoke test (N_BOOT=50)
+THEORY_FIGURES_ONLY = false;  % true: stop after S3--S5 (no bootstrap)
 if QUICK_MODE
     N_BOOT = 50;
 end
@@ -86,6 +90,10 @@ fig_s4 = fullfile(FIG_DIR, 'Figure_S4_idealised_I_vs_dML_stratified.png');
 plot_idealised_stratified(ideal, fig_s4);
 fprintf('Wrote finalize_idealised_stratified.csv and %s\n', fig_s4);
 fprintf('Pooled corr(I, dML) = %.3f; stratified slices in CSV\n\n', pooled_r);
+overlay_script = fullfile(SCRIPTS, 'matlab_figures', 'regenerate_figure_S4_overlay.m');
+if isfile(overlay_script)
+    run(overlay_script);
+end
 
 %% ---- Item 3: Iso-eta / iso-I overlay ------------------------------------
 if ~isfinite(median_dr) || median_dr <= 0
@@ -95,8 +103,14 @@ else
 end
 write_iso_delta_sidecar(fullfile(OUT_DIR, 'finalize_iso_delta_ratio.txt'), iso_dr, median_dr);
 fig_s5 = fullfile(FIG_DIR, 'Figure_S5_iso_eta_I_tension.png');
-plot_iso_eta_I_tension(kpi_tbl, iso_dr, H, fig_s5);
-fprintf('Wrote %s (delta/sigma_A = %.3f)\n\n', fig_s5, iso_dr);
+% Theory panel: controlled surface + factorial design points only (no empirical KPI overlay).
+plot_iso_eta_I_tension(ideal, iso_dr, fig_s5);
+fprintf('Wrote %s (delta/sigma_A = %.3f; grid design points only)\n\n', fig_s5, iso_dr);
+
+if THEORY_FIGURES_ONLY
+    fprintf('THEORY_FIGURES_ONLY: skipping bootstrap / Q4 / drift blocks.\n');
+    return;
+end
 
 %% ---- Items 4-5: Bootstrap + Q4 Bayes gap ----------------------------------
 [boot_tbl, paired_all] = run_bootstrap_all_kpis(REPO, kpi_tbl, H, N_BOOT);
@@ -262,6 +276,23 @@ function plot_Ipred_vs_dML(tbl, valid, fpath)
         'FontSize', ST.fs_title, 'FontWeight', 'bold');
     legend(ax, 'Location', 'northwest', 'Box', 'off', 'FontSize', ST.fs_panel);
     pef_figure_style.style_scatter_axes(ax, ST);
+
+    % Annotate high-|DeltaML| outliers (often outcome-adjacent KPIs).
+    sub = tbl(valid, :);
+    [~, ord] = sort(abs(sub.acc_improvement), 'descend');
+    n_ann = min(5, height(sub));
+    hold(ax, 'on');
+    for i = 1:n_ann
+        r = sub(ord(i), :);
+        lbl = strrep(char(string(r.kpi)), '_', ' ');
+        if strlength(string(r.sport)) > 0
+            lbl = sprintf('%s (%s)', lbl, char(string(r.sport)));
+        end
+        text(ax, r.I_pred + 0.0004, r.acc_improvement, lbl, ...
+            'FontSize', 8, 'Color', [0.15, 0.15, 0.15], ...
+            'Interpreter', 'none', 'Clipping', 'on');
+    end
+
     pef_figure_style.export_figure(fig, fpath);
     close(fig);
 end
@@ -298,24 +329,32 @@ function plot_idealised_stratified(ideal, fpath)
     dr_u = unique(ideal.delta_ratio);
     dr_u = sort(dr_u);
     nP = numel(dr_u);
+    panel_letters = 'ABCDEFGH';
+    Y_LIM = [0, 30];
     fig = pef_figure_style.new_figure(380 * nP, 420);
     for pi = 1:nP
         dr = dr_u(pi);
         sl = abs(ideal.delta_ratio - dr) < 1e-9;
         sub = ideal(sl, :);
         ax = subplot(1, nP, pi);
-        pef_figure_style.scatter_by_quadrant(ax, sub.Ixy, ...
+        % Log-x: I>0 on the idealised grid; clamp tiny values for display.
+        xI = max(sub.Ixy, 1e-4);
+        pef_figure_style.scatter_by_quadrant(ax, xI, ...
             sub.acc_impr_pct_mean, sub.quadrant, ST, 40);
+        set(ax, 'XScale', 'log');
+        ylim(ax, Y_LIM);
         xlabel(ax, 'I(X;Y)  [bits]', 'FontSize', ST.fs_label);
         ylabel(ax, 'Mean \DeltaML  (%)', 'FontSize', ST.fs_label);
-        title(ax, sprintf('\\delta/\\sigma_A = %.1f', dr), ...
+        title(ax, sprintf('(%s)  \\delta/\\sigma_A = %.1f', panel_letters(pi), dr), ...
             'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
         pef_figure_style.style_scatter_axes(ax, ST);
+        set(ax, 'XScale', 'log');  % style helper may reset
+        ylim(ax, Y_LIM);
         if pi == 1
             legend(ax, 'Location', 'best', 'Box', 'off', 'FontSize', ST.fs_panel);
         end
     end
-    sgtitle(fig, 'Idealised probit: I vs ML gain by fixed \delta/\sigma_A', ...
+    sgtitle(fig, 'Idealised probit: I vs ML gain by fixed \delta/\sigma_A (shared y; log x)', ...
         'FontSize', ST.fs_label, 'FontWeight', 'bold', 'Interpreter', 'tex');
     pef_figure_style.export_figure(fig, fpath);
     close(fig);
@@ -330,17 +369,26 @@ function write_iso_delta_sidecar(fpath, iso_dr, median_dr)
 end
 
 % =========================================================================
-function plot_iso_eta_I_tension(kpi_tbl, deltaRatio, ~, fpath)
+function plot_iso_eta_I_tension(ideal_tbl, deltaRatio, fpath)
+    % (A) Pedagogical PEF surface at empirical-median signal: iso-eta vs iso-I.
+    % (B--C) Landscape cuts at kappa=1 and rho=0, comparing delta/sigma_A =
+    %        empirical median vs main-text Fig. 2 nominal (1.0).
+    % Markers on (A) are idealised factorial design points only.
     ST = pef_figure_style.config();
+    delta_fig2 = 1.0;
     [r_g, k_g, R, K] = pef_figure_style.landscape_grid(400, 400);
     eta_s = pef_figure_style.compute_eta(R, K);
-    Ixy = pef_figure_style.compute_mi_grid(K, R, deltaRatio, 1.0);
+    I_med = pef_figure_style.compute_mi_grid(K, R, deltaRatio, 1.0);
+    I_f2  = pef_figure_style.compute_mi_grid(K, R, delta_fig2, 1.0);
 
-    fig = pef_figure_style.new_figure(950, 720);
-    ax = axes('Parent', fig);
-    h_img = imagesc(ax, r_g, k_g, Ixy);
+    fig = pef_figure_style.new_figure(1100, 980);
+    tl = tiledlayout(fig, 2, 2, 'Padding', 'compact', 'TileSpacing', 'compact');
+
+    % ---- (A) iso surface -------------------------------------------------
+    ax = nexttile(tl, [1 2]);
+    h_img = imagesc(ax, r_g, k_g, I_med);
     set(ax, 'YDir', 'normal');
-    set(h_img, 'AlphaData', double(~isnan(Ixy)) * ST.surface_alpha);
+    set(h_img, 'AlphaData', double(~isnan(I_med)) * ST.surface_alpha);
     colormap(ax, parula(256));
     caxis(ax, ST.I_caxis);
     hold(ax, 'on');
@@ -350,18 +398,86 @@ function plot_iso_eta_I_tension(kpi_tbl, deltaRatio, ~, fpath)
     [Ce, he] = contour(ax, R, K, eta_s, [0.5, 0.75, 1, 1.25, 1.5, 2], ...
         'Color', [0.15, 0.15, 0.15], 'LineWidth', 1.1);
     clabel(Ce, he, 'FontSize', ST.fs_panel, 'Color', [0.15, 0.15, 0.15]);
-    [Ci, hi] = contour(ax, R, K, Ixy, [0.02, 0.05, 0.1, 0.15, 0.20], ...
+    [Ci, hi] = contour(ax, R, K, I_med, [0.02, 0.05, 0.1, 0.15, 0.20], ...
         'w--', 'LineWidth', 0.9);
     clabel(Ci, hi, 'FontSize', ST.fs_panel, 'Color', 'w');
-    scatter(ax, kpi_tbl.rho, kpi_tbl.kappa, 28, 'w', 'filled', ...
-        'MarkerEdgeColor', [0.2, 0.2, 0.2], 'LineWidth', 0.4, ...
-        'MarkerFaceAlpha', 0.65);
+    % Cut guides
+    xline(ax, 0, 'Color', [0.95, 0.95, 0.2], 'LineWidth', 1.4, 'LineStyle', '-');
+    yline(ax, 1, 'Color', [0.95, 0.95, 0.2], 'LineWidth', 1.4, 'LineStyle', '-');
+    if istable(ideal_tbl) && all(ismember({'rho','kappa'}, ideal_tbl.Properties.VariableNames))
+        pts = unique([ideal_tbl.rho, ideal_tbl.kappa], 'rows');
+        scatter(ax, pts(:, 1), pts(:, 2), 36, [0.92, 0.92, 0.92], 'o', ...
+            'MarkerEdgeColor', [0.15, 0.15, 0.15], 'LineWidth', 0.7, ...
+            'MarkerFaceAlpha', 0.9);
+    end
     pef_figure_style.style_landscape_axes(ax, ST);
     pef_figure_style.add_I_colorbar(ax, ST);
-    title(ax, sprintf('Iso-\\eta (solid) vs iso-I (dashed) at \\delta/\\sigma_A = %.2f', ...
+    title(ax, sprintf(['(A)  Iso-\\eta (solid) vs iso-I (dashed) at \\delta/\\sigma_A = %.2f; ', ...
+        'yellow lines = cuts in (B)--(C)'], deltaRatio), ...
+        'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
+
+    % ---- Cuts: dense 1D samples along kappa=1 and rho=0 -----------------
+    rho_line = linspace(-0.95, 0.95, 400);
+    kap_line = linspace(0.05, 2.95, 400);
+    eta_vs_rho = (1 + 1) ./ (1 + 1 - 2 * sqrt(1) .* rho_line);  % kappa=1
+    eta_vs_kap = (1 + kap_line) ./ (1 + kap_line - 2 * sqrt(kap_line) .* 0);  % rho=0 -> 1
+    I_rho_med = arrayfun(@(r) mi_at(1.0, r, deltaRatio), rho_line);
+    I_rho_f2  = arrayfun(@(r) mi_at(1.0, r, delta_fig2), rho_line);
+    I_kap_med = arrayfun(@(k) mi_at(k, 0.0, deltaRatio), kap_line);
+    I_kap_f2  = arrayfun(@(k) mi_at(k, 0.0, delta_fig2), kap_line);
+
+    axb = nexttile(tl);
+    hold(axb, 'on');
+    yyaxis(axb, 'left');
+    plot(axb, rho_line, eta_vs_rho, 'k-', 'LineWidth', 1.6);
+    ylabel(axb, '\eta', 'FontSize', ST.fs_label, 'Interpreter', 'tex');
+    yyaxis(axb, 'right');
+    plot(axb, rho_line, I_rho_med, 'Color', [0.12, 0.47, 0.71], 'LineWidth', 1.5);
+    plot(axb, rho_line, I_rho_f2, 'Color', [0.12, 0.47, 0.71], 'LineStyle', '--', 'LineWidth', 1.5);
+    ylabel(axb, 'I(X;Y)  [bits]', 'FontSize', ST.fs_label);
+    xline(axb, 0, ':', 'Color', [0.4, 0.4, 0.4]);
+    xlabel(axb, '\rho  (\kappa = 1 cut)', 'FontSize', ST.fs_label, 'Interpreter', 'tex');
+    title(axb, sprintf('(B)  \\kappa=1 cut: \\eta invariant; I at \\delta/\\sigma_A=%.2f (solid) vs 1.0 (dashed)', ...
         deltaRatio), 'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
+    grid(axb, 'on');
+    axb.FontSize = ST.fs_tick;
+
+    axc = nexttile(tl);
+    hold(axc, 'on');
+    yyaxis(axc, 'left');
+    plot(axc, kap_line, eta_vs_kap, 'k-', 'LineWidth', 1.6);
+    ylabel(axc, '\eta', 'FontSize', ST.fs_label, 'Interpreter', 'tex');
+    ylim(axc, [0.8, 1.2]);
+    yyaxis(axc, 'right');
+    plot(axc, kap_line, I_kap_med, 'Color', [0.89, 0.47, 0.07], 'LineWidth', 1.5);
+    plot(axc, kap_line, I_kap_f2, 'Color', [0.89, 0.47, 0.07], 'LineStyle', '--', 'LineWidth', 1.5);
+    ylabel(axc, 'I(X;Y)  [bits]', 'FontSize', ST.fs_label);
+    xline(axc, 1, ':', 'Color', [0.4, 0.4, 0.4]);
+    xlabel(axc, '\kappa  (\rho = 0 cut)', 'FontSize', ST.fs_label, 'Interpreter', 'tex');
+    title(axc, sprintf('(C)  \\rho=0 cut: \\eta=1; I at \\delta/\\sigma_A=%.2f (solid) vs 1.0 (dashed)', ...
+        deltaRatio), 'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
+    grid(axc, 'on');
+    axc.FontSize = ST.fs_tick;
+
     pef_figure_style.export_figure(fig, fpath);
     close(fig);
+end
+
+function I = mi_at(kappa, rho, deltaRatio)
+    % Mutual information under (A1)--(A2) with sigma_A = 1 (matches figure helpers).
+    eta = (1 + kappa) / (1 + kappa - 2 * sqrt(kappa) * rho);
+    if ~(isfinite(eta) && eta > 0)
+        I = NaN;
+        return;
+    end
+    snr = deltaRatio / (2 * sqrt((1 + kappa) / eta));
+    p_err = normcdf(-snr);
+    if p_err <= 0 || p_err >= 1
+        I = 1;
+    else
+        H = @(p) -p .* log2(p) - (1 - p) .* log2(1 - p);
+        I = 1 - H(p_err);
+    end
 end
 
 % =========================================================================
