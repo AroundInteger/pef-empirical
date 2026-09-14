@@ -8,9 +8,9 @@ The SI is organised into **thematic sections** ordered by the main paper narrati
 |---|---|---|
 | **§1 Idealised probit validation** | Introduction (contributions); Methods Tier 1; Results (foundation, `\cref{sec:eff_power}`) | Note S2; Figure S4; Figure S5 |
 | **§2 Information surface (theory)** | Theory (`\cref{sec:theory}`, `\cref{fig:info_surface}`, `\cref{sec:signal_strength}`) | Figure S1 |
-| **§3 Sports KPI landscape** | Methods (`\cref{sec:outcome_defs}`); Results landscape; Discussion (stationarity) | Figure S2; Figure S3; Table S1; inventory tables; Figure S8 |
+| **§3 Sports KPI landscape** | Methods (`\cref{sec:outcome_defs}`); Results landscape; Discussion (stationarity) | Figure S2; Figure S3; Table S1; Table S2 (ranked by $\|\hat\eta-1\|$); inventory CSVs; Figure S8 |
 | **§4 Efficiency–power diagnostics** | Results (`\cref{sec:eff_power}`); `\cref{tab:exemplars}` | Figure S6; Figure S7 |
-| **§5 Quality control** | Methods (`\cref{sec:qc}`); Discussion (limitations) | Note S1 |
+| **§5 Quality control** | Methods (`\cref{sec:qc}`); Discussion (limitations) | Paired-difference Shapiro--Wilk note; Note S1 |
 | **§6 Practitioner diagnostic** | Discussion (`\cref{sec:practical_guidance}`); `\cref{sec:data_availability}` | Note S4 |
 
 ## Design rules
@@ -40,6 +40,8 @@ The SI is organised into **thematic sections** ordered by the main paper narrati
 | `fig:si_q4_bayes_gap` | Figure S7 |
 | `fig:si_season_drift` | Figure S8 |
 | `tab:si_quad_landscape` | Table S1 |
+| `tab:si_quad_ranked` | Table S2 |
+| `sec:si_normality` | Paired-difference Shapiro--Wilk note |
 | `sec:si_note_s1` | Note S1 |
 | `sec:si_note_s2` | Note S2 |
 | `sec:si_note_s4` | Note S4 |

@@ -41,6 +41,7 @@ addpath(fullfile(THIS_DIR, 'lib'));
 N_BOOT    = 300;
 QUICK_MODE = false;   % set true for smoke test (N_BOOT=50)
 THEORY_FIGURES_ONLY = false;  % true: stop after S3--S5 (no bootstrap)
+REUSE_BOOTSTRAP = isfile(fullfile(OUT_DIR, 'finalize_bootstrap_pef.csv'));
 if QUICK_MODE
     N_BOOT = 50;
 end
@@ -113,16 +114,22 @@ if THEORY_FIGURES_ONLY
 end
 
 %% ---- Items 4-5: Bootstrap + Q4 Bayes gap ----------------------------------
-[boot_tbl, paired_all] = run_bootstrap_all_kpis(REPO, kpi_tbl, H, N_BOOT);
-writetable(boot_tbl, fullfile(OUT_DIR, 'finalize_bootstrap_pef.csv'));
-fprintf('Wrote finalize_bootstrap_pef.csv\n');
+boot_csv = fullfile(OUT_DIR, 'finalize_bootstrap_pef.csv');
+if REUSE_BOOTSTRAP
+    boot_tbl = readtable(boot_csv);
+    fprintf('Reusing %s (REUSE_BOOTSTRAP)\n', boot_csv);
+else
+    [boot_tbl, ~] = run_bootstrap_all_kpis(REPO, kpi_tbl, H, N_BOOT);
+    writetable(boot_tbl, boot_csv);
+    fprintf('Wrote finalize_bootstrap_pef.csv\n');
+end
 
-ex_top = exemplars_unique_rank1(exem);
+ex_top = confirmatory_exemplars_plus_rucks();
 fig_boot = fullfile(FIG_DIR, 'Figure_finalize_bootstrap_exemplars.png');
 plot_bootstrap_exemplars(boot_tbl, ex_top, fig_boot);
 fprintf('Wrote %s\n', fig_boot);
 
-q4_tbl = build_q4_bayes_gap(kpi_tbl, exem);
+q4_tbl = build_q4_bayes_gap(kpi_tbl);
 writetable(q4_tbl, fullfile(OUT_DIR, 'finalize_q4_bayes_gap.csv'));
 fig_s6 = fullfile(FIG_DIR, 'Figure_S6_q4_bayes_gap.png');
 plot_q4_bayes_gap(q4_tbl, fig_s6);
@@ -162,8 +169,8 @@ function tbl = build_kpi_information_table(pef2, ml, H)
         [delta, sigmaA, dr] = H.delta_sigma_from_means( ...
             pef2.mean_home(i), pef2.mean_away(i), pef2.var_home(i));
         varX = H.var_diff(pef2.kappa(i), pef2.rho(i), sigmaA);
-        Ipr = H.mi_closed(pef2.kappa(i), pef2.rho(i), delta, sigmaA);
-        bay = H.bayes_acc_x(delta, varX);
+        Ipr = H.mi_closed(pef2.kappa(i), pef2.rho(i), abs(delta), sigmaA);
+        bay = H.bayes_acc_A(delta, pef2.kappa(i), pef2.rho(i), sigmaA);
         if mi.found
             gap = 100 * (mi.acc_rel - bay);
             acc_a = mi.acc_abs;
@@ -524,10 +531,16 @@ function [boot_tbl, paired_all] = run_bootstrap_all_kpis(REPO, kpi_tbl, H, nBoot
 end
 
 % =========================================================================
-function ex = exemplars_unique_rank1(exem)
-    top = exem(exem.rank_in_group == 1, :);
-    [~, ia] = unique(top.kpi, 'stable');
-    ex = top(ia, :);
+function ex = confirmatory_exemplars_plus_rucks()
+    % Four tab:exemplars KPIs plus the rucks-won counter-example.
+    spec = { ...
+        "rugby",    "kick_metres",           "Q1"; ...
+        "football", "long_balls",            "Q2"; ...
+        "football", "passes",                "Q3"; ...
+        "football", "goalkeeper_long_balls", "Q4"; ...
+        "rugby",    "rucks_won",             "Q2"};
+    ex = table(string(spec(:,1)), string(spec(:,2)), string(spec(:,3)), ...
+        'VariableNames', {'sport','kpi','quadrant'});
 end
 
 % =========================================================================
@@ -586,13 +599,14 @@ function plot_bootstrap_exemplars(boot_tbl, ex_top, fpath)
 end
 
 % =========================================================================
-function q4 = build_q4_bayes_gap(kpi_tbl, exem)
-    q4ex = exem(exem.quadrant == "Q4" & exem.rank_in_group == 1, :);
-    [~, ia] = unique(q4ex.kpi, 'stable');
-    q4ex = q4ex(ia, :);
+function q4 = build_q4_bayes_gap(kpi_tbl)
+    % Confirmatory Q4 KPI plus one additional Q4 inventory case.
+    spec = { ...
+        "football", "goalkeeper_long_balls"; ...
+        "rugby",    "tackles"};
     rows = {};
-    for i = 1:height(q4ex)
-        m = kpi_tbl.sport == string(q4ex.sport(i)) & kpi_tbl.kpi == string(q4ex.kpi(i));
+    for i = 1:size(spec, 1)
+        m = kpi_tbl.sport == spec{i, 1} & kpi_tbl.kpi == spec{i, 2};
         if ~any(m), continue; end
         r = kpi_tbl(find(m, 1), :);
         rows(end+1, :) = {r.sport, r.kpi, r.eta, r.I_pred, r.delta_ratio, ...
@@ -624,9 +638,10 @@ function plot_q4_bayes_gap(q4, fpath)
         bh(bi).LineWidth = 0.6;
     end
     set(ax, 'XTickLabel', labels, 'XTickLabelRotation', 20, 'FontSize', ST.fs_panel);
-    legend(ax, {'Accuracy A (%)', 'Accuracy A-B (%)', 'Bayes bound on A (%)'}, ...
+    legend(ax, {'Accuracy A (%)', 'Accuracy A-B (%)', ...
+        'Equal-prior Bayes bound on A (%)'}, ...
         'Location', 'northwest', 'Box', 'off', 'FontSize', ST.fs_panel);
-    title(ax, 'Quadrant~4 exemplars: absolute vs relative vs Bayes bound', ...
+    title(ax, 'Q4: absolute vs relative vs Gaussian bound on A', ...
         'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
     ylabel(ax, 'Accuracy (%)', 'FontSize', ST.fs_label);
     pef_figure_style.style_scatter_axes(ax, ST);
