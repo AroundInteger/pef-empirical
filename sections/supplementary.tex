@@ -67,7 +67,7 @@ which makes $X$ the Bayes-sufficient statistic for $Y$ and yields analytic infor
 
 \textbf{Validation 3 (efficiency--power tension).} All 16 Quadrant~4 grid cells with $\eta<1$ produced positive mean machine-learning improvement (\cref{fig:si_idealised_stratified}), reproducing the predicted tension (\cref{sec:eff_power_theory}) in a setting free of empirical confounds.
 
-\textbf{Reproducibility.} The simulation is implemented in \texttt{scripts/paper\_pipeline/run\_pef\_idealised\_probit\_sim.m}, with theory helpers in \texttt{scripts/paper\_pipeline/lib/pef\_theory\_helpers.m}. The locked configuration (grid, $n$, trials, folds, base seed) is recorded in the script's \texttt{PRODUCTION\_CONFIG} block; outputs (\texttt{idealised\_probit\_grid.csv}, \texttt{idealised\_probit\_scenarios.csv}, \texttt{idealised\_probit\_summary.txt}, and the diagnostic figures) are written to \texttt{scripts/paper\_pipeline/outputs/}. A \texttt{SMOKE\_TEST} flag runs a one-cell sanity check before a full execution.
+\textbf{Reproducibility.} The simulation is implemented in \texttt{scripts/paper\...\_sim.m}, with theory helpers in \texttt{scripts/paper\...\_helpers.m}. The locked configuration (grid, $n$, trials, folds, base seed) is recorded in the script's \texttt{PRODUCTION\_CONFIG} block; outputs (\texttt{idealised\_probit\_grid.csv}, \texttt{idealised\_probit\_scenarios.csv}, \texttt{idealised\_probit\_summary.txt}, and the diagnostic figures) are written to \texttt{scripts/paper\_pipeline/outputs/}. A \texttt{SMOKE\_TEST} flag runs a one-cell sanity check before a full execution.
 
 \clearpage
 
