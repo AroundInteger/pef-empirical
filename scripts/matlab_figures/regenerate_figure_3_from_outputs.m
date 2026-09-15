@@ -8,6 +8,7 @@ THIS = fileparts(mfilename('fullpath'));
 REPO = fileparts(fileparts(THIS));
 OUT  = fullfile(REPO, 'scripts', 'paper_pipeline', 'outputs');
 FIG  = fullfile(REPO, 'figures');
+addpath(fullfile(REPO, 'scripts', 'paper_pipeline', 'lib'));
 
 pef = readtable(fullfile(OUT, 'pef_landscape_2season.csv'));
 ml  = readtable(fullfile(OUT, 'ml_empirical_results.csv'));
@@ -22,6 +23,7 @@ pef_s = pef(:, keep);
 ml_all = outerjoin(ml, pef_s, 'Keys', {'sport','kpi'}, 'MergeKeys', true, ...
     'Type', 'left');
 
+ST = pef_figure_style.config();
 X_LIM = [0, 5.5];
 Y_LIM = [-5, 10];
 quads = ["Q1","Q2","Q3","Q4"];
@@ -30,9 +32,9 @@ valid = ~isnan(ml_all.eta) & ~isnan(ml_all.acc_improvement);
 n_clip = sum(valid & (ml_all.eta > X_LIM(2) | ...
     ml_all.acc_improvement < Y_LIM(1) | ml_all.acc_improvement > Y_LIM(2)));
 
-fig = figure('Color','w','Position',[100 100 950 650], 'Visible', 'off');
+fig = pef_figure_style.new_figure(950, 650);
 
-subplot(1,2,1); hold on;
+ax1 = subplot(1,2,1); hold on;
 for qi = 1:4
     qm = valid & ml_all.quadrant == quads(qi);
     if ~any(qm), continue; end
@@ -46,33 +48,36 @@ yline(0, 'k:', 'LineWidth',0.8, 'HandleVisibility','off');
 exemplar_sport = ["rugby","football","football","football"];
 exemplar_kpi   = ["kick_metres","long_balls","passes","goalkeeper_long_balls"];
 exemplar_label = ["Q1: kick metres","Q2: long balls","Q3: passes","Q4: gk long balls"];
-exemplar_xoff  = [0.12, 0.10, 0.10, 0.15];
-exemplar_yoff  = [1.2, 1.8, -2.0, 1.5];
+exemplar_xoff  = [0.18, 0.55, 0.16, 0.85];
+exemplar_yoff  = [1.15, 2.40, -2.70, -2.15];
 for ei = 1:4
     emask = valid & ml_all.sport == exemplar_sport(ei) & ml_all.kpi == exemplar_kpi(ei);
     if ~any(emask), continue; end
     xe = ml_all.eta(emask); ye = ml_all.acc_improvement(emask);
     scatter(xe, ye, 160, 'k', 'o', 'LineWidth', 2.0, 'HandleVisibility','off');
     text(xe + exemplar_xoff(ei), ye + exemplar_yoff(ei), exemplar_label(ei), ...
-        'FontSize', 8, 'FontWeight', 'bold');
+        'FontSize', ST.fs_annot, 'FontWeight', 'bold');
 end
 rmask = valid & ml_all.sport == "rugby" & ml_all.kpi == "rucks_won";
 if any(rmask)
     scatter(ml_all.eta(rmask), ml_all.acc_improvement(rmask), 130, ...
         [0.5 0.5 0.5], 'd', 'LineWidth', 1.5, 'HandleVisibility','off');
-    text(ml_all.eta(rmask) + 0.12, ml_all.acc_improvement(rmask) + 1.2, ...
-        'rucks won', 'FontSize', 7.5, 'Color', [0.35 0.35 0.35]);
+    text(ml_all.eta(rmask) - 0.12, ml_all.acc_improvement(rmask) + 0.35, ...
+        'rucks won', 'FontSize', ST.fs_annot, 'Color', [0.35 0.35 0.35], ...
+        'HorizontalAlignment', 'right');
 end
 xlim(X_LIM); ylim(Y_LIM);
-xlabel('\eta (PEF)','FontSize',11);
-ylabel('\DeltaML accuracy (%)','FontSize',11);
-title('(A)  ML improvement vs \eta  (annotated exemplars)','FontSize',11);
-legend('Location','northwest','Box','off','FontSize',8);
+xlabel('\eta (PEF)','FontSize',ST.fs_label);
+ylabel('\DeltaML accuracy (%)','FontSize',ST.fs_label);
+legend('Location','northeast','Box','off','FontSize',ST.fs_panel);
+pef_figure_style.add_panel_letter(ax1, '(A)', ST);
 if n_clip > 0
-    annotation('textbox',[0.09 0.04 0.36 0.04], ...
-        'String', sprintf('%d pt(s) outside shown range', n_clip), ...
-        'EdgeColor','none','FontSize',7,'Color',[0.5 0.5 0.5]);
+    text(ax1, 0.98, 0.02, sprintf('%d pt(s) outside shown range', n_clip), ...
+        'Units', 'normalized', 'HorizontalAlignment', 'right', ...
+        'VerticalAlignment', 'bottom', 'FontSize', ST.fs_tick, ...
+        'Color', [0.45 0.45 0.45], 'HandleVisibility', 'off');
 end
+pef_figure_style.style_scatter_axes(ax1, ST);
 grid on; hold off;
 
 ax2 = subplot(1,2,2); hold on;
@@ -88,26 +93,34 @@ for qi = 1:4, bh.CData(qi,:) = qcol(qi,:); end
 for qi = 1:4
     y0 = q_means(qi);
     y1 = q_means(qi) + q_se(qi);
-    plot([qi, qi], [y0, y1], 'k-', 'LineWidth', 1.2, 'HandleVisibility','off');
+    plot([qi, qi], [max(y0, 0), y1], 'k-', 'LineWidth', 1.2, 'HandleVisibility','off');
     plot([qi-0.08, qi+0.08], [y1, y1], 'k-', 'LineWidth', 1.2, 'HandleVisibility','off');
 end
-yline(0, 'k-', 'LineWidth', 0.8, 'HandleVisibility','off');
 xlim(ax2, [0.4, 4.6]);
 xticks(1:4); xticklabels(cellstr(quads));
-xlabel('Quadrant','FontSize',11);
-ylabel('Mean \DeltaML accuracy (%)','FontSize',11);
-title('(B)  Mean + 1 SE by quadrant','FontSize',11);
+xlabel('Quadrant','FontSize',ST.fs_label);
+ylabel('Mean \DeltaML accuracy (%)','FontSize',ST.fs_label);
+y_hi = max(q_means + q_se);
+pef_figure_style.ylim_bars_from_zero(ax2, y_hi);
 yl = ax2.YLim;
+ymax = yl(2);
 for qi = 1:4
-    ty = max(min(q_means(qi)*0.5, yl(2)-0.2), yl(1)+0.1);
+    if q_means(qi) > 0.28 * ymax
+        ty = q_means(qi) * 0.45;
+        tc = [1 1 1];
+    else
+        ty = max(q_means(qi), 0) + q_se(qi) + 0.05 * ymax;
+        tc = [0.15 0.15 0.15];
+    end
     text(qi, ty, sprintf('n=%d', q_n(qi)), ...
-        'HorizontalAlignment','center','FontSize',9,'Color','w','FontWeight','bold');
+        'HorizontalAlignment','center','FontSize',ST.fs_annot, ...
+        'Color', tc, 'FontWeight','bold');
 end
+pef_figure_style.add_panel_letter(ax2, '(B)', ST);
+pef_figure_style.style_scatter_axes(ax2, ST);
 grid on; hold off;
 
-sgtitle('PEF empirical ML improvement  (23/24 + 24/25 pooled)', ...
-    'FontSize',12,'FontWeight','bold');
 out = fullfile(FIG, 'Figure_3.png');
-exportgraphics(fig, out, 'Resolution', 200);
+pef_figure_style.export_figure(fig, out);
 close(fig);
 fprintf('Saved %s\n', out);

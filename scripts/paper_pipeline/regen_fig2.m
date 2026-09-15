@@ -2,11 +2,15 @@
 THIS_DIR = fileparts(mfilename('fullpath'));
 SCRIPTS  = fileparts(THIS_DIR);
 REPO     = fileparts(SCRIPTS);
+addpath(THIS_DIR);
+addpath(fullfile(THIS_DIR, 'lib'));
+addpath(fullfile(SCRIPTS, 'PEF_Normality_4seasons'));
 
 OUT_DIR = fullfile(THIS_DIR, 'outputs');
 FIG_DIR = fullfile(REPO, 'figures');
 
 pef_2s         = readtable(fullfile(OUT_DIR, 'pef_landscape_2season.csv'), 'TextType', 'string');
+pef_per_season = readtable(fullfile(OUT_DIR, 'pef_landscape_per_season.csv'), 'TextType', 'string');
 domain_summary = readtable(fullfile(OUT_DIR, 'domain_summary.csv'),        'TextType', 'string');
 
 for c = {'rho_mean','kappa_mean','mean_eta','sd_eta','success_pct','n'}
@@ -18,5 +22,5 @@ for c = {'rho_mean','kappa_mean','mean_eta','sd_eta','success_pct','n'}
     end
 end
 
-figure_2_info_surface(pef_2s, domain_summary, fullfile(FIG_DIR, 'Figure_2.png'));
+figure_2_info_surface(pef_2s, pef_per_season, domain_summary, fullfile(FIG_DIR, 'Figure_2.png'));
 fprintf('Figure 2 saved to %s\n', fullfile(FIG_DIR, 'Figure_2.png'));

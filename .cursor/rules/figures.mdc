@@ -1,0 +1,68 @@
+---
+description: House style for main-paper and SI figures (type, panel letters, legends, captions)
+globs: "**/figures/**,**/*figure*.m,**/pef_figure_style.m,**/tables_and_figures.tex,**/supplementary.tex"
+alwaysApply: false
+---
+
+# Figure presentation (empirical paper)
+
+Canonical implementation: `scripts/paper_pipeline/lib/pef_figure_style.m`.
+Use `config()`, `add_panel_letter`, `style_scatter_axes`, `export_figure`.
+Do not set font sizes or titles by hand in published figure scripts.
+
+Applies to main Figures 1--3 and SI S1--S8. Diagnostic notebooks
+(`pef_information_content_*.m`, synthetic ML validation, probit smoke plots)
+are exempt.
+
+## Type
+
+| Element | Size | `config` field |
+|---------|------|----------------|
+| Axis labels, colourbar labels | 12 pt (minimum 10 pt) | `fs_label` |
+| Tick labels, contour clabels | 10 pt | `fs_tick` |
+| Panel letters, KPI names, `n=`, notes | 12 pt | `fs_annot` |
+| Legends, Q1--Q4 tags | 12 pt | `fs_panel`, `fs_quad` |
+
+Export at 300 dpi (`export_figure`). White figure background.
+
+## Titles and captions
+
+- No axes `title` / `sgtitle` on published figures.
+- Narrative lives in the LaTeX caption (`sections/tables_and_figures.tex`, `sections/supplementary.tex`).
+- Captions use (A), (B), (C) to match panel letters. British English.
+
+## Panel letters
+
+- Multi-panel figures: `(A)`, `(B)`, `(C)` via `pef_figure_style.add_panel_letter`.
+- Sit **inside** the axes, default northwest inset (~5% from top-left).
+- White background, 12 pt bold. Optional `Note` on the same line (e.g. `\delta/\sigma_A`).
+- Use another corner only when northwest sits on data (document why).
+- Single-panel figures do not need a letter.
+
+## Legends and annotations
+
+- Legends 12 pt, box off. Place in empty space, not on data, bars, or curves.
+- Do not let labels overlap each other, markers, or panel letters.
+- If a name has no free slot, omit it (keep the marker). Prefer collision-aware placement.
+- Dense maps (SI S2 football): thinning is allowed; say so in the caption.
+
+## Axes
+
+- Bar charts of non-negative summaries start at zero (`ylim_bars_from_zero`).
+- Do not leave an empty negative floor when every mean is ~0 or above.
+- Colour: Q1 green, Q2 blue, Q3 orange, Q4 red (`quadrant_color`).
+- Landscape limits: `\rho\in[-0.999,0.999]`, `\kappa\in[0.001,3]`.
+
+## Pre-export check
+
+1. No title on the figure.
+2. Panel letters inside the box, same corner across panels.
+3. Axis labels 12 pt, ticks 10 pt, annotations and legends 12 pt.
+4. Legend and labels clear of data.
+5. Caption describes panels without repeating a figure title.
+
+## Regeneration
+
+- Figures 1--2: `scripts/paper_pipeline/regen_fig1.m`, `regen_fig2.m`
+- Figure 3: `scripts/matlab_figures/regenerate_figure_3_from_outputs.m`
+- SI S1--S8: `scripts/matlab_figures/generate_all_si_figures.m`

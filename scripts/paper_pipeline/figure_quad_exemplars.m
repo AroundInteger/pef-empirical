@@ -21,7 +21,8 @@ function figure_quad_exemplars(ax, pef_2s, pef_per_season, metric, delta, sigmaA
         'Q3', "football", "passes",                'Passes (football)',            foot_clr,  's'; ...
         'Q4', "football", "goalkeeper_long_balls", 'GK long balls (football)',     foot_clr,  's'};
 
-    FS_MARKER = 12;
+    ST = pef_figure_style.config();
+    FS_MARKER = ST.fs_annot;
     season_early = "23/24";
     season_late  = "24/25";
 

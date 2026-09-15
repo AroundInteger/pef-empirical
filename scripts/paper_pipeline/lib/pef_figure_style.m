@@ -1,6 +1,8 @@
 classdef pef_figure_style
 %PEF_FIGURE_STYLE  Shared layout, colours, and drawing helpers for PEF figures.
 %
+%  House style: .cursor/rules/figures.mdc (no titles; labels 12 pt; ticks 10 pt;
+%  annotations and legends 12 pt; panel letters inside the axes).
 %  Used by main-text figures (Figures 1--3), supplementary figures (S1--S8),
 %  and finalize diagnostics.  Call static methods directly, e.g.:
 %    cfg = pef_figure_style.config();
@@ -11,15 +13,18 @@ classdef pef_figure_style
     methods (Static)
 
         function cfg = config()
+            % Publication type: no axes titles; captions carry the narrative.
+            % Axis labels >= 10 pt; tick labels 10 pt; annotations and legends 12 pt.
             cfg.rho_min = -0.999;
             cfg.rho_max =  0.999;
             cfg.kap_min =  0.001;
             cfg.kap_max =  3.000;
-            cfg.fs_label  = 16;
-            cfg.fs_tick   = 12;
-            cfg.fs_quad   = 16;
-            cfg.fs_title  = 13;
-            cfg.fs_panel  = 11;
+            cfg.fs_label  = 12;
+            cfg.fs_tick   = 10;
+            cfg.fs_quad   = 12;
+            cfg.fs_annot  = 12;
+            cfg.fs_panel  = 12;
+            cfg.fs_title  = 12;   % unused on published figures (kept for older scripts)
             cfg.eta_color_lo = 0.4;
             cfg.eta_color_hi = 10.0;
             cfg.I_caxis = [0, 0.30];
@@ -35,7 +40,7 @@ classdef pef_figure_style
                 0.88,  2.65; ...
                 0.88,  0.35; ...
                -0.92,  0.35; ...
-               -0.92,  2.65];
+               -0.92,  2.38];
             cfg.quad_keys = {'Q1', 'Q2', 'Q3', 'Q4'};
             cfg.bar_series = [ ...
                 0.12, 0.47, 0.71; ...
@@ -144,6 +149,54 @@ classdef pef_figure_style
             if nargin < 2, cfg = pef_figure_style.config(); end
             set(ax, 'FontSize', cfg.fs_tick, 'Box', 'on', 'GridAlpha', 0.2);
             grid(ax, 'on');
+        end
+
+        function add_panel_letter(ax, letter, cfg, varargin)
+            % Panel identifier inside the axes (never a title, never outside).
+            % Default: northwest inset, consistent across all published figures.
+            % Optional Note is drawn on the same line (12 pt).
+            if nargin < 3 || isempty(cfg), cfg = pef_figure_style.config(); end
+            loc = 'northwest';
+            note = '';
+            if ~isempty(varargin)
+                for vi = 1:2:numel(varargin)
+                    key = varargin{vi};
+                    val = varargin{vi + 1};
+                    if strcmpi(key, 'Location')
+                        loc = val;
+                    elseif strcmpi(key, 'Note')
+                        note = val;
+                    end
+                end
+            end
+            txt = char(string(letter));
+            if ~isempty(note)
+                txt = [txt, '  ', char(string(note))];
+            end
+            switch lower(char(string(loc)))
+                case 'northeast'
+                    xy = [0.95, 0.92]; ha = 'right'; va = 'top';
+                case 'southwest'
+                    xy = [0.05, 0.06]; ha = 'left'; va = 'bottom';
+                case 'southeast'
+                    xy = [0.95, 0.06]; ha = 'right'; va = 'bottom';
+                otherwise
+                    xy = [0.05, 0.92]; ha = 'left'; va = 'top';
+            end
+            text(ax, xy(1), xy(2), txt, 'Units', 'normalized', ...
+                'FontSize', cfg.fs_annot, 'FontWeight', 'bold', ...
+                'HorizontalAlignment', ha, 'VerticalAlignment', va, ...
+                'Interpreter', 'tex', 'HandleVisibility', 'off', ...
+                'Clipping', 'off', 'Margin', 1, ...
+                'BackgroundColor', [1 1 1], 'EdgeColor', 'none');
+        end
+
+        function ylim_bars_from_zero(ax, y_hi)
+            % Bar charts of non-negative summaries start at zero (no empty negative floor).
+            if nargin < 2 || isempty(y_hi) || ~isfinite(y_hi) || y_hi <= 0
+                y_hi = 1;
+            end
+            ylim(ax, [0, y_hi * 1.18]);
         end
 
         function cb = add_eta_colorbar(ax, cfg)

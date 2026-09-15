@@ -45,5 +45,6 @@ Copy to companion: `kappa_symmetry_*.csv`, `psi_*.csv`, `pef_landscape_2season_g
 ## Writing defaults
 
 - British English; LaTeX maths per `latex-paper.mdc`
+- Figures: `figures.mdc` (type, panel letters, legends); helper `scripts/paper_pipeline/lib/pef_figure_style.m`
 - Do not edit manuscript `.tex` unless user asks
 - No hard-coded `/Users/iMacPro/` paths

@@ -11,9 +11,10 @@ function figure_1_landscape(pef_2s, pef_per_season, domain_summary, fpath, ~)
     ETA_COLOR_LO = 0.4;
     ETA_COLOR_HI = 10.0;
 
-    FS_LABEL  = 16;
-    FS_TICK   = 12;
-    FS_QUAD   = 16;
+    ST = pef_figure_style.config();
+    FS_LABEL  = ST.fs_label;
+    FS_TICK   = ST.fs_tick;
+    FS_QUAD   = ST.fs_quad;
 
     fig = figure('Color', 'w', 'Position', [100 100 1400 820]);
     ax  = axes('Parent', fig, 'Position', [0.07 0.10 0.46 0.84]);
@@ -75,7 +76,7 @@ function figure_1_landscape(pef_2s, pef_per_season, domain_summary, fpath, ~)
     text(ax,  0.88, 2.65, 'Q1', 'FontSize', FS_QUAD, 'FontWeight', 'bold', 'Color', [0.2 0.2 0.2]);
     text(ax,  0.88,  0.35, 'Q2', 'FontSize', FS_QUAD, 'FontWeight', 'bold', 'Color', [0.2 0.2 0.2]);
     text(ax, -0.92,  0.35, 'Q3', 'FontSize', FS_QUAD, 'FontWeight', 'bold', 'Color', [0.2 0.2 0.2]);
-    text(ax, -0.92, 2.65, 'Q4', 'FontSize', FS_QUAD, 'FontWeight', 'bold', 'Color', [0.2 0.2 0.2]);
+    text(ax, -0.92, 2.38, 'Q4', 'FontSize', FS_QUAD, 'FontWeight', 'bold', 'Color', [0.2 0.2 0.2]);
 
     xlim(ax, [RHO_MIN RHO_MAX]);
     ylim(ax, [KAP_MIN KAP_MAX]);
@@ -100,7 +101,7 @@ function figure_1_landscape(pef_2s, pef_per_season, domain_summary, fpath, ~)
         'FontSize', FS_LABEL, 'HorizontalAlignment', 'left', ...
         'VerticalAlignment', 'middle', 'Interpreter', 'tex');
 
-    lgd = legend(ax, 'Location', 'none', 'Box', 'off', 'FontSize', FS_TICK, ...
+    lgd = legend(ax, 'Location', 'none', 'Box', 'off', 'FontSize', ST.fs_panel, ...
         'Interpreter', 'tex');
     lgd.Position = [0.60 0.05 0.38 0.90];
 

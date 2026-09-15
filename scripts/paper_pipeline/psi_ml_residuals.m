@@ -138,6 +138,8 @@ function res = psi_ml_residuals(varargin)
     %% ---- Optional figure
     if ~isempty(a.fig_path)
         try
+            libdir = fullfile(fileparts(mfilename('fullpath')), 'lib');
+            addpath(libdir);
             render_figure_3b(ml(valid, :), slope, slope_p, a.fig_path);
         catch ME
             warning('psi_ml_residuals:figfail', ...
@@ -181,32 +183,38 @@ function res = empty_result()
 end
 
 function render_figure_3b(ml, slope, slope_p, fpath)
-    fig = figure('Color','w','Position',[100 100 1100 480], 'Visible','off');
+    ST = pef_figure_style.config();
+    fig = pef_figure_style.new_figure(1100, 480);
 
-    % Panel A: residual vs eta (sanity overlay, the current figure scope)
-    subplot(1, 2, 1);
+    ax1 = subplot(1, 2, 1);
     scatter(ml.eta, ml.residual, 40, ml.psi, 'filled'); hold on;
     yline(0, '--', 'Color', [0.4 0.4 0.4]);
-    xlabel('\eta');
-    ylabel('residual: observed - polynomial prediction (%)');
-    title('(a) Residual on the \eta scale');
+    xlabel('\eta', 'FontSize', ST.fs_label);
+    ylabel('residual: observed - polynomial prediction (%)', 'FontSize', ST.fs_label);
     cb = colorbar; cb.Label.String = '\psi';
-    grid on; box on;
+    cb.Label.FontSize = ST.fs_label;
+    cb.FontSize = ST.fs_tick;
+    pef_figure_style.add_panel_letter(ax1, '(A)', ST);
+    pef_figure_style.style_scatter_axes(ax1, ST);
 
-    % Panel B: residual vs psi (the diagnostic)
-    subplot(1, 2, 2);
+    ax2 = subplot(1, 2, 2);
     scatter(ml.psi, ml.residual, 40, sign(ml.rho), 'filled'); hold on;
     psi_grid = linspace(min(ml.psi)-0.05, max(ml.psi)+0.05, 100);
     plot(psi_grid, slope * psi_grid + ...
          (mean(ml.residual) - slope * mean(ml.psi)), 'k-', 'LineWidth', 1.5);
     yline(0, '--', 'Color', [0.4 0.4 0.4]);
-    xlabel('\psi   (Fisher--Rao coordinate)');
-    ylabel('residual (%)');
-    title(sprintf('(b) Residual on the \\psi scale (slope %.2f, p=%.3f)', slope, slope_p));
-    grid on; box on;
-    cb = colorbar; cb.Label.String = 'sign(\rho)'; caxis([-1 1]);
+    xlabel('\psi   (Fisher--Rao coordinate)', 'FontSize', ST.fs_label);
+    ylabel('residual (%)', 'FontSize', ST.fs_label);
+    cb = colorbar; cb.Label.String = 'sign(\rho)';
+    cb.Label.FontSize = ST.fs_label;
+    cb.FontSize = ST.fs_tick;
+    caxis([-1 1]);
+    text(ax2, 0.04, 0.08, sprintf('slope %.2f, p=%.3f', slope, slope_p), ...
+        'Units', 'normalized', 'FontSize', ST.fs_annot, 'Color', [0.2 0.2 0.2], ...
+        'Interpreter', 'tex');
+    pef_figure_style.add_panel_letter(ax2, '(B)', ST, 'Location', 'northeast');
+    pef_figure_style.style_scatter_axes(ax2, ST);
 
-    sgtitle('Figure 3b: \psi-stratified residual diagnostic for the PEF-to-ML mapping');
-    exportgraphics(fig, fpath, 'Resolution', 200);
+    pef_figure_style.export_figure(fig, fpath);
     close(fig);
 end

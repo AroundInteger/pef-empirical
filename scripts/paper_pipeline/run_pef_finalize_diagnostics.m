@@ -279,8 +279,6 @@ function plot_Ipred_vs_dML(tbl, valid, fpath)
     xlabel(ax, 'I_{pred}(X;Y)  [bits]', 'FontSize', ST.fs_label);
     ylabel(ax, '\DeltaML improvement  (%, relative minus absolute)', ...
         'FontSize', ST.fs_label);
-    title(ax, 'Predicted information vs relativisation gain', ...
-        'FontSize', ST.fs_title, 'FontWeight', 'bold');
     legend(ax, 'Location', 'northwest', 'Box', 'off', 'FontSize', ST.fs_panel);
     pef_figure_style.style_scatter_axes(ax, ST);
 
@@ -288,6 +286,7 @@ function plot_Ipred_vs_dML(tbl, valid, fpath)
     sub = tbl(valid, :);
     [~, ord] = sort(abs(sub.acc_improvement), 'descend');
     n_ann = min(5, height(sub));
+    xmax = max(sub.I_pred);
     hold(ax, 'on');
     for i = 1:n_ann
         r = sub(ord(i), :);
@@ -295,9 +294,15 @@ function plot_Ipred_vs_dML(tbl, valid, fpath)
         if strlength(string(r.sport)) > 0
             lbl = sprintf('%s (%s)', lbl, char(string(r.sport)));
         end
-        text(ax, r.I_pred + 0.0004, r.acc_improvement, lbl, ...
-            'FontSize', 8, 'Color', [0.15, 0.15, 0.15], ...
-            'Interpreter', 'none', 'Clipping', 'on');
+        if r.I_pred > 0.72 * xmax
+            ha = 'right'; xoff = -0.00035;
+        else
+            ha = 'left'; xoff = 0.0004;
+        end
+        text(ax, r.I_pred + xoff, r.acc_improvement, lbl, ...
+            'FontSize', ST.fs_annot, 'Color', [0.15, 0.15, 0.15], ...
+            'Interpreter', 'none', 'Clipping', 'off', ...
+            'HorizontalAlignment', ha, 'VerticalAlignment', 'middle');
     end
 
     pef_figure_style.export_figure(fig, fpath);
@@ -352,17 +357,15 @@ function plot_idealised_stratified(ideal, fpath)
         ylim(ax, Y_LIM);
         xlabel(ax, 'I(X;Y)  [bits]', 'FontSize', ST.fs_label);
         ylabel(ax, 'Mean \DeltaML  (%)', 'FontSize', ST.fs_label);
-        title(ax, sprintf('(%s)  \\delta/\\sigma_A = %.1f', panel_letters(pi), dr), ...
-            'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
+        pef_figure_style.add_panel_letter(ax, sprintf('(%s)', panel_letters(pi)), ST, ...
+            'Note', sprintf('\\delta/\\sigma_A = %.1f', dr));
         pef_figure_style.style_scatter_axes(ax, ST);
         set(ax, 'XScale', 'log');  % style helper may reset
         ylim(ax, Y_LIM);
         if pi == 1
-            legend(ax, 'Location', 'best', 'Box', 'off', 'FontSize', ST.fs_panel);
+            legend(ax, 'Location', 'northeast', 'Box', 'off', 'FontSize', ST.fs_panel);
         end
     end
-    sgtitle(fig, 'Idealised probit: I vs ML gain by fixed \delta/\sigma_A (shared y; log x)', ...
-        'FontSize', ST.fs_label, 'FontWeight', 'bold', 'Interpreter', 'tex');
     pef_figure_style.export_figure(fig, fpath);
     close(fig);
 end
@@ -419,9 +422,8 @@ function plot_iso_eta_I_tension(ideal_tbl, deltaRatio, fpath)
     end
     pef_figure_style.style_landscape_axes(ax, ST);
     pef_figure_style.add_I_colorbar(ax, ST);
-    title(ax, sprintf(['(A)  Iso-\\eta (solid) vs iso-I (dashed) at \\delta/\\sigma_A = %.2f; ', ...
-        'yellow lines = cuts in (B)--(C)'], deltaRatio), ...
-        'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
+    pef_figure_style.add_panel_letter(ax, '(A)', ST, ...
+        'Note', sprintf('\\delta/\\sigma_A = %.2f', deltaRatio));
 
     % ---- Cuts: dense 1D samples along kappa=1 and rho=0 -----------------
     rho_line = linspace(-0.95, 0.95, 400);
@@ -444,8 +446,7 @@ function plot_iso_eta_I_tension(ideal_tbl, deltaRatio, fpath)
     ylabel(axb, 'I(X;Y)  [bits]', 'FontSize', ST.fs_label);
     xline(axb, 0, ':', 'Color', [0.4, 0.4, 0.4]);
     xlabel(axb, '\rho  (\kappa = 1 cut)', 'FontSize', ST.fs_label, 'Interpreter', 'tex');
-    title(axb, sprintf('(B)  \\kappa=1 cut: \\eta invariant; I at \\delta/\\sigma_A=%.2f (solid) vs 1.0 (dashed)', ...
-        deltaRatio), 'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
+    pef_figure_style.add_panel_letter(axb, '(B)', ST);
     grid(axb, 'on');
     axb.FontSize = ST.fs_tick;
 
@@ -461,8 +462,7 @@ function plot_iso_eta_I_tension(ideal_tbl, deltaRatio, fpath)
     ylabel(axc, 'I(X;Y)  [bits]', 'FontSize', ST.fs_label);
     xline(axc, 1, ':', 'Color', [0.4, 0.4, 0.4]);
     xlabel(axc, '\kappa  (\rho = 0 cut)', 'FontSize', ST.fs_label, 'Interpreter', 'tex');
-    title(axc, sprintf('(C)  \\rho=0 cut: \\eta=1; I at \\delta/\\sigma_A=%.2f (solid) vs 1.0 (dashed)', ...
-        deltaRatio), 'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
+    pef_figure_style.add_panel_letter(axc, '(C)', ST);
     grid(axc, 'on');
     axc.FontSize = ST.fs_tick;
 
@@ -572,8 +572,7 @@ function plot_bootstrap_exemplars(boot_tbl, ex_top, fpath)
     set(ax1, 'XTick', 1:height(ex_top), 'XTickLabel', labels, ...
         'XTickLabelRotation', 25, 'FontSize', ST.fs_panel);
     ylabel(ax1, '\eta', 'FontSize', ST.fs_label);
-    title(ax1, 'Bootstrap 95% CI on \eta  (exemplars)', ...
-        'FontSize', ST.fs_title, 'FontWeight', 'bold');
+    pef_figure_style.add_panel_letter(ax1, '(A)', ST);
     pef_figure_style.style_scatter_axes(ax1, ST);
 
     ax2 = nexttile;
@@ -590,8 +589,7 @@ function plot_bootstrap_exemplars(boot_tbl, ex_top, fpath)
     set(ax2, 'XTick', 1:height(ex_top), 'XTickLabel', labels, ...
         'XTickLabelRotation', 25, 'FontSize', ST.fs_panel);
     ylabel(ax2, 'I_{pred}  [bits]', 'FontSize', ST.fs_label);
-    title(ax2, 'Bootstrap 95% CI on I_{pred}  (exemplars)', ...
-        'FontSize', ST.fs_title, 'FontWeight', 'bold');
+    pef_figure_style.add_panel_letter(ax2, '(B)', ST);
     pef_figure_style.style_scatter_axes(ax2, ST);
 
     pef_figure_style.export_figure(fig, fpath);
@@ -641,9 +639,8 @@ function plot_q4_bayes_gap(q4, fpath)
     legend(ax, {'Accuracy A (%)', 'Accuracy A-B (%)', ...
         'Equal-prior Bayes bound on A (%)'}, ...
         'Location', 'northwest', 'Box', 'off', 'FontSize', ST.fs_panel);
-    title(ax, 'Q4: absolute vs relative vs Gaussian bound on A', ...
-        'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
     ylabel(ax, 'Accuracy (%)', 'FontSize', ST.fs_label);
+    pef_figure_style.ylim_bars_from_zero(ax, max(Y(:)));
     pef_figure_style.style_scatter_axes(ax, ST);
     pef_figure_style.export_figure(fig, fpath);
     close(fig);
@@ -733,9 +730,9 @@ function plot_season_drift(drift, fpath)
     xlabel(ax, 'Alignment:  season drift \cdot \nabla I / (|\Delta| |\nabla I|)', ...
         'FontSize', ST.fs_label);
     ylabel(ax, 'Count', 'FontSize', ST.fs_label);
-    title(ax, 'Season-to-season drift vs local information gradient', ...
-        'FontSize', ST.fs_title, 'FontWeight', 'bold');
-    legend(ax, 'Location', 'best', 'Box', 'off', 'FontSize', ST.fs_panel);
+    yl = ylim(ax);
+    ylim(ax, [0, max(yl(2), 1) * 1.22]);
+    legend(ax, 'Location', 'northeast', 'Box', 'off', 'FontSize', ST.fs_panel);
     pef_figure_style.style_scatter_axes(ax, ST);
     pef_figure_style.export_figure(fig, fpath);
     close(fig);

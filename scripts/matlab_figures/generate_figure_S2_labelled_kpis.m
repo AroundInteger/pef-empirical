@@ -45,12 +45,14 @@ fig = pef_figure_style.new_figure(1800, 820);
 ax1 = subplot(1, 2, 1);
 pef_figure_style.draw_eta_surface(ax1, ST, true);
 plot_kpi_panel(ax1, kpi_rugby, rugby_stems, ST.rugby, ST.migrate, ...
-    'o', 'URC Rugby — all KPIs, seasons 23/24 \rightarrow 24/25', H, ST);
+    'o', H, ST);
+pef_figure_style.add_panel_letter(ax1, '(A)', ST, 'Note', 'Rugby URC');
 
 ax2 = subplot(1, 2, 2);
 pef_figure_style.draw_eta_surface(ax2, ST, true);
 plot_kpi_panel(ax2, kpi_football, football_stems, ST.football, ST.migrate, ...
-    's', 'Championship Football — all KPIs, seasons 23/24 \rightarrow 24/25', H, ST);
+    's', H, ST);
+pef_figure_style.add_panel_letter(ax2, '(B)', ST, 'Note', 'Football Championship');
 
 cb = pef_figure_style.add_eta_colorbar(ax2);
 cb.Label.String = 'PEF \eta';
@@ -59,33 +61,42 @@ set(fig, 'Units', 'normalized');
 ax1.Position = [0.04, 0.08, 0.42, 0.84];
 ax2.Position = [0.53, 0.08, 0.38, 0.84];
 
-annotation('textbox', [0.01, 0.93, 0.98, 0.06], ...
-    'String', ...
-    ['{\bf Season symbols:}  open marker = season 1 (23/24);  ' ...
-     'filled marker = season 2 (24/25);  arrow = direction of change;  ' ...
-     '{\color[rgb]{0.84,0.37,0.00}vermillion} = quadrant migration'], ...
-    'EdgeColor', 'none', 'FontSize', ST.fs_panel, ...
-    'HorizontalAlignment', 'center', 'Interpreter', 'tex');
-
 out_png = fullfile(cfg.fig_dir, 'Figure_2_SI.png');
 pef_figure_style.export_figure(fig, out_png);
 close(fig);
 fprintf('Saved: %s\n', out_png);
 
-function plot_kpi_panel(ax, kpi_data, stems, clr_cat, clr_migrate, marker, ttl, H, ST)
+function plot_kpi_panel(ax, kpi_data, stems, clr_cat, clr_migrate, marker, H, ST)
     axes(ax); %#ok<LAXES>
     n_kpi = size(kpi_data, 1);
-    label_offsets = compute_label_offsets(kpi_data, n_kpi);
-
+    rows = [];
     for k = 1:n_kpi
         rh1 = kpi_data(k, 1, 2);  kp1 = kpi_data(k, 1, 1);
         rh2 = kpi_data(k, 2, 2);  kp2 = kpi_data(k, 2, 1);
         if any(isnan([rh1, kp1, rh2, kp2])), continue; end
-
         q1 = H.classify_quadrant(kp1, rh1);
         q2 = H.classify_quadrant(kp2, rh2);
+        migrate = ~strcmp(q1, q2);
+        move = abs(rh2 - rh1) + abs(kp2 - kp1);
+        rows = [rows; k, rh1, kp1, rh2, kp2, double(migrate), move]; %#ok<AGROW>
+    end
+    if isempty(rows)
+        return
+    end
+    % Migrating KPIs first, then largest year-on-year moves.
+    rows = sortrows(rows, [-6, -7]);
+
+    placed = zeros(0, 4);  % [x0 x1 y0 y1] data-space boxes
+    % Keep the northwest panel letter and west legend clear of KPI names.
+    placed(end+1, :) = [-0.99, -0.20, 2.45, 3.00];
+    placed(end+1, :) = [-0.99, -0.42, 0.65, 1.70];
+    for ri = 1:size(rows, 1)
+        k = rows(ri, 1);
+        rh1 = rows(ri, 2); kp1 = rows(ri, 3);
+        rh2 = rows(ri, 4); kp2 = rows(ri, 5);
+        migrate = rows(ri, 6) > 0.5;
         clr = clr_cat;
-        if ~strcmp(q1, q2), clr = clr_migrate; end
+        if migrate, clr = clr_migrate; end
 
         dr = rh2 - rh1;  dk = kp2 - kp1;
         if abs(dr) + abs(dk) > 1e-4
@@ -93,7 +104,6 @@ function plot_kpi_panel(ax, kpi_data, stems, clr_cat, clr_migrate, marker, ttl, 
                 'Color', clr, 'LineWidth', 1.2, ...
                 'MaxHeadSize', 0.6, 'HandleVisibility', 'off');
         end
-
         plot(rh1, kp1, marker, 'MarkerFaceColor', 'none', ...
             'MarkerEdgeColor', clr, 'MarkerSize', 9, 'LineWidth', 1.4, ...
             'HandleVisibility', 'off');
@@ -102,11 +112,15 @@ function plot_kpi_panel(ax, kpi_data, stems, clr_cat, clr_migrate, marker, ttl, 
             'HandleVisibility', 'off');
 
         lbl = stems{k, 2};
-        dx = label_offsets(k, 1);
-        dy = label_offsets(k, 2);
-        text(rh2 + dx, kp2 + dy, lbl, 'FontSize', 9, 'Color', clr, ...
-            'HorizontalAlignment', dx_align(dx), ...
-            'VerticalAlignment', 'middle', 'Interpreter', 'none');
+        [ok, dx, dy] = find_label_slot(rh2, kp2, lbl, placed);
+        if ~ok
+            continue
+        end
+        ha = dx_align(dx);
+        text(rh2 + dx, kp2 + dy, lbl, 'FontSize', ST.fs_annot, 'Color', clr, ...
+            'HorizontalAlignment', ha, 'VerticalAlignment', 'middle', ...
+            'Interpreter', 'none', 'Clipping', 'on');
+        placed(end+1, :) = label_box(rh2, kp2, dx, dy, lbl); %#ok<AGROW>
     end
 
     h1 = plot(nan, nan, marker, 'MarkerFaceColor', 'none', ...
@@ -117,19 +131,53 @@ function plot_kpi_panel(ax, kpi_data, stems, clr_cat, clr_migrate, marker, ttl, 
         'MarkerEdgeColor', 'w', 'MarkerSize', 9, 'LineWidth', 1);
     legend([h1, h2, h3], ...
         {'Season 1 (23/24)', 'Season 2 (24/25)', 'Quadrant migration'}, ...
-        'Location', 'southeast', 'Box', 'off', 'FontSize', ST.fs_panel, ...
+        'Location', 'west', 'Box', 'off', 'FontSize', ST.fs_panel, ...
         'TextColor', ST.quad_text);
-
-    title(ttl, 'FontSize', ST.fs_title, 'FontWeight', 'bold');
 end
 
-function offsets = compute_label_offsets(~, n_kpi)
-    offsets = repmat([0.03, 0.06], n_kpi, 1);
-    for k = 1:n_kpi
-        if mod(k, 2) == 0
-            offsets(k, 2) = -0.08;
+function [ok, dx, dy] = find_label_slot(x, y, lbl, placed)
+    % Eight directions, two radii; skip the label if nothing is free.
+    dirs = [ 1  0.6;  1 -0.6; -1  0.6; -1 -0.6; ...
+             0.4  1;  0.4 -1; -0.4  1; -0.4 -1];
+    radii = [0.10, 0.18, 0.28];
+    ok = false; dx = 0; dy = 0;
+    for r = 1:numel(radii)
+        for d = 1:size(dirs, 1)
+            cand_dx = dirs(d, 1) * radii(r);
+            cand_dy = dirs(d, 2) * radii(r);
+            box = label_box(x, y, cand_dx, cand_dy, lbl);
+            if box(1) < -0.98 || box(2) > 0.98 || box(3) < 0.05 || box(4) > 2.95
+                continue
+            end
+            hit = false;
+            for p = 1:size(placed, 1)
+                if boxes_overlap(box, placed(p, :))
+                    hit = true;
+                    break
+                end
+            end
+            if ~hit
+                ok = true; dx = cand_dx; dy = cand_dy;
+                return
+            end
         end
     end
+end
+
+function box = label_box(x, y, dx, dy, lbl)
+    w = max(0.20, 0.034 * max(strlength(string(lbl)), 1));
+    h = 0.15;
+    xc = x + dx;
+    yc = y + dy;
+    if dx >= 0
+        box = [xc, xc + w, yc - h/2, yc + h/2];
+    else
+        box = [xc - w, xc, yc - h/2, yc + h/2];
+    end
+end
+
+function tf = boxes_overlap(a, b)
+    tf = ~(a(2) < b(1) || a(1) > b(2) || a(4) < b(3) || a(3) > b(4));
 end
 
 function ha = dx_align(dx)

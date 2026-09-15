@@ -19,9 +19,7 @@ addpath(fullfile(fileparts(script_dir), 'paper_pipeline', 'lib'));
 ST = pef_figure_style.config();
 fig_dir = cfg.fig_dir;
 delta_sigma_A_values = [0.5, 1.0, 2.0];
-panel_labels = {'(A)  \delta/\sigma_A = 0.5', ...
-                '(B)  \delta/\sigma_A = 1.0', ...
-                '(C)  \delta/\sigma_A = 2.0'};
+panel_letters = {'(A)', '(B)', '(C)'};
 
 % Idealised probit factorial design points (controlled coordinates), if available.
 ideal_csv = fullfile(fileparts(script_dir), 'paper_pipeline', 'outputs', ...
@@ -48,8 +46,8 @@ for p = 1:3
             'MarkerEdgeColor', [0.15, 0.15, 0.15], 'LineWidth', 0.6, ...
             'MarkerFaceAlpha', 0.85, 'HandleVisibility', 'off');
     end
-    title(ax, panel_labels{p}, 'FontSize', ST.fs_title, 'FontWeight', 'bold', ...
-        'Interpreter', 'tex');
+    pef_figure_style.add_panel_letter(ax, panel_letters{p}, ST, ...
+        'Note', sprintf('\\delta/\\sigma_A = %.1f', delta_sigma_A_values(p)));
     if p > 1
         ylabel(ax, '');
     end

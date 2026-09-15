@@ -30,6 +30,11 @@ Modest claims; statistics or citations for empirical statements. Distribution-fr
 
 Sentence length, em-dash ban (`---` asides), and one-idea-per-sentence rules: see `writing-clarity.mdc` (ported from Football-TDA Paper A house style).
 
+## Figures
+
+House style (type sizes, no titles, panel letters, legends): `figures.mdc`.
+MATLAB helper: `scripts/paper_pipeline/lib/pef_figure_style.m`.
+
 ## Reference
 
 Full checklist: `UP1_PEF/paper/draft_v13_comprehensive_theoretical/documentation/OVERLEAF_BEST_PRACTICES.md` (archive).

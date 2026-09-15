@@ -1,5 +1,5 @@
 === Finalize diagnostics: correlation summary ===
-Date: 14-Sep-2026 12:58:53
+Date: 15-Sep-2026 08:56:54
 N valid KPIs: 113
 
 corr(I_pred, acc_improvement)   = 0.1694

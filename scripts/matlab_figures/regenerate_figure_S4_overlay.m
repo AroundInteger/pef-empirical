@@ -58,16 +58,15 @@ end
 text(axA, 0.42, 0.30, 'Q1', 'FontSize', 12, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
 text(axA, 0.42, -0.21, 'Q2', 'FontSize', 12, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
 text(axA, -0.78, -0.21, 'Q3', 'FontSize', 12, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
-text(axA, -0.78, 0.30, 'Q4', 'FontSize', 12, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
+text(axA, -0.50, 0.32, 'Q4', 'FontSize', 12, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
 xlim(axA, [-0.85, 0.65]);
 ylim(axA, [-0.25, 0.42]);
 xlabel(axA, '\rho', 'FontSize', ST.fs_label, 'Interpreter', 'tex');
 ylabel(axA, '\tau = (1/2) log \kappa', 'FontSize', ST.fs_label, 'Interpreter', 'tex');
-title(axA, '(A)  Design points in canonical PEF coordinates', ...
-    'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
 pef_figure_style.style_scatter_axes(axA, ST);
+pef_figure_style.add_panel_letter(axA, '(A)', ST);
 text(axA, 0.04, 0.58, {'○  \rho>0 (shared)', '□  \rho=0 (Fisher)', '▽  \rho<0 (competitive)'}, ...
-    'Units', 'normalized', 'FontSize', 8.5, 'Color', [0.25, 0.25, 0.25], ...
+    'Units', 'normalized', 'FontSize', ST.fs_annot, 'Color', [0.25, 0.25, 0.25], ...
     'Interpreter', 'tex', 'VerticalAlignment', 'top');
 
 % ---- (B) Outcome space: trajectories in I vs DeltaML --------------------
@@ -104,11 +103,10 @@ set(axB, 'XScale', 'log');
 ylim(axB, Y_LIM);
 xlabel(axB, 'I(X;Y)  [bits]', 'FontSize', ST.fs_label);
 ylabel(axB, 'Mean \DeltaML  (%)', 'FontSize', ST.fs_label);
-title(axB, '(B)  Same (\kappa,\rho) across signal (log x)', ...
-    'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
 legend(axB, leg_h, cellstr(leg_s), 'Location', 'northeast', 'Box', 'off', ...
     'FontSize', ST.fs_panel, 'Interpreter', 'tex');
 pef_figure_style.style_scatter_axes(axB, ST);
+pef_figure_style.add_panel_letter(axB, '(B)', ST);
 set(axB, 'XScale', 'log');
 ylim(axB, Y_LIM);
 grid(axB, 'on');
@@ -161,17 +159,16 @@ cb.Label.FontSize = ST.fs_label;
 xlabel(axC, 'Relative-feature signal  d_{rel} = \delta / \surd Var(X)', ...
     'FontSize', ST.fs_label, 'Interpreter', 'tex');
 ylabel(axC, 'Mean \DeltaML  (%)', 'FontSize', ST.fs_label, 'Interpreter', 'tex');
-title(axC, '(C)  Master surface bounded by r', ...
-    'FontSize', ST.fs_title, 'FontWeight', 'bold', 'Interpreter', 'tex');
 ylim(axC, Y_LIM);
 pef_figure_style.style_scatter_axes(axC, ST);
+pef_figure_style.add_panel_letter(axC, '(C)', ST);
 grid(axC, 'on');
 legend(axC, [h_ceil, h_edge], ...
     {'ceiling: r\rightarrow0 (majority baseline)', sprintf('grid edge: r = %.2f', r_min)}, ...
-    'Location', 'northeast', 'Box', 'off', 'FontSize', ST.fs_panel, 'Interpreter', 'tex');
-text(axC, 0.96, 0.60, {'floor: \DeltaML = 0', '(r\rightarrow1, Bayes-sufficient)'}, ...
+    'Location', 'east', 'Box', 'off', 'FontSize', ST.fs_panel, 'Interpreter', 'tex');
+text(axC, 0.97, 0.78, {'floor: \DeltaML = 0', '(r\rightarrow1, Bayes-sufficient)'}, ...
     'Units', 'normalized', 'HorizontalAlignment', 'right', ...
-    'FontSize', ST.fs_panel, 'Interpreter', 'tex', 'Color', [0.25, 0.25, 0.25]);
+    'FontSize', ST.fs_annot, 'Interpreter', 'tex', 'Color', [0.25, 0.25, 0.25]);
 
 out = fullfile(FIG, 'Figure_S4b_idealised_I_vs_dML_overlay.png');
 pef_figure_style.export_figure(fig, out);
