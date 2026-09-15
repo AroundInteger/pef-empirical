@@ -1,17 +1,18 @@
 # Supplementary Information — agreed structure
 
-The SI is organised into **thematic sections** ordered by the main paper narrative. **Figure, table, and note labels (S1–S8, Note S1/S2/S4) are fixed** for cross-references; section order differs from numeric S-order where grouping requires it. Each figure environment sets `\setcounter{figure}{...}` so printed labels stay S1–S8.
+The SI is organised into **thematic sections** ordered by the main paper narrative. **Figure, table, and note labels (S1–S8, Notes S1–S4) are fixed** for cross-references; section order differs from numeric S-order where grouping requires it. Each figure environment sets `\setcounter{figure}{...}` so printed labels stay S1–S8.
 
 ## Roadmap (section order in PDF)
 
 | SI section | Main paper anchor | Contents (fixed labels) |
 |---|---|---|
 | **§1 Idealised probit validation** | Introduction (contributions); Methods Tier 1; Results (foundation, `\cref{sec:eff_power}`) | Note S2; Figure S4; Figure S5 |
-| **§2 Information surface (theory)** | Theory (`\cref{sec:theory}`, `\cref{fig:info_surface}`, `\cref{sec:signal_strength}`) | Figure S1 |
-| **§3 Sports KPI landscape** | Methods (`\cref{sec:outcome_defs}`); Results landscape; Discussion (stationarity) | Figure S2; Figure S3; Table S1; Table S2 (ranked by $\|\hat\eta-1\|$); inventory CSVs; Figure S8 |
-| **§4 Efficiency–power diagnostics** | Results (`\cref{sec:eff_power}`); `\cref{tab:exemplars}` | Figure S6; Figure S7 |
-| **§5 Quality control** | Methods (`\cref{sec:qc}`); Discussion (limitations) | Paired-difference Shapiro--Wilk note; Note S1 |
-| **§6 Practitioner diagnostic** | Discussion (`\cref{sec:practical_guidance}`); `\cref{sec:data_availability}` | Note S4 |
+| **§2 Mathematical derivations** | Theory (`\cref{sec:theory}`); Introduction (Pitman ARE) | Note S3 (`sections/appendix.tex`); `\cref{sec:pitman}` |
+| **§3 Information surface (theory)** | Theory (`\cref{sec:theory}`, `\cref{fig:info_surface}`, `\cref{sec:signal_strength}`) | Figure S1 |
+| **§4 Sports KPI landscape** | Methods (`\cref{sec:outcome_defs}`); Results landscape; Discussion (stationarity) | Figure S2; Figure S3; Table S1; Table S2 (ranked by $\|\hat\eta-1\|$); inventory CSVs; Figure S8 |
+| **§5 Efficiency–power diagnostics** | Results (`\cref{sec:eff_power}`); `\cref{tab:exemplars}` | Figure S6; Figure S7 |
+| **§6 Quality control** | Methods (`\cref{sec:qc}`); Discussion (limitations) | Paired-difference Shapiro--Wilk note; Note S1 |
+| **§7 Practitioner diagnostic** | Discussion (`\cref{sec:practical_guidance}`); `\cref{sec:data_availability}` | Note S4 |
 
 ## Design rules
 
@@ -19,18 +20,21 @@ The SI is organised into **thematic sections** ordered by the main paper narrati
 2. **Bridge paragraphs** — each SI section opens with 2–4 sentences linking to main-text sections (see `sections/supplementary.tex`).
 3. **Stable S-labels** — main text cites `\cref{fig:si_...}`, `\cref{tab:si_...}`, `\cref{sec:si_note_...}`; avoid hard-coded “Figure~S2” in body `.tex` where possible.
 4. **Reproducibility detail** — script paths and CSV names live in SI notes and `README.md`, not in the main paper body.
-5. **No Note S3** — KPI inventory is prose under §3 (landscape), not a separate numbered note.
+5. **Note S3** — mathematical derivations formerly in the main-text appendix (`sections/appendix.tex`). Figure and table S-numbers are unchanged. The KPI inventory remains prose under §4 (landscape), not a numbered note.
 
 ## Label reference
 
 | Label | Printed as |
 |---|---|
 | `sec:si_probit` | SI §1 |
-| `sec:si_theory` | SI §2 |
-| `sec:si_landscape` | SI §3 |
-| `sec:si_effpower` | SI §4 |
-| `sec:si_qc` | SI §5 |
-| `sec:si_practitioner` | SI §6 |
+| `sec:si_maths` | SI §2 |
+| `sec:si_note_s3` (`sec:appendix` alias) | Note S3 |
+| `sec:pitman` | Pitman ARE (inside Note S3) |
+| `sec:si_theory` | SI §3 |
+| `sec:si_landscape` | SI §4 |
+| `sec:si_effpower` | SI §5 |
+| `sec:si_qc` | SI §6 |
+| `sec:si_practitioner` | SI §7 |
 | `fig:si_info_sensitivity` | Figure S1 |
 | `fig:si_kpi_labelled` | Figure S2 |
 | `fig:si_ipred_vs_dml` | Figure S3 |

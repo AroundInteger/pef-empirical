@@ -135,7 +135,7 @@ $$
 
 $$
 
-where $H(p)=-p\log_2p-(1-p)\log_2(1-p)$ is the binary entropy function. (Full derivation in (sec:appendix).) The PEF formula rearranges to $\Var(X)=\sigma^2_A(1+\kappa)/\eta$, linking variance geometry directly to $\eta$. Substituting into (eq:hygx) yields
+where $H(p)=-p\log_2p-(1-p)\log_2(1-p)$ is the binary entropy function. (Full derivation in Supplementary (sec:si_note_s3).) The PEF formula rearranges to $\Var(X)=\sigma^2_A(1+\kappa)/\eta$, linking variance geometry directly to $\eta$. Substituting into (eq:hygx) yields
 
 $$
 
@@ -202,6 +202,7 @@ The quadrant logic applies uniformly across fields. (tab:cross_domain) situates 
 
 | table[t]
 
+  0.9
   llll@
 
     **Field** | **Method** | **Correlation source** | **Typical PEF regime** |
@@ -211,6 +212,7 @@ The quadrant logic applies uniformly across fields. (tab:cross_domain) situates 
 | Healthcare | Paired clinical trials | Temporal/biological | Q1--Q2: $\eta\gg 1$ |
 | Manufacturing | Control charts | Process dynamics | Q2: $\eta>1$, moderate $\rho$ |
 | Sports | Relative metrics | Environmental/competitive | Q3-dominant; Q4 when $\kappa>1$ |
+|  |
 
 *Cross-domain mapping of familiar methods to typical PEF regimes.*
 

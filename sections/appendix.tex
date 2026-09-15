@@ -1,11 +1,13 @@
-\section{Mathematical Appendix}
+%% SI Note S3 (mathematical derivations). Input from sections/supplementary.tex (SI Section 2).
+\subsection*{Supplementary Note S3: Mathematical Derivations}
+\label{sec:si_note_s3}
 \label{sec:appendix}
 
-\noindent The algebraic derivation of the PEF formula (\cref{eq:pef}) from the variance of correlated differences, together with its reduction to Fisher's classical case at $\kappa=1$, is given in full in \cref{sec:theory} (\S2.1). This appendix records the material not reproduced in the main text: the step-by-step information content derivation, the boundary analysis, the statistical properties of the PEF estimator, and the Pitman asymptotic relative efficiency proof.
+\noindent The algebraic derivation of the PEF formula (\cref{eq:pef}) from the variance of correlated differences, together with its reduction to Fisher's classical case at $\kappa=1$, is given in full in \cref{sec:theory} (\S2.1). This note records the material not reproduced in the main text: the step-by-step information content derivation, the boundary analysis, the statistical properties of the PEF estimator, and the Pitman asymptotic relative efficiency proof.
 
-\subsection{Information Content Derivation}
+\subsubsection*{Information Content Derivation}
 
-\subsubsection{Setup}
+\paragraph*{Setup}
 
 Under Assumption~(A1), $X=X_{\mathrm{A}}-X_{\mathrm{B}}\sim\mathcal{N}\bigl(\delta,\sigma^{2}_{\mathrm{A}}(1+\kappa-2\sqrt{\kappa}\,\rho)\bigr)$ with $\delta=\mu_{\mathrm{A}}-\mu_{\mathrm{B}}$.
 
@@ -18,14 +20,14 @@ with equal priors. Mutual information:
   I(X;Y) = H(Y) - H(Y\mid X).
 \end{equation*}
 
-\subsubsection{Unconditional Entropy}
+\paragraph*{Unconditional Entropy}
 
 For equiprobable outcomes ($\mathbb{P}(Y=1)=\mathbb{P}(Y=0)=0.5$),
 \begin{equation*}
   H(Y) = 1 \text{ bit}.
 \end{equation*}
 
-\subsubsection{Conditional Entropy}
+\paragraph*{Conditional Entropy}
 
 Under (A2), the posterior is $\mathbb{P}(Y=1\mid X=x)=\Phi(x/\sqrt{\Var(X)})$, so the expected conditional entropy is
 \begin{align*}
@@ -37,16 +39,16 @@ Evaluating this expectation under the marginal distribution of $X$ (which has me
 \end{equation*}
 where $H(p)=-p\log_{2}p-(1-p)\log_{2}(1-p)$ is the binary entropy function and the right-hand side equals the binary entropy of the Bayes error rate $\Phi(-\delta/(2\sqrt{\Var(X)}))$.
 
-\subsubsection{Substitution}
+\paragraph*{Substitution}
 
 From \cref{eq:pef}: $1+\kappa-2\sqrt{\kappa}\,\rho=(1+\kappa)/\eta$. Therefore $\Var(X)=\sigma^{2}_{\mathrm{A}}(1+\kappa)/\eta$, giving
 \begin{equation*}
   I(X;Y) = 1 - H\!\left(\Phi\!\left(\frac{\delta}{2\sigma_{\mathrm{A}}\sqrt{(1+\kappa)/\eta}}\right)\right).
 \end{equation*}
 
-\subsection{Boundary Analysis}
+\subsubsection*{Boundary Analysis}
 
-\subsubsection{Fisher Regime ($\kappa=1$, $\rho=0$)}
+\paragraph*{Fisher Regime ($\kappa=1$, $\rho=0$)}
 
 \begin{equation*}
   \eta = 1,\quad \Var(X) = 2\sigma^{2}_{\mathrm{A}},\quad
@@ -54,7 +56,7 @@ From \cref{eq:pef}: $1+\kappa-2\sqrt{\kappa}\,\rho=(1+\kappa)/\eta$. Therefore $
 \end{equation*}
 Independent measurements with equal variances; relativisation is neutral.
 
-\subsubsection{Variance Ratio Extremities}
+\paragraph*{Variance Ratio Extremities}
 
 \textbf{$\kappa\to 0$} (entity B negligible variance):
 \begin{equation*}
@@ -69,7 +71,7 @@ Reduces to measurement of entity A alone.
 \end{equation*}
 Signal drowns in noise from entity B's extreme variability.
 
-\subsubsection{Correlation Extremities}
+\paragraph*{Correlation Extremities}
 
 \textbf{$\rho\to -1$} (perfect negative correlation):
 \begin{equation*}
@@ -85,7 +87,7 @@ For $\kappa=1$: $\eta=0.5$, variance quadrupled. Yet $I(X;Y)$ may remain substan
 \end{equation*}
 Variance vanishes, information content approaches unity.
 
-\subsubsection{Summary of Special Cases}
+\paragraph*{Summary of Special Cases}
 
 \begin{center}
 \begin{tabular}{@{}lccc@{}}
@@ -101,9 +103,9 @@ Variance vanishes, information content approaches unity.
 \end{tabular}
 \end{center}
 
-\subsection{Statistical Properties of the PEF Estimator}
+\subsubsection*{Statistical Properties of the PEF Estimator}
 
-\subsubsection{Estimators}
+\paragraph*{Estimators}
 
 For paired observations $(X_{\mathrm{A},i},X_{\mathrm{B},i})$, $i=1,\ldots,n$,
 \begin{equation}
@@ -111,7 +113,7 @@ For paired observations $(X_{\mathrm{A},i},X_{\mathrm{B},i})$, $i=1,\ldots,n$,
 \end{equation}
 where $\hat{\kappa}=s^{2}_{\mathrm{B}}/s^{2}_{\mathrm{A}}$ and $\hat{\rho}$ is the Pearson sample correlation.
 
-\subsubsection{Asymptotic Distribution}
+\paragraph*{Asymptotic Distribution}
 
 Under bivariate normality and independence, the delta method \parencite{lehmann1999} gives
 \begin{equation}
@@ -129,7 +131,7 @@ where $\sigma^{2}_{\eta} = \mathbf{g}^{\top} \boldsymbol{\Sigma}_{(\kappa,\rho)}
 \end{align}
 The asymptotic covariance matrix $\boldsymbol{\Sigma}_{(\kappa,\rho)}$ can be obtained from the delta method applied to $(\hat{s}^{2}_{\mathrm{A}},\hat{s}^{2}_{\mathrm{B}},\hat{\rho})$, or estimated directly via bootstrap (see below).
 
-\subsubsection{Theoretical Guarantees}
+\paragraph*{Theoretical Guarantees}
 
 \begin{itemize}
   \item \textbf{Consistency:} $\hat{\eta}\xrightarrow{p}\eta$ as $n\to\infty$ (continuous mapping theorem).
@@ -137,14 +139,14 @@ The asymptotic covariance matrix $\boldsymbol{\Sigma}_{(\kappa,\rho)}$ can be ob
   \item \textbf{Efficiency:} $\hat{\eta}$ is a continuous function of the MLEs $(\hat{\kappa},\hat{\rho})$ under bivariate normality; by the invariance of the MLE, $\hat{\eta}$ is itself the MLE of $\eta$ and is asymptotically efficient \parencite{lehmann1999}.
 \end{itemize}
 
-\subsubsection{Bootstrap Confidence Intervals}
+\paragraph*{Bootstrap Confidence Intervals}
 
 \begin{equation}
   \mathrm{CI}_{1-\alpha} = \bigl[\hat{\eta}^{*}_{(\alpha/2)},\hat{\eta}^{*}_{(1-\alpha/2)}\bigr],
 \end{equation}
 where $\hat{\eta}^{*}_{(p)}$ denotes the $p$th quantile of the bootstrap distribution from resampling paired observations.
 
-\subsection{Connection to Classical Tests}
+\subsubsection*{Connection to Classical Tests}
 
 The paired $t$-statistic is
 \begin{equation}
@@ -156,12 +158,12 @@ Higher $\eta$ (lower $\Var(D)$) increases the $t$-statistic and hence test power
 \end{equation}
 also increases with $\eta$, yielding larger detectable effect sizes.
 
-\subsection{Connection to Pitman Asymptotic Relative Efficiency}
+\subsubsection*{Connection to Pitman Asymptotic Relative Efficiency}
 \label{sec:pitman}
 
-This section establishes that, under bivariate normality and equal group sizes, the PEF equals the Pitman asymptotic relative efficiency (ARE) of the paired $t$-test relative to the independent two-sample $t$-test. We state this as a proposition, give a self-contained proof, verify the classical reduction, and record the qualifications that bound the result.
+This note establishes that, under bivariate normality and equal group sizes, the PEF equals the Pitman asymptotic relative efficiency (ARE) of the paired $t$-test relative to the independent two-sample $t$-test. We state this as a proposition, give a self-contained proof, verify the classical reduction, and record the qualifications that bound the result.
 
-\subsubsection{Proposition}
+\paragraph*{Proposition}
 
 \noindent\textbf{Proposition (PEF as Pitman ARE).} \emph{Under Assumption~(A1) and equal allocation ($n$ observations per group), the Pitman ARE of the paired $t$-test relative to the independent two-sample $t$-test equals}
 \begin{equation}
@@ -169,7 +171,7 @@ This section establishes that, under bivariate normality and equal group sizes, 
   \label{eq:are_pef}
 \end{equation}
 
-\subsubsection{Proof}
+\paragraph*{Proof}
 
 Let $N=2n$ be the total number of observations available. Fix $\mu_{\mathrm{A}}-\mu_{\mathrm{B}}=\delta>0$ and let $n\to\infty$. We compare the noncentrality parameters of the two tests at the same total sample size.
 
@@ -197,7 +199,7 @@ Let $N=2n$ be the total number of observations available. Fix $\mu_{\mathrm{A}}-
     = \eta \phantom{00} \qedsymbol{}.
 \end{equation}
 
-\subsubsection{Classical Verification}
+\paragraph*{Classical Verification}
 
 Setting $\kappa=1$:
 \begin{equation*}
@@ -205,7 +207,7 @@ Setting $\kappa=1$:
 \end{equation*}
 recovering Fisher's classical paired-design efficiency \parencite{fisher1935}. The PEF is therefore the direct generalisation of Fisher's result to unequal variances, expressed in the language of Pitman efficiency.
 
-\subsubsection{Qualifications}
+\paragraph*{Qualifications}
 
 Three conditions bound \cref{eq:are_pef}:
 

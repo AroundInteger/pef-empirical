@@ -23,7 +23,7 @@ ORDER = [
     ("05_discussion", "sections/discussion.tex", "Discussion"),
     ("06_conclusion", "sections/conclusion.tex", "Conclusion"),
     ("07_data_availability", "sections/data_availability.tex", "Data Availability"),
-    ("08_appendix", "sections/appendix.tex", "Appendix"),
+    ("08_appendix", "sections/appendix.tex", "SI Note S3 (Mathematical Derivations)"),
     ("09_tables_and_figures", "sections/tables_and_figures.tex", "Tables and Figures"),
     ("10_supplementary", "sections/supplementary.tex", "Supplementary Information"),
 ]
@@ -46,6 +46,21 @@ def load_macros() -> dict[str, str]:
             if m and m.group(1) not in macros:
                 macros[m.group(1)] = m.group(2)
     return macros
+
+
+def expand_inputs(tex: str) -> str:
+    """Inline \\input{...} so SI review copies include Note S3."""
+
+    def repl(m: re.Match[str]) -> str:
+        rel = m.group(1)
+        path = ROOT / rel
+        if path.suffix == "":
+            path = path.with_suffix(".tex")
+        if path.exists():
+            return path.read_text(encoding="utf-8")
+        return m.group(0)
+
+    return re.sub(r"\\input\{([^}]+)\}", repl, tex)
 
 
 def expand_macros(text: str, macros: dict[str, str]) -> str:
@@ -197,7 +212,7 @@ def main() -> None:
         "|---|---------|----------|-------|",
     ]
     for i, (stem, path, title) in enumerate(ORDER, 1):
-        tex = (ROOT / path).read_text(encoding="utf-8")
+        tex = expand_inputs((ROOT / path).read_text(encoding="utf-8"))
         md = tex_to_md(tex, title, path, macros)
         (OUT_DIR / f"{stem}.md").write_text(md, encoding="utf-8")
         index.append(f"| {i} | {title} | [`{stem}.md`]({stem}.md) | [`{path}`](../../{path}) |")
@@ -211,7 +226,7 @@ def main() -> None:
         "2. **Methods** (current focus)",
         "3. Theoretical framework (skim)",
         "4. Results → Discussion → Conclusion",
-        "5. Tables/figures captions → Appendix / SI as needed",
+        "5. Tables/figures captions → SI as needed",
         "",
     ]
     (OUT_DIR / "README.md").write_text("\n".join(index), encoding="utf-8")

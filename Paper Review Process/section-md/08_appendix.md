@@ -1,4 +1,4 @@
-# Appendix
+# SI Note S3 (Mathematical Derivations)
 
 > **Review copy** from LaTeX. Source of truth: `sections/appendix.tex`.
 > Propose edits in chat (or annotate this file); agreed changes go into the `.tex`.
@@ -6,13 +6,13 @@
 
 ---
 
-# Mathematical Appendix
+## Supplementary Note S3: Mathematical Derivations
 
- The algebraic derivation of the PEF formula ((eq:pef)) from the variance of correlated differences, together with its reduction to Fisher's classical case at $\kappa=1$, is given in full in (sec:theory) (2.1). This appendix records the material not reproduced in the main text: the step-by-step information content derivation, the boundary analysis, the statistical properties of the PEF estimator, and the Pitman asymptotic relative efficiency proof.
+ The algebraic derivation of the PEF formula ((eq:pef)) from the variance of correlated differences, together with its reduction to Fisher's classical case at $\kappa=1$, is given in full in (sec:theory) (2.1). This note records the material not reproduced in the main text: the step-by-step information content derivation, the boundary analysis, the statistical properties of the PEF estimator, and the Pitman asymptotic relative efficiency proof.
 
-## Information Content Derivation
+### Information Content Derivation
 
-### Setup
+Setup
 
 Under Assumption (A1), $X=X_A-X_B\simN\bigl(\delta,\sigma^2_A(1+\kappa-2sqrt(\kappa) \rho)\bigr)$ with $\delta=\mu_A-\mu_B$.
 
@@ -28,7 +28,7 @@ $$
 
 $$
 
-### Unconditional Entropy
+Unconditional Entropy
 
 For equiprobable outcomes ($P(Y=1)=P(Y=0)=0.5$),
 
@@ -38,7 +38,7 @@ $$
 
 $$
 
-### Conditional Entropy
+Conditional Entropy
 
 Under (A2), the posterior is $P(Y=1\mid X=x)=\Phi(x/sqrt(\Var(X)))$, so the expected conditional entropy is
 
@@ -58,7 +58,7 @@ $$
 
 where $H(p)=-p\log_2p-(1-p)\log_2(1-p)$ is the binary entropy function and the right-hand side equals the binary entropy of the Bayes error rate $\Phi(-\delta/(2sqrt(\Var(X))))$.
 
-### Substitution
+Substitution
 
 From (eq:pef): $1+\kappa-2sqrt(\kappa) \rho=(1+\kappa)/\eta$. Therefore $\Var(X)=\sigma^2_A(1+\kappa)/\eta$, giving
 
@@ -68,9 +68,9 @@ $$
 
 $$
 
-## Boundary Analysis
+### Boundary Analysis
 
-### Fisher Regime ($\kappa=1$, $\rho=0$)
+Fisher Regime ($\kappa=1$, $\rho=0$)
 
 $$
 
@@ -81,7 +81,7 @@ $$
 
 Independent measurements with equal variances; relativisation is neutral.
 
-### Variance Ratio Extremities
+Variance Ratio Extremities
 
 **$\kappa\to 0$** (entity B negligible variance):
 
@@ -104,7 +104,7 @@ $$
 
 Signal drowns in noise from entity B's extreme variability.
 
-### Correlation Extremities
+Correlation Extremities
 
 **$\rho\to -1$** (perfect negative correlation):
 
@@ -128,7 +128,7 @@ $$
 
 Variance vanishes, information content approaches unity.
 
-### Summary of Special Cases
+Summary of Special Cases
 
 center
 tabular@lccc@
@@ -144,9 +144,9 @@ tabular@lccc@
 tabular
 center
 
-## Statistical Properties of the PEF Estimator
+### Statistical Properties of the PEF Estimator
 
-### Estimators
+Estimators
 
 For paired observations $(X_A,i,X_B,i)$, $i=1,…,n$,
 
@@ -158,7 +158,7 @@ $$
 
 where $\kappa=s^2_B/s^2_A$ and $\rho$ is the Pearson sample correlation.
 
-### Asymptotic Distribution
+Asymptotic Distribution
 
 Under bivariate normality and independence, the delta method [lehmann1999] gives
 
@@ -183,7 +183,7 @@ $$
 
 The asymptotic covariance matrix $\Sigma_(\kappa,\rho)$ can be obtained from the delta method applied to $(s^2_A,s^2_B,\rho)$, or estimated directly via bootstrap (see below).
 
-### Theoretical Guarantees
+Theoretical Guarantees
 
 - **Consistency:** $\etap\eta$ as $n\to\infty$ (continuous mapping theorem).
 
@@ -191,7 +191,7 @@ The asymptotic covariance matrix $\Sigma_(\kappa,\rho)$ can be obtained from the
 
 - **Efficiency:** $\eta$ is a continuous function of the MLEs $(\kappa,\rho)$ under bivariate normality; by the invariance of the MLE, $\eta$ is itself the MLE of $\eta$ and is asymptotically efficient [lehmann1999].
 
-### Bootstrap Confidence Intervals
+Bootstrap Confidence Intervals
 
 $$
 
@@ -201,7 +201,7 @@ $$
 
 where $\eta^*_(p)$ denotes the $p$th quantile of the bootstrap distribution from resampling paired observations.
 
-## Connection to Classical Tests
+### Connection to Classical Tests
 
 The paired $t$-statistic is
 
@@ -221,11 +221,11 @@ $$
 
 also increases with $\eta$, yielding larger detectable effect sizes.
 
-## Connection to Pitman Asymptotic Relative Efficiency
+### Connection to Pitman Asymptotic Relative Efficiency
 
-This section establishes that, under bivariate normality and equal group sizes, the PEF equals the Pitman asymptotic relative efficiency (ARE) of the paired $t$-test relative to the independent two-sample $t$-test. We state this as a proposition, give a self-contained proof, verify the classical reduction, and record the qualifications that bound the result.
+This note establishes that, under bivariate normality and equal group sizes, the PEF equals the Pitman asymptotic relative efficiency (ARE) of the paired $t$-test relative to the independent two-sample $t$-test. We state this as a proposition, give a self-contained proof, verify the classical reduction, and record the qualifications that bound the result.
 
-### Proposition
+Proposition
 
 **Proposition (PEF as Pitman ARE).** *Under Assumption (A1) and equal allocation ($n$ observations per group), the Pitman ARE of the paired $t$-test relative to the independent two-sample $t$-test equals*
 
@@ -235,7 +235,7 @@ $$
 
 $$
 
-### Proof
+Proof
 
 Let $N=2n$ be the total number of observations available. Fix $\mu_A-\mu_B=\delta>0$ and let $n\to\infty$. We compare the noncentrality parameters of the two tests at the same total sample size.
 
@@ -269,7 +269,7 @@ $$
 
 $$
 
-### Classical Verification
+Classical Verification
 
 Setting $\kappa=1$:
 
@@ -281,7 +281,7 @@ $$
 
 recovering Fisher's classical paired-design efficiency [fisher1935]. The PEF is therefore the direct generalisation of Fisher's result to unequal variances, expressed in the language of Pitman efficiency.
 
-### Qualifications
+Qualifications
 
 Three conditions bound (eq:are_pef):
 

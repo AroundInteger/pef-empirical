@@ -47,7 +47,7 @@ pef-empirical/
 | `Figure_S6_q4_bayes_gap.png` | Q4 Bayes gap (S7) | `run_pef_finalize_diagnostics.m` |
 | `Figure_S7_season_drift_alignment.png` | Season drift (S8) | `run_pef_finalize_diagnostics.m` |
 
-Captions for S1--S8 are in `sections/supplementary.tex`. Structure: `documentation/SUPPLEMENTARY_STRUCTURE.md` (six thematic SI blocks; stable figure/note labels).
+Captions for S1--S8 are in `sections/supplementary.tex`. Structure: `documentation/SUPPLEMENTARY_STRUCTURE.md` (seven thematic SI blocks; Note S3 holds the mathematical derivations; stable figure/note labels).
 
 **Shared figure style:** all main and SI landscape/scatter plots use `scripts/paper_pipeline/lib/pef_figure_style.m` (axis limits, colormaps, quadrant colours, 300 dpi export). Regenerate S1--S8 via `scripts/matlab_figures/generate_all_si_figures.m` (requires pipeline outputs for S3--S8).
 

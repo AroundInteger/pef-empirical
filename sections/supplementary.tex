@@ -9,7 +9,7 @@
 
 \section*{Supplementary Information}
 
-\noindent This supplement supports the main paper in six thematic blocks, ordered to follow the manuscript narrative (simulation validation, theory, sports landscape, efficiency--power diagnostics, quality control, practitioner tools). Figure, table, and note numbers (S1--S8; Notes S1, S2, S4) are fixed for cross-referencing; block order differs from numeric figure order where material is grouped by topic.
+\noindent This supplement supports the main paper in seven thematic blocks, ordered to follow the manuscript narrative (simulation validation, mathematical derivations, theory, sports landscape, efficiency--power diagnostics, quality control, practitioner tools). Figure, table, and note numbers (S1--S8; Notes S1--S4) are fixed for cross-referencing; block order differs from numeric figure order where material is grouped by topic.
 
 \medskip
 \noindent\begin{tabular}{@{}p{0.22\linewidth}p{0.34\linewidth}p{0.38\linewidth}@{}}
@@ -17,11 +17,12 @@
   \textbf{SI block} & \textbf{Main paper} & \textbf{Contents} \\
   \midrule
   \S1 Probit validation & Intro.; Methods Tier~1; Results & Note~S2; Figs~S4--S5 \\
-  \S2 Info.\ surface & Theory; Fig.~2 & Fig.~S1 \\
-  \S3 KPI landscape & Methods; Results; Discussion & Figs~S2--S3; Tables~S1--S2; Fig.~S8 \\
-  \S4 Eff.--power & Results (\cref{sec:eff_power}) & Figs~S6--S7 \\
-  \S5 QC & Methods (\cref{sec:qc}); Discussion & Normality note; Note~S1 \\
-  \S6 Practitioner tool & Discussion (\cref{sec:practical_guidance}) & Note~S4 \\
+  \S2 Maths.\ derivations & Theory; Intro.\ (Pitman) & Note~S3 \\
+  \S3 Info.\ surface & Theory; Fig.~2 & Fig.~S1 \\
+  \S4 KPI landscape & Methods; Results; Discussion & Figs~S2--S3; Tables~S1--S2; Fig.~S8 \\
+  \S5 Eff.--power & Results (\cref{sec:eff_power}) & Figs~S6--S7 \\
+  \S6 QC & Methods (\cref{sec:qc}); Discussion & Normality note; Note~S1 \\
+  \S7 Practitioner tool & Discussion (\cref{sec:practical_guidance}) & Note~S4 \\
   \bottomrule
 \end{tabular}
 
@@ -146,7 +147,17 @@ The floor is exact. With $X$ Bayes-sufficient, relativisation cannot reduce accu
 \clearpage
 
 % ---------------------------------------------------------------------------
-\section*{SI Section 2: Information Surface (Theory)}
+\section*{SI Section 2: Mathematical Derivations}
+\label{sec:si_maths}
+
+\noindent Supports the theoretical framework (\cref{sec:theory}). The main text states the closed form (\cref{eq:mi_closed}) and the four-quadrant partition. This section records the omitted algebra for the information-content derivation, the boundary analysis, estimator asymptotics, and the Pitman ARE identity.
+
+\input{sections/appendix}
+
+\clearpage
+
+% ---------------------------------------------------------------------------
+\section*{SI Section 3: Information Surface (Theory)}
 \label{sec:si_theory}
 
 \noindent Extends main-text Figure~2 (\cref{fig:info_surface}) and the signal-strength discussion (\cref{sec:signal_strength,sec:theory}). Figure~S1 examines sensitivity of the $I(X;Y)$ surface to $\delta/\sigma_{\mathrm{A}}$ on a controlled grid; empirical KPI positions appear separately in the landscape figures of \cref{sec:si_landscape}.
@@ -166,7 +177,7 @@ The floor is exact. With $X$ Bayes-sufficient, relativisation cannot reduce accu
 \clearpage
 
 % ---------------------------------------------------------------------------
-\section*{SI Section 3: Sports KPI Landscape}
+\section*{SI Section 4: Sports KPI Landscape}
 \label{sec:si_landscape}
 
 \noindent Supports landscape characterisation (\cref{sec:outcome_defs,sec:results}): the full $\PEFtotalStudies{}$-KPI inventory on the $(\kappa,\rho)$ plane, quadrant aggregates, and season-to-season drift. Main-text Figures~1--3 show exemplars and summaries. This section gives per-KPI detail (Figures~S2--S3), quadrant-level aggregates (Table~S1), further KPIs ranked by $|\hat\eta-1|$ (Table~S2), and drift alignment (Figure~S8). Throughout, $I_{\mathrm{pred}}(X;Y)$ denotes the plug-in of \cref{eq:mi_closed} at the estimated $(\hat\kappa,\hat\rho,\hat\delta,\hat\sigma_{\mathrm{A}})$. It is not a fitted mutual-information estimator, and it is not a global predictor of $\Delta\mathrm{ML}$.
@@ -280,7 +291,7 @@ Per-KPI estimates from the canonical pipeline outputs:
 \clearpage
 
 % ---------------------------------------------------------------------------
-\section*{SI Section 4: Efficiency--Power Diagnostics}
+\section*{SI Section 5: Efficiency--Power Diagnostics}
 \label{sec:si_effpower}
 
 \noindent Supports \cref{sec:eff_power,sec:eff_power_theory} and the confirmatory exemplars (\cref{tab:exemplars}). Figure~S6 reports team-stratified bootstrap intervals on $\hat\eta$ and $I_{\mathrm{pred}}$. Figure~S7 compares team-blocked CV accuracy with the equal-prior Gaussian Bayes accuracy of the absolute feature under (A1)--(A2).
@@ -316,7 +327,7 @@ Per-KPI estimates from the canonical pipeline outputs:
 \clearpage
 
 % ---------------------------------------------------------------------------
-\section*{SI Section 5: Quality Control}
+\section*{SI Section 6: Quality Control}
 \label{sec:si_qc}
 
 \noindent Supports normality and transformation checks in Methods (\cref{sec:qc}) and distributional limitations in Discussion.
@@ -342,7 +353,7 @@ A logarithmic transformation $Z=\log(X+1)$ was applied to all \PEFrugbyNkpis{} r
 \clearpage
 
 % ---------------------------------------------------------------------------
-\section*{SI Section 6: Practitioner Diagnostic}
+\section*{SI Section 7: Practitioner Diagnostic}
 \label{sec:si_practitioner}
 
 \noindent Implements the six-step procedure in \cref{sec:practical_guidance}. Code and repository details: \cref{sec:data_availability}.

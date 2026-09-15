@@ -50,7 +50,7 @@ $$
 
  where $\eta>1$ indicates that pairing reduces variance. Across sports KPIs, $\kappa$ spans approximately $1.0$--$2.5$, with a broader empirical range in wider scientific domains ((tab:validation)). Specifically, $\rho=\Corr(X_A,X_B)$ is the Pearson correlation between the home and away KPI values *across fixtures*: for each match $i$, $X_A,i$ and $X_B,i$ are the two teams' counts from the same game, and $\hat\rho$ is computed from the $n$ such paired observations ((sec:methods)). The magnitude of $\rho$ ranges from approximately $-0.3$ to $+0.4$ in competitive sports and frequently exceeds $0.5$ in repeat-measurement clinical designs ((tab:validation)).
 
-Like the classical result, this formula is purely algebraic, and it recovers Fisher's equal-variance ($\kappa=1$) as a special case. Thus, $\eta$  depends jointly on correlation strength and variance asymmetry, a dependence the classical formula cannot express. Under bivariate normality and equal group sizes, the PEF equals the Pitman asymptotic relative efficiency of the paired t‑test versus the independent two-sample t‑test, confirming the variance-ratio formula (see (sec:pitman) and [lehmann1999] for the general framework).
+Like the classical result, this formula is purely algebraic, and it recovers Fisher's equal-variance ($\kappa=1$) as a special case. Thus, $\eta$  depends jointly on correlation strength and variance asymmetry, a dependence the classical formula cannot express. Under bivariate normality and equal group sizes, the PEF equals the Pitman asymptotic relative efficiency of the paired t‑test versus the independent two-sample t‑test, confirming the variance-ratio formula (see Supplementary (sec:pitman) and [lehmann1999] for the general framework).
 
 ## Resolving the Tension: Efficiency versus Information
 
@@ -60,7 +60,7 @@ Resolving this tension carries a concrete practical payoff. Feature engineering,
 
 ## Scope and Contributions
 
-The primary empirical analysis draws on KPI data from professional rugby union and football, where head-to-head matchups produce natural pairing across a range of $(\kappa,\rho)$ values, including negative within-match correlation. Performance-indicator construction in invasion games is well established [hughes2002], and modern team-sports analytics emphasises spatiotemporal and match-context structure [bornn2021]. We supplement this with validation data from healthcare (NHANES oscillometric systolic and diastolic readings on the same visit), transcriptomics (GEO GSE47462), finance, and manufacturing (real CNC process telemetry) to assess generalisability. Supporting-domain summaries appear in (tab:validation); the Supplementary Information focuses on sports KPI landscape detail and simulation diagnostics.
+The primary empirical analysis draws on KPI data from professional rugby union and football, where head-to-head matchups produce natural pairing across a range of $(\kappa,\rho)$ values, including negative within-match correlation. Performance-indicator construction in invasion games is well established [hughes2002], and modern team-sports analytics emphasises spatiotemporal and match-context structure [bornn2021]. We supplement this with validation data from healthcare (NHANES oscillometric systolic and diastolic readings on the same visit), transcriptomics (GEO GSE47462), finance, and manufacturing (real CNC process telemetry) to assess generalisability. Supporting-domain summaries appear in (tab:validation). The Supplementary Information records the mathematical derivations, the sports KPI landscape, and the simulation diagnostics.
 
 This paper makes the following contributions:
 
@@ -76,4 +76,4 @@ This paper makes the following contributions:
 
 ## Organisation
 
-(sec:theory) develops the theoretical framework: the PEF formula, the PEF--information content relationship, and boundary analysis. (sec:methods) describes the validation methodology. (sec:results) presents results. (sec:discussion) discusses implications and limitations. Mathematical derivations with full intermediate steps appear in the Appendix.
+(sec:theory) develops the theoretical framework: the PEF formula, the PEF--information content relationship, and boundary analysis. (sec:methods) describes the validation methodology. (sec:results) presents results. (sec:discussion) discusses implications and limitations. Mathematical derivations with full intermediate steps appear in Supplementary Note S3 ((sec:si_note_s3)).

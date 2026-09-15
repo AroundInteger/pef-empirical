@@ -16,7 +16,7 @@ Regenerate: `python3 "Paper Review Process/export_sections_to_md.py"`
 | 6 | Discussion | [`05_discussion.md`](05_discussion.md) | [`sections/discussion.tex`](../../sections/discussion.tex) |
 | 7 | Conclusion | [`06_conclusion.md`](06_conclusion.md) | [`sections/conclusion.tex`](../../sections/conclusion.tex) |
 | 8 | Data Availability | [`07_data_availability.md`](07_data_availability.md) | [`sections/data_availability.tex`](../../sections/data_availability.tex) |
-| 9 | Appendix | [`08_appendix.md`](08_appendix.md) | [`sections/appendix.tex`](../../sections/appendix.tex) |
+| 9 | SI Note S3 (Mathematical Derivations) | [`08_appendix.md`](08_appendix.md) | [`sections/appendix.tex`](../../sections/appendix.tex) |
 | 10 | Tables and Figures | [`09_tables_and_figures.md`](09_tables_and_figures.md) | [`sections/tables_and_figures.tex`](../../sections/tables_and_figures.tex) |
 | 11 | Supplementary Information | [`10_supplementary.md`](10_supplementary.md) | [`sections/supplementary.tex`](../../sections/supplementary.tex) |
 
@@ -26,4 +26,4 @@ Regenerate: `python3 "Paper Review Process/export_sections_to_md.py"`
 2. **Methods** (current focus)
 3. Theoretical framework (skim)
 4. Results → Discussion → Conclusion
-5. Tables/figures captions → Appendix / SI as needed
+5. Tables/figures captions → SI as needed
