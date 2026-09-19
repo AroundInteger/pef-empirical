@@ -107,6 +107,7 @@ function plot_quadrant_share(ax, kpi_rugby, kpi_football, H, ST)
         'FontSize', ST.fs_tick, 'Box', 'on', 'TickLabelInterpreter', 'none', ...
         'XTickLabelRotation', 0, 'YGrid', 'on', 'XGrid', 'off');
     ylabel(ax, 'Share of KPIs  (%)', 'FontSize', ST.fs_label);
+    ax.YTickLabel = pef_figure_style.decimal_labels(ax.YTick, 0);
     legend(ax, b, qkeys, 'Location', 'north', 'Box', 'off', ...
         'FontSize', ST.fs_panel);
 end

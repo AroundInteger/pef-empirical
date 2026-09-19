@@ -58,7 +58,9 @@ cb = colorbar(ax_handles(3));
 cb.Label.String = 'I(X;Y)  [bits]';
 cb.Label.FontSize = ST.fs_label;
 cb.FontSize = ST.fs_tick;
-cb.Ticks = 0:0.2:1;
+I_ticks = 0:0.2:1;
+cb.Ticks = I_ticks;
+cb.TickLabels = pef_figure_style.decimal_labels(I_ticks, 1);
 
 out_png = fullfile(fig_dir, 'Figure_S3_info_sensitivity.png');
 pef_figure_style.export_figure(fig, out_png);

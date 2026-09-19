@@ -14,8 +14,9 @@ classdef pef_figure_style
 
         function cfg = config()
             % Publication type: no axes titles; captions carry the narrative.
-            % Axis / colourbar labels match the legend (18 pt); tick numbers
-            % 2 pt smaller (16 pt); contour clabels stay 10 pt.
+            % Axis / colourbar labels and panel letters match the legend
+            % (18 pt); tick numbers 2 pt smaller (16 pt); contour clabels
+            % stay 10 pt. KPI names and notes stay on the annotation scale.
             cfg.rho_min = -0.999;
             cfg.rho_max =  0.999;
             cfg.kap_min =  0.001;
@@ -173,7 +174,8 @@ classdef pef_figure_style
         function add_panel_letter(ax, letter, cfg, varargin)
             % Panel identifier inside the axes (never a title, never outside).
             % Default: northwest inset, consistent across all published figures.
-            % Optional Note is drawn on the same line (12 pt).
+            % Optional Note is drawn on the same line at fs_annot (12 pt).
+            % The letter itself uses fs_label so it matches axis titles.
             if nargin < 3 || isempty(cfg), cfg = pef_figure_style.config(); end
             loc = 'northwest';
             note = '';
@@ -191,10 +193,6 @@ classdef pef_figure_style
                     end
                 end
             end
-            txt = char(string(letter));
-            if ~isempty(note)
-                txt = [txt, '  ', char(string(note))];
-            end
             switch lower(char(string(loc)))
                 case 'northeast'
                     xy = [0.95, 0.92]; ha = 'right'; va = 'top';
@@ -205,12 +203,29 @@ classdef pef_figure_style
                 otherwise
                     xy = [0.05, 0.92]; ha = 'left'; va = 'top';
             end
-            text(ax, xy(1), xy(2), txt, 'Units', 'normalized', ...
-                'FontSize', cfg.fs_annot, 'FontWeight', 'bold', ...
+            h = text(ax, xy(1), xy(2), char(string(letter)), ...
+                'Units', 'normalized', ...
+                'FontSize', cfg.fs_label, 'FontWeight', 'bold', ...
                 'HorizontalAlignment', ha, 'VerticalAlignment', va, ...
                 'Interpreter', 'tex', 'HandleVisibility', 'off', ...
                 'Clipping', 'off', 'Margin', 1, ...
                 'BackgroundColor', bg, 'EdgeColor', 'none');
+            if ~isempty(note)
+                ext = h.Extent;
+                gap = 0.012;
+                if strcmp(ha, 'right')
+                    nx = ext(1) - gap;
+                else
+                    nx = ext(1) + ext(3) + gap;
+                end
+                text(ax, nx, xy(2), char(string(note)), ...
+                    'Units', 'normalized', ...
+                    'FontSize', cfg.fs_annot, 'FontWeight', 'normal', ...
+                    'HorizontalAlignment', ha, 'VerticalAlignment', va, ...
+                    'Interpreter', 'tex', 'HandleVisibility', 'off', ...
+                    'Clipping', 'off', 'Margin', 1, ...
+                    'BackgroundColor', bg, 'EdgeColor', 'none');
+            end
         end
 
         function ylim_bars_from_zero(ax, y_hi)
@@ -229,9 +244,14 @@ classdef pef_figure_style
 
         function apply_decimal_ticks(ax, ndp)
             % Fixed decimal places on numeric x/y tick labels.
+            % ndp may be a scalar or [ndp_x, ndp_y]. Log-scaled x is left alone.
             if nargin < 2 || isempty(ndp), ndp = 1; end
-            ax.XTickLabel = pef_figure_style.decimal_labels(ax.XTick, ndp);
-            ax.YTickLabel = pef_figure_style.decimal_labels(ax.YTick, ndp);
+            ndp = ndp(:)';
+            if isscalar(ndp), ndp = [ndp, ndp]; end
+            if ~strcmpi(get(ax, 'XScale'), 'log')
+                ax.XTickLabel = pef_figure_style.decimal_labels(ax.XTick, ndp(1));
+            end
+            ax.YTickLabel = pef_figure_style.decimal_labels(ax.YTick, ndp(2));
         end
 
         function apply_side_legend(ax, cfg, position)
@@ -269,6 +289,15 @@ classdef pef_figure_style
             cb.Label.FontSize = cfg.fs_label;
             cb.Label.FontWeight = 'normal';
             caxis(ax, caxis_range);
+            if max(caxis_range) <= 0.35
+                ticks = 0:0.05:0.30;
+                ndp = 2;
+            else
+                ticks = 0:0.2:max(caxis_range);
+                ndp = 1;
+            end
+            cb.Ticks = ticks;
+            cb.TickLabels = pef_figure_style.decimal_labels(ticks, ndp);
         end
 
         function h_img = draw_eta_surface(ax, cfg, show_contours)

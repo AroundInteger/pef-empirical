@@ -46,7 +46,7 @@ pef-empirical/
 
 Captions for printed S1--S5 are in `sections/supplementary.tex`. Structure: `documentation/SUPPLEMENTARY_STRUCTURE.md` (three SI blocks: theory, probit, empirical; figures numbered in order of appearance; SI §1 holds the mathematical derivations). Disk file names retain generator tags and need not match printed S-numbers.
 
-**Shared figure style:** all main and SI landscape/scatter plots use `scripts/paper_pipeline/lib/pef_figure_style.m` (axis limits, colormaps, quadrant colours, 300 dpi export). Regenerate printed S1--S5 via `scripts/matlab_figures/generate_all_si_figures.m` (requires pipeline outputs for the S2 overlay, iso-η companion, and *I*_pred panel).
+**Shared figure style:** all main and SI landscape/scatter plots use `scripts/paper_pipeline/lib/pef_figure_style.m` (axis limits, colormaps, quadrant colours, 300 dpi export). Author-facing checklist: [`documentation/PAPER_FORMATTING.md`](documentation/PAPER_FORMATTING.md). Agent sizes and helpers: `.cursor/rules/figures.mdc`. Regenerate printed S1--S5 via `scripts/matlab_figures/generate_all_si_figures.m` (requires pipeline outputs for the S2 overlay, iso-η companion, and *I*_pred panel).
 
 ## Requirements
 

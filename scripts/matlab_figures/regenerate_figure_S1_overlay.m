@@ -55,15 +55,16 @@ for i = 1:height(pts)
     scatter(axA, pts.rho(i), pts.tau(i), msz, [0.25, 0.25, 0.25], ...
         'filled', 'Marker', mk, 'MarkerEdgeColor', 'k', 'LineWidth', 0.4);
 end
-text(axA, 0.42, 0.30, 'Q1', 'FontSize', 12, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
-text(axA, 0.42, -0.21, 'Q2', 'FontSize', 12, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
-text(axA, -0.78, -0.21, 'Q3', 'FontSize', 12, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
-text(axA, -0.50, 0.32, 'Q4', 'FontSize', 12, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
+text(axA, 0.42, 0.30, 'Q1', 'FontSize', ST.fs_quad, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
+text(axA, 0.42, -0.21, 'Q2', 'FontSize', ST.fs_quad, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
+text(axA, -0.78, -0.21, 'Q3', 'FontSize', ST.fs_quad, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
+text(axA, -0.50, 0.32, 'Q4', 'FontSize', ST.fs_quad, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
 xlim(axA, [-0.85, 0.65]);
 ylim(axA, [-0.25, 0.42]);
 xlabel(axA, '\rho', 'FontSize', ST.fs_label, 'Interpreter', 'tex');
 ylabel(axA, '\tau = (1/2) log \kappa', 'FontSize', ST.fs_label, 'Interpreter', 'tex');
 pef_figure_style.style_scatter_axes(axA, ST);
+pef_figure_style.apply_decimal_ticks(axA, 1);
 pef_figure_style.add_panel_letter(axA, '(A)', ST);
 text(axA, 0.04, 0.58, {'○  \rho>0 (shared)', '□  \rho=0 (Fisher)', '▽  \rho<0 (competitive)'}, ...
     'Units', 'normalized', 'FontSize', ST.fs_annot, 'Color', [0.25, 0.25, 0.25], ...
@@ -109,6 +110,7 @@ pef_figure_style.style_scatter_axes(axB, ST);
 pef_figure_style.add_panel_letter(axB, '(B)', ST);
 set(axB, 'XScale', 'log');
 ylim(axB, Y_LIM);
+pef_figure_style.apply_decimal_ticks(axB, [1, 0]);
 grid(axB, 'on');
 
 % ---- (C) Master surface: DeltaML vs d_rel, bounded by r = corr(A,X) -----
@@ -155,6 +157,8 @@ cb = colorbar(axC);
 cb.Label.String = 'r = corr(A, X)';
 cb.Label.Interpreter = 'tex';
 cb.Label.FontSize = ST.fs_label;
+cb.FontSize = ST.fs_tick;
+cb.TickLabels = pef_figure_style.decimal_labels(cb.Ticks, 2);
 
 xlabel(axC, 'Relative-feature signal  d_{rel} = \delta / \surd Var(X)', ...
     'FontSize', ST.fs_label, 'Interpreter', 'tex');
@@ -162,6 +166,7 @@ ylabel(axC, 'Mean \DeltaML  (%)', 'FontSize', ST.fs_label, 'Interpreter', 'tex')
 ylim(axC, Y_LIM);
 pef_figure_style.style_scatter_axes(axC, ST);
 pef_figure_style.add_panel_letter(axC, '(C)', ST);
+pef_figure_style.apply_decimal_ticks(axC, [1, 0]);
 grid(axC, 'on');
 legend(axC, [h_ceil, h_edge], ...
     {'ceiling: r\rightarrow0 (majority baseline)', sprintf('grid edge: r = %.2f', r_min)}, ...

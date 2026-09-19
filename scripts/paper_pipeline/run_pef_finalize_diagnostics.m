@@ -265,11 +265,12 @@ function plot_Ipred_vs_dML(tbl, valid, fpath)
     ax = axes('Parent', fig);
     pef_figure_style.scatter_by_quadrant(ax, tbl.I_pred(valid), ...
         tbl.acc_improvement(valid), tbl.quadrant(valid), ST, 48);
+    pef_figure_style.style_scatter_axes(ax, ST);
     xlabel(ax, 'I_{pred}(X;Y)  [bits]', 'FontSize', ST.fs_label);
     ylabel(ax, '\DeltaML improvement  (%, relative minus absolute)', ...
         'FontSize', ST.fs_label);
+    pef_figure_style.apply_decimal_ticks(ax, [3, 1]);
     legend(ax, 'Location', 'northeast', 'Box', 'off', 'FontSize', ST.fs_panel);
-    pef_figure_style.style_scatter_axes(ax, ST);
 
     % Annotate high-|DeltaML| outliers among retained action KPIs.
     sub = tbl(valid, :);
@@ -396,10 +397,10 @@ function plot_iso_eta_I_tension(ideal_tbl, deltaRatio, fpath)
     pef_figure_style.draw_quadrant_labels(ax, ST);
     [Ce, he] = contour(ax, R, K, eta_s, [0.5, 0.75, 1, 1.25, 1.5, 2], ...
         'Color', [0.15, 0.15, 0.15], 'LineWidth', 1.1);
-    clabel(Ce, he, 'FontSize', ST.fs_panel, 'Color', [0.15, 0.15, 0.15]);
+    clabel(Ce, he, 'FontSize', ST.fs_contour, 'Color', [0.15, 0.15, 0.15]);
     [Ci, hi] = contour(ax, R, K, I_med, [0.02, 0.05, 0.1, 0.15, 0.20], ...
         'w--', 'LineWidth', 0.9);
-    clabel(Ci, hi, 'FontSize', ST.fs_panel, 'Color', 'w');
+    clabel(Ci, hi, 'FontSize', ST.fs_contour, 'Color', 'w');
     % Cut guides
     xline(ax, 0, 'Color', [0.95, 0.95, 0.2], 'LineWidth', 1.4, 'LineStyle', '-');
     yline(ax, 1, 'Color', [0.95, 0.95, 0.2], 'LineWidth', 1.4, 'LineStyle', '-');
@@ -438,6 +439,10 @@ function plot_iso_eta_I_tension(ideal_tbl, deltaRatio, fpath)
     pef_figure_style.add_panel_letter(axb, '(B)', ST);
     grid(axb, 'on');
     axb.FontSize = ST.fs_tick;
+    axb.XLabel.FontSize = ST.fs_label;
+    axb.YAxis(1).Label.FontSize = ST.fs_label;
+    axb.YAxis(2).Label.FontSize = ST.fs_label;
+    axb.XTickLabel = pef_figure_style.decimal_labels(axb.XTick, 1);
 
     axc = nexttile(tl);
     hold(axc, 'on');
@@ -454,6 +459,10 @@ function plot_iso_eta_I_tension(ideal_tbl, deltaRatio, fpath)
     pef_figure_style.add_panel_letter(axc, '(C)', ST);
     grid(axc, 'on');
     axc.FontSize = ST.fs_tick;
+    axc.XLabel.FontSize = ST.fs_label;
+    axc.YAxis(1).Label.FontSize = ST.fs_label;
+    axc.YAxis(2).Label.FontSize = ST.fs_label;
+    axc.XTickLabel = pef_figure_style.decimal_labels(axc.XTick, 1);
 
     pef_figure_style.export_figure(fig, fpath);
     close(fig);

@@ -37,4 +37,5 @@ MATLAB helper: `scripts/paper_pipeline/lib/pef_figure_style.m`.
 
 ## Reference
 
-Full checklist: `UP1_PEF/paper/draft_v13_comprehensive_theoretical/documentation/OVERLEAF_BEST_PRACTICES.md` (archive).
+Author-facing formatting guide: `documentation/PAPER_FORMATTING.md`.
+Figure house style: `figures.mdc`.

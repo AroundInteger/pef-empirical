@@ -6,6 +6,7 @@ alwaysApply: false
 
 # Figure presentation (empirical paper)
 
+Author-facing rationale: `documentation/PAPER_FORMATTING.md`.
 Canonical implementation: `scripts/paper_pipeline/lib/pef_figure_style.m`.
 Use `config()`, `add_panel_letter`, `style_scatter_axes`, `export_figure`.
 Do not set font sizes or titles by hand in published figure scripts.
@@ -19,9 +20,10 @@ are exempt.
 | Element | Size | `config` field |
 |---------|------|----------------|
 | Axis labels, colourbar labels | 18 pt (match legend) | `fs_label` |
+| Panel letters `(A)`, `(B)`, … | 18 pt bold (match axis labels) | `fs_label` |
 | Tick labels (numeric) | 16 pt, fixed decimals | `fs_tick` |
 | Contour clabels | 10 pt | `fs_contour` |
-| Panel letters, KPI names, `n=`, notes | 12 pt | `fs_annot` |
+| KPI names, `n=`, notes | 12 pt | `fs_annot` |
 | Legends (in-plot and side) | 18 pt | `fs_panel`, `fs_legend` |
 | Q1--Q4 tags | 16 pt | `fs_quad` |
 
@@ -37,7 +39,7 @@ Export at 300 dpi (`export_figure`). White figure background.
 
 - Multi-panel figures: `(A)`, `(B)`, `(C)` via `pef_figure_style.add_panel_letter`.
 - Sit **inside** the axes, default northwest inset (~5% from top-left).
-- No white patch. 12 pt bold. Optional `Note` on the same line (e.g. `\delta/\sigma_A`).
+- No white patch. 18 pt bold (same as axis labels). Optional `Note` on the same line at 12 pt (e.g. `\delta/\sigma_A`).
 - Use another corner only when northwest sits on data (document why).
 - Single-panel figures do not need a letter.
 
@@ -60,7 +62,7 @@ Export at 300 dpi (`export_figure`). White figure background.
 
 1. No title on the figure.
 2. Panel letters inside the box, same corner across panels.
-3. Axis / colourbar / legend 18 pt; tick numbers 16 pt with fixed decimals; Q tags 16 pt; contour clabels 10 pt.
+3. Axis / colourbar / legend / panel letters 18 pt; tick numbers 16 pt with fixed decimals; Q tags 16 pt; contour clabels 10 pt.
 4. Legend and labels clear of data.
 5. Caption describes panels without repeating a figure title.
 
