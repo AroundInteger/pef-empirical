@@ -12,8 +12,8 @@
 
     **Domain** | **Tier** | **$n$ studies** | **Mean $\eta$** | **SD** | **Efficiency** | **Data source** |
 | --- | --- | --- | --- | --- | --- | --- |
-| Sports (Rugby) | Primary | 24 | 1.313 | 0.996 | 54.2\% | URC |
-| Sports (Football) | Primary | 89 | 0.884 | 0.182 | 16.9\% | English Championship |
+| Sports (Rugby) | Primary | 22 | 1.342 | 1.037 | 54.5\% | URC |
+| Sports (Football) | Primary | 64 | 0.859 | 0.204 | 18.8\% | English Championship |
 | Healthcare | Supporting | $1^\dagger$ | 2.533 | 0.04$^\dagger$ | 100.0\% | [nhanes2017pbxo] |
 | Clinical Genomics | Supporting | $3500^\ddagger$ | 2.696 | 1.601 | 97.0\% | [brunner2014earlybreast,geoGSE47462] |
 | Finance | Supporting | 18 | 3.129 | 1.108 | 100.0\% | Yahoo Finance |
@@ -21,7 +21,7 @@
 |
 
   minipage0.95
-    *Note:* Landscape efficiency rate: proportion of units with $\hat\eta>1$ ((sec:outcome_defs)). $^\dagger$Paired NHANES oscillometric records (participants; systolic vs diastolic, first reading); SD column gives a bootstrap standard error for the pooled $\eta$ (not a cross-unit sample SD). $^\ddagger$Genes in the ranked subset of the GSE47462 paired design (see Methods). $^\S$Axis-wise paired process features per Bosch production cycle (OpenML 752); SD is the sample SD of $\eta$ across pairings. Primary empirical tier: landscape characterisation in Figures (fig:pef_landscape)--(fig:pef_ml) and Supplementary (fig:si_kpi_labelled,fig:si_ipred_vs_dml); mechanistic confirmation via quadrant exemplars ((tab:exemplars)). Supporting tier: parameter estimation and PEF calculation summarised here and in (sec:results); mean $(\kappa,\rho)$ overlay in (fig:pef_landscape).
+    *Note:* Landscape efficiency rate: proportion of units with $\hat\eta>1$ ((sec:outcome_defs)). $^\dagger$Paired NHANES oscillometric records (participants; systolic vs diastolic, first reading); SD column gives a bootstrap standard error for the pooled $\eta$ (not a cross-unit sample SD). $^\ddagger$Genes in the ranked subset of the GSE47462 paired design (see Methods). $^\S$Axis-wise paired process features per Bosch production cycle (OpenML 752); SD is the sample SD of $\eta$ across pairings. Primary empirical tier: landscape characterisation in Figures (fig:pef_landscape)--(fig:info_surface) and Supplementary (fig:si_kpi_labelled,fig:si_ipred_vs_dml); mechanistic confirmation via (fig:pef_ml,tab:exemplars). Supporting tier: parameter estimation and PEF calculation summarised here and in (sec:results); mean $(\kappa,\rho)$ overlay in (fig:pef_landscape).
   minipage |
 
 *Validation results across domains.*
@@ -67,4 +67,4 @@
 > **[Figure]** Information-theoretic surface $I(X;Y)$ as a function of $$ and $$
     (\crefeq:mi_closed
 
-> **[Figure]** Observed machine learning improvement $mathrmML
+> **[Figure]** Confirmatory machine-learning check: $mathrmML

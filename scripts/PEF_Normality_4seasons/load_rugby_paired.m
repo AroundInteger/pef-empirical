@@ -21,8 +21,8 @@ function [paired, kpi_names] = load_rugby_paired(csv_path)
 %   Notes
 %       - Matches without exactly one home and one away row are dropped
 %         (with a warning printed listing the offending match_ids).
-%       - All KPI columns are coerced to double; non-numeric entries
-%         become NaN.
+%       - Score, cards, xG, shots on target, and OBV are dropped by
+%         pef_drop_outcome_kpis (circular with Y = home_win).
 
     opts = detectImportOptions(csv_path, 'TextType', 'string');
     % Force matchid and string columns to be read robustly
@@ -32,11 +32,9 @@ function [paired, kpi_names] = load_rugby_paired(csv_path)
     % Normalise the match_location values
     raw.match_location = lower(strtrim(raw.match_location));
 
-    % Identify KPI columns: anything ending with '_a' EXCEPT the outcome.
+    % Identify KPI columns: anything ending with '_a'.
     vn = raw.Properties.VariableNames;
     is_kpi = endsWith(vn, '_a');
-    % final_points_a is technically a margin but treat it as a KPI too -
-    % it sits naturally alongside the others in PEF terms.
     kpi_cols = vn(is_kpi);
 
     % Strip the '_a' suffix to form base KPI names.
@@ -102,4 +100,6 @@ function [paired, kpi_names] = load_rugby_paired(csv_path)
         paired.([kpi_names{k} '_home']) = home_vals(:,k);
         paired.([kpi_names{k} '_away']) = away_vals(:,k);
     end
+
+    [paired, kpi_names] = pef_drop_outcome_kpis(paired, kpi_names);
 end

@@ -124,7 +124,7 @@ def load_rugby_paired(csv_path: Path) -> tuple[pd.DataFrame, list[str]]:
         out[f"{base}_home"] = home.loc[common, c].values
         out[f"{base}_away"] = away.loc[common, c].values
     paired = pd.DataFrame(out)
-    return paired, kpi_names
+    return drop_outcome_kpis(paired, kpi_names)
 
 
 def load_football_paired(csv_dir: Path, season_files: list[str]) -> tuple[pd.DataFrame, list[str]]:
@@ -169,7 +169,32 @@ def load_football_paired(csv_dir: Path, season_files: list[str]) -> tuple[pd.Dat
         out[f"{c}_home"] = home.loc[common, c].values
         out[f"{c}_away"] = away.loc[common, c].values
     paired = pd.DataFrame(out)
-    return paired, kpi_names
+    return drop_outcome_kpis(paired, kpi_names)
+
+
+OUTCOME_ADJACENT_KPIS = {
+    "final_points",
+    "goals", "np_goals", "op_goals", "sp_goals",
+    "penalty_goals", "own_goals", "goals_from_counters",
+    "red_cards", "yellow_cards", "second_yellow_cards",
+    "xg", "np_xg", "op_xg", "sp_xg", "penalty_xg", "xg_from_counters",
+    "shots_on_target", "np_shots_on_target",
+    "obv", "on_ball_obv", "defensive_obv",
+    "obv_from_passes", "obv_from_carries",
+    "obv_from_dribbles", "obv_from_dribble_carry",
+}
+
+
+def drop_outcome_kpis(paired: pd.DataFrame, kpi_names: list[str]):
+    """Omit score, cards, xG, shots on target, and OBV (circular with home_win)."""
+    keep = [k for k in kpi_names if k.lower() not in OUTCOME_ADJACENT_KPIS]
+    dropped = [k for k in kpi_names if k.lower() in OUTCOME_ADJACENT_KPIS]
+    for stem in dropped:
+        for sfx in ("_home", "_away"):
+            col = f"{stem}{sfx}"
+            if col in paired.columns:
+                paired = paired.drop(columns=col)
+    return paired, keep
 
 
 # =====================================================================

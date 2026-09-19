@@ -111,7 +111,7 @@ description
 
 Under (A2), $Y$ is *not* a deterministic function of $X$: the outcome depends on many factors beyond the single observed KPI difference, so $H(Y\mid X)>0$. The Gaussian discriminant model is the natural linear classifier for normally distributed features and is consistent with (A1) when the within-class variance equals the marginal $\Var(X)$.
 
-**Remark.** Assumption (A1) is empirically reasonable for the present data: the per-match paired difference series $X=X_A-X_B$ in professional rugby and football are approximately normal (mean Shapiro--Wilk $W$ of $0.94$--$0.95$, near-zero skewness), consistent with the central-limit behaviour of paired differences even where the individual team series are mildly skewed (Supplementary (sec:si_normality)). Note that (A1) is required only for the information content derivation; the PEF formula itself ((eq:pef)) is distribution-free. Assumption (A2) is an additional approximation for the predictive setting and is likewise not required for the PEF formula.
+**Remark.** Assumption (A1) is empirically reasonable for the present data: the per-match paired difference series $X=X_A-X_B$ in professional rugby and football are approximately normal (mean Shapiro--Wilk $W$ of $0.98$, near-zero skewness), consistent with the central-limit behaviour of paired differences even where the individual team series are mildly skewed (Supplementary (sec:si_normality)). Note that (A1) is required only for the information content derivation; the PEF formula itself ((eq:pef)) is distribution-free. Assumption (A2) is an additional approximation for the predictive setting and is likewise not required for the PEF formula.
 
 ### Derivation
 
@@ -135,7 +135,7 @@ $$
 
 $$
 
-where $H(p)=-p\log_2p-(1-p)\log_2(1-p)$ is the binary entropy function. (Full derivation in Supplementary (sec:si_note_s3).) The PEF formula rearranges to $\Var(X)=\sigma^2_A(1+\kappa)/\eta$, linking variance geometry directly to $\eta$. Substituting into (eq:hygx) yields
+where $H(p)=-p\log_2p-(1-p)\log_2(1-p)$ is the binary entropy function. (Full derivation in Supplementary (sec:si_maths).) The PEF formula rearranges to $\Var(X)=\sigma^2_A(1+\kappa)/\eta$, linking variance geometry directly to $\eta$. Substituting into (eq:hygx) yields
 
 $$
 
@@ -154,6 +154,8 @@ From (eq:mi_closed), $\eta$ enters the information content formula through the d
 - **Signal may increase relative to noise:** if the mean difference $\delta$ is large relative to the amplified standard deviation, $I(X;Y)$ can still be substantial.
 
 Predictive power depends on $I(X;Y)$, not $\eta$ alone. When $\delta$ is sufficiently large relative to the amplified standard deviation, the information content remains high despite increased variance. This accounts for cases where machine learning models benefit from relative features even when $\eta<1$.
+
+Statistical harm ($\eta<1$) and predictive harm ($\DeltaML<0$; (sec:ml_cv)) are not the same test. The first means the difference has larger variance than unpaired measurement. The second means the difference is a worse classifier than the absolute KPI. The two can disagree ((sec:exemplars)).
 
 ## Sources of Correlation in Paired Comparisons
 
@@ -175,7 +177,7 @@ Each KPI occupies a position in the $(\kappa,\rho)$ plane shaped by these mechan
 
 **Quadrant 2 ($\kappa<1$, $\rho>0$): High efficiency, moderate information.** Positive correlation provides variance reduction even with low variance ratio, though information content is lower than Quadrant 1. Exemplified by manufacturing control charts.
 
-**Quadrant 3 ($\kappa<1$, $\rho<0$): Low efficiency, low information.** Negative correlation with low variance asymmetry amplifies variance without commensurate information gain. Absolute features are preferred. Exemplified by high-volume invasion-game KPIs (passes, pressures, duels) and by weakly competitive or near-independent measurements.
+**Quadrant 3 ($\kappa<1$, $\rho<0$): Low efficiency, low information.** Negative correlation with low variance asymmetry amplifies variance without commensurate information gain. Relativisation is then predictively harmful ($\DeltaML<0$), so absolute features are preferred. Exemplified by high-volume invasion-game KPIs (passes, pressures, duels) and by weakly competitive or near-independent measurements.
 
 **Quadrant 4 ($\kappa>1$, $\rho<0$): Low efficiency, variable information.** This is where the efficiency--power tension is most pronounced. $\eta<1$ indicates statistical harm, yet information content may remain substantial when $\delta$ is large. The decision to relativise requires explicit analysis of both $\eta$ and $I(X;Y)$. Exemplified by asymmetric head-to-head pairings ($\kappa>1$ with $\rho<0$), including some sports KPIs and competitive business comparisons.
 

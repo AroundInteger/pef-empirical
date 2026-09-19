@@ -1,9 +1,9 @@
 classdef pef_figure_style
 %PEF_FIGURE_STYLE  Shared layout, colours, and drawing helpers for PEF figures.
 %
-%  House style: .cursor/rules/figures.mdc (no titles; labels 12 pt; ticks 10 pt;
-%  annotations and legends 12 pt; panel letters inside the axes).
-%  Used by main-text figures (Figures 1--3), supplementary figures (S1--S8),
+%  House style: .cursor/rules/figures.mdc (no titles; axis labels = legend 18 pt;
+%  tick numbers 16 pt; contour clabels 10 pt; panel letters inside the axes).
+%  Used by main-text figures (Figures 1--3), supplementary figures (S1--S5),
 %  and finalize diagnostics.  Call static methods directly, e.g.:
 %    cfg = pef_figure_style.config();
 %    fig = pef_figure_style.new_figure(1400, 820);
@@ -14,17 +14,24 @@ classdef pef_figure_style
 
         function cfg = config()
             % Publication type: no axes titles; captions carry the narrative.
-            % Axis labels >= 10 pt; tick labels 10 pt; annotations and legends 12 pt.
+            % Axis / colourbar labels match the legend (18 pt); tick numbers
+            % 2 pt smaller (16 pt); contour clabels stay 10 pt.
             cfg.rho_min = -0.999;
             cfg.rho_max =  0.999;
             cfg.kap_min =  0.001;
             cfg.kap_max =  3.000;
-            cfg.fs_label  = 12;
-            cfg.fs_tick   = 10;
-            cfg.fs_quad   = 12;
+            cfg.fs_label  = 18;
+            cfg.fs_tick   = 16;
+            cfg.fs_contour = 10;
+            cfg.fs_quad   = 16;
             cfg.fs_annot  = 12;
-            cfg.fs_panel  = 12;
+            cfg.fs_panel  = 18;
+            cfg.fs_legend = 18;   % side legends on Figures 1--2
+            cfg.legend_token = [48, 14];  % wide markers, short tokens → tight rows
             cfg.fs_title  = 12;   % unused on published figures (kept for older scripts)
+            cfg.ms_exemplar = 230;
+            cfg.ms_exemplar_open = 140;
+            cfg.ms_domain = 200;
             cfg.eta_color_lo = 0.4;
             cfg.eta_color_hi = 10.0;
             cfg.I_caxis = [0, 0.30];
@@ -139,15 +146,27 @@ classdef pef_figure_style
             end
             xlim(ax, [cfg.rho_min, cfg.rho_max]);
             ylim(ax, [cfg.kap_min, cfg.kap_max]);
+            xticks(ax, -0.8:0.2:0.8);
+            yticks(ax, 0.5:0.5:3.0);
+            % Tick FontSize first: axes FontSize also resets X/Y labels.
+            set(ax, 'FontSize', cfg.fs_tick, 'Box', 'on', ...
+                'LabelFontSizeMultiplier', cfg.fs_label / cfg.fs_tick);
             xlabel(ax, xlabel_str, 'FontSize', cfg.fs_label);
             ylabel(ax, ylabel_str, 'FontSize', cfg.fs_label);
-            set(ax, 'FontSize', cfg.fs_tick, 'Box', 'on');
+            pef_figure_style.apply_decimal_ticks(ax, 1);
             grid(ax, 'on');
         end
 
         function style_scatter_axes(ax, cfg)
             if nargin < 2, cfg = pef_figure_style.config(); end
-            set(ax, 'FontSize', cfg.fs_tick, 'Box', 'on', 'GridAlpha', 0.2);
+            set(ax, 'FontSize', cfg.fs_tick, 'Box', 'on', 'GridAlpha', 0.2, ...
+                'LabelFontSizeMultiplier', cfg.fs_label / cfg.fs_tick);
+            if ~isempty(ax.XLabel.String)
+                ax.XLabel.FontSize = cfg.fs_label;
+            end
+            if ~isempty(ax.YLabel.String)
+                ax.YLabel.FontSize = cfg.fs_label;
+            end
             grid(ax, 'on');
         end
 
@@ -158,6 +177,7 @@ classdef pef_figure_style
             if nargin < 3 || isempty(cfg), cfg = pef_figure_style.config(); end
             loc = 'northwest';
             note = '';
+            bg = 'none';
             if ~isempty(varargin)
                 for vi = 1:2:numel(varargin)
                     key = varargin{vi};
@@ -166,6 +186,8 @@ classdef pef_figure_style
                         loc = val;
                     elseif strcmpi(key, 'Note')
                         note = val;
+                    elseif strcmpi(key, 'BackgroundColor')
+                        bg = val;
                     end
                 end
             end
@@ -188,7 +210,7 @@ classdef pef_figure_style
                 'HorizontalAlignment', ha, 'VerticalAlignment', va, ...
                 'Interpreter', 'tex', 'HandleVisibility', 'off', ...
                 'Clipping', 'off', 'Margin', 1, ...
-                'BackgroundColor', [1 1 1], 'EdgeColor', 'none');
+                'BackgroundColor', bg, 'EdgeColor', 'none');
         end
 
         function ylim_bars_from_zero(ax, y_hi)
@@ -199,16 +221,43 @@ classdef pef_figure_style
             ylim(ax, [0, y_hi * 1.18]);
         end
 
+        function labels = decimal_labels(vals, ndp)
+            if nargin < 2 || isempty(ndp), ndp = 1; end
+            fmt = sprintf('%%.%df', ndp);
+            labels = arrayfun(@(v) sprintf(fmt, v), vals, 'UniformOutput', false);
+        end
+
+        function apply_decimal_ticks(ax, ndp)
+            % Fixed decimal places on numeric x/y tick labels.
+            if nargin < 2 || isempty(ndp), ndp = 1; end
+            ax.XTickLabel = pef_figure_style.decimal_labels(ax.XTick, ndp);
+            ax.YTickLabel = pef_figure_style.decimal_labels(ax.YTick, ndp);
+        end
+
+        function apply_side_legend(ax, cfg, position)
+            % Compact side legend: larger type, larger markers, short box so
+            % entries do not stretch over the full figure height.
+            if nargin < 2 || isempty(cfg), cfg = pef_figure_style.config(); end
+            lgd = legend(ax, 'Location', 'none', 'Box', 'off', ...
+                'FontSize', cfg.fs_legend, 'Interpreter', 'tex');
+            lgd.ItemTokenSize = cfg.legend_token;
+            if nargin >= 3 && ~isempty(position)
+                lgd.Position = position;
+            else
+                lgd.Position = [0.60, 0.34, 0.38, 0.38];
+            end
+        end
+
         function cb = add_eta_colorbar(ax, cfg)
             if nargin < 2, cfg = pef_figure_style.config(); end
             cb = colorbar(ax);
             eta_ticks = [0.5, 1, 2, 3, 5, 10];
             cb.Ticks = log10(eta_ticks);
-            cb.TickLabels = arrayfun(@(v) sprintf('%.0g', v), eta_ticks, ...
-                'UniformOutput', false);
+            cb.TickLabels = pef_figure_style.decimal_labels(eta_ticks, 1);
             cb.FontSize = cfg.fs_tick;
             cb.Label.String = '\eta';
             cb.Label.FontSize = cfg.fs_label;
+            cb.Label.FontWeight = 'normal';
         end
 
         function cb = add_I_colorbar(ax, cfg, caxis_range)
@@ -218,6 +267,7 @@ classdef pef_figure_style
             cb.FontSize = cfg.fs_tick;
             cb.Label.String = 'I(X;Y)  [bits]';
             cb.Label.FontSize = cfg.fs_label;
+            cb.Label.FontWeight = 'normal';
             caxis(ax, caxis_range);
         end
 
@@ -237,7 +287,7 @@ classdef pef_figure_style
             if show_contours
                 levels = [0.5, 0.75, 1, 1.25, 1.5, 2, 3, 5];
                 [C, h] = contour(ax, R, K, eta_s, levels, 'k-', 'LineWidth', 0.7);
-                clabel(C, h, 'FontSize', cfg.fs_tick, 'Color', [0.25, 0.25, 0.25]);
+                clabel(C, h, 'FontSize', cfg.fs_contour, 'Color', [0.25, 0.25, 0.25]);
                 h.HandleVisibility = 'off';
             end
             pef_figure_style.draw_admissibility_boundary(ax, cfg);
@@ -267,7 +317,7 @@ classdef pef_figure_style
                     I_levels = 0:0.1:1;
                 end
                 [C, h] = contour(ax, R, K, I_xy, I_levels, 'k-', 'LineWidth', 0.7);
-                clabel(C, h, 'FontSize', cfg.fs_tick, 'Color', [0.25, 0.25, 0.25]);
+                clabel(C, h, 'FontSize', cfg.fs_contour, 'Color', [0.25, 0.25, 0.25]);
                 h.HandleVisibility = 'off';
             end
             pef_figure_style.draw_admissibility_boundary(ax, cfg);

@@ -8,4 +8,4 @@
 
 # Data and Code Availability
 
-Sports KPI data sources and supporting-domain provenance are described in Methods ((sec:methods)). Analysis code, the practitioner quadrant diagnostic, pipeline output tables, and figure-generation scripts are available at https://github.com/AroundInteger/pef-empirical. File-level listings, input schemas, and run instructions are given in the Supplementary Information and repository README.
+Sports KPI data were analysed under agreement with the United Rugby Championship and Swansea City AFC and are not redistributed. Supporting-domain provenance is described in Methods ((sec:methods)). Interactive SI2 and SI3 tools (analytic probit surface and practitioner diagnostic) are available at https://github.com/AroundInteger/pef-tools. Input schemas and run instructions are given in the Supplementary Information and the tools repository README.

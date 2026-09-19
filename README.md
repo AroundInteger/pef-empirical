@@ -1,6 +1,6 @@
 # PEF empirical paper — reproducibility repository
 
-Companion to the Paired Efficiency Factor (PEF) empirical manuscript. The mathematical companion lives in [`pef-mathematics`](../pef-mathematics) (local) or on GitHub when published.
+Companion to the Paired Efficiency Factor (PEF) empirical manuscript. The mathematical companion lives in [`pef-mathematics`](../pef-mathematics) (local) or on GitHub when published. Public SI2/SI3 tools live in [`pef-tools`](https://github.com/AroundInteger/pef-tools); this working repository stays private.
 
 **Project memory:** [`PEF_PROJECT_MEMORY.md`](PEF_PROJECT_MEMORY.md) (both repos).  
 **Submission checklist, companion drafting order, and 2-day timeline:** [`PAPER_ROADMAP.md`](PAPER_ROADMAP.md).  
@@ -22,11 +22,11 @@ pef-empirical/
 │   │   ├── sync_to_companion.sh
 │   │   ├── lib/pef_theory_helpers.m
 │   │   └── outputs/                 numbers.tex, CSVs, SI diagnostics
-│   ├── practitioner/                Standalone PEF quadrant diagnostic (Note S4)
+│   ├── practitioner/                Standalone PEF quadrant diagnostic (repo README)
 │   │   ├── run_pef_diagnostic.m
 │   │   └── examples/                Long- and wide-format CSV templates
 │   ├── PEF_Normality_4seasons/      KPI loaders, compute_pef, normality
-│   └── matlab_figures/              Supplementary figures S1–S2 (standalone)
+│   └── matlab_figures/              Supplementary figure generators (printed S1–S5)
 └── .cursor/rules/                   MATLAB path, companion scope, Git workflow
 ```
 
@@ -36,20 +36,17 @@ pef-empirical/
 |------|------|-----------|
 | `Figure_1.png` | PEF landscape (main) | `run_paper_pipeline.m` |
 | `Figure_2.png` | Information surface (main) | `run_paper_pipeline.m` |
-| `Figure_3.png` | PEF-to-ML mapping (main) | `run_paper_pipeline.m` |
+| `Figure_3.png` | Confirmatory \(\eta\) vs \(\Delta\mathrm{ML}\) (exemplars) | `run_paper_pipeline.m` / `regenerate_figure_3_from_outputs.m` |
 | `Figure_3b.png` | ψ-stratified ML residual (companion bridge) | `run_paper_pipeline.m` |
-| `Figure_1_SI.png` | Info sensitivity (S1) | `matlab_figures/generate_figure_S1_info_sensitivity.m` |
-| `Figure_2_SI.png` | Labelled KPI maps (S2) | `matlab_figures/generate_figure_S2_labelled_kpis.m` |
-| `Figure_S3_Ipred_vs_dML.png` | *I*\_pred vs ΔML (S3) | `run_pef_finalize_diagnostics.m` |
-| `Figure_S4_idealised_I_vs_dML_stratified.png` | Idealised probit (S4) | `run_pef_idealised_probit_sim.m` + finalize |
-| `Figure_S5_iso_eta_I_tension.png` | Iso-η / iso-*I* (S5) | `run_pef_finalize_diagnostics.m` |
-| `Figure_finalize_bootstrap_exemplars.png` | Bootstrap exemplars (S6) | `run_pef_finalize_diagnostics.m` |
-| `Figure_S6_q4_bayes_gap.png` | Q4 Bayes gap (S7) | `run_pef_finalize_diagnostics.m` |
-| `Figure_S7_season_drift_alignment.png` | Season drift (S8) | `run_pef_finalize_diagnostics.m` |
+| `Figure_S3_info_sensitivity.png` | Info sensitivity (**printed S1**) | `matlab_figures/generate_figure_S3_info_sensitivity.m` |
+| `Figure_S1_idealised_I_vs_dML_overlay.png` | Idealised probit (**printed S2**) | `matlab_figures/regenerate_figure_S1_overlay.m` |
+| `Figure_S2_iso_eta_I_tension.png` | Iso-η / iso-*I* (**printed S3**) | `run_pef_finalize_diagnostics.m` |
+| `Figure_S4_labelled_kpis.png` | Labelled KPI maps (**printed S4**) | `matlab_figures/generate_figure_S4_labelled_kpis.m` |
+| `Figure_S5_Ipred_vs_dML.png` | *I*\_pred vs ΔML (**printed S5**) | `run_pef_finalize_diagnostics.m` |
 
-Captions for S1--S8 are in `sections/supplementary.tex`. Structure: `documentation/SUPPLEMENTARY_STRUCTURE.md` (seven thematic SI blocks; Note S3 holds the mathematical derivations; stable figure/note labels).
+Captions for printed S1--S5 are in `sections/supplementary.tex`. Structure: `documentation/SUPPLEMENTARY_STRUCTURE.md` (three SI blocks: theory, probit, empirical; figures numbered in order of appearance; SI §1 holds the mathematical derivations). Disk file names retain generator tags and need not match printed S-numbers.
 
-**Shared figure style:** all main and SI landscape/scatter plots use `scripts/paper_pipeline/lib/pef_figure_style.m` (axis limits, colormaps, quadrant colours, 300 dpi export). Regenerate S1--S8 via `scripts/matlab_figures/generate_all_si_figures.m` (requires pipeline outputs for S3--S8).
+**Shared figure style:** all main and SI landscape/scatter plots use `scripts/paper_pipeline/lib/pef_figure_style.m` (axis limits, colormaps, quadrant colours, 300 dpi export). Regenerate printed S1--S5 via `scripts/matlab_figures/generate_all_si_figures.m` (requires pipeline outputs for the S2 overlay, iso-η companion, and *I*_pred panel).
 
 ## Requirements
 
@@ -70,13 +67,13 @@ cd scripts/paper_pipeline
 # 2. Idealised probit simulation (A1)–(A2); PRODUCTION_CONFIG locked in script
 /Applications/MATLAB_R2025b.app/bin/matlab -batch "run('run_pef_idealised_probit_sim.m')"
 
-# 3. Pre-submission diagnostics: S3–S8 figures + finalize_*.csv
+# 3. Pre-submission diagnostics: printed SI figures S2--S5 + finalize_*.csv
 /Applications/MATLAB_R2025b.app/bin/matlab -batch "run('run_pef_finalize_diagnostics.m')"
 ```
 
 ### Practitioner diagnostic (Discussion §Practical Guidance)
 
-Lightweight script for steps 1--6 from paired CSV data (no sports loaders or ML). Schema and examples: Supplementary Note S4.
+Lightweight script for steps 1--6 from paired CSV data (no sports loaders or ML). Schema and examples are in this README and `scripts/practitioner/examples/`.
 
 ```bash
 cd scripts/practitioner
@@ -113,14 +110,14 @@ If the companion paper needs these as macros, use digit-free names (e.g. `\PEFka
 
 Many other `AppendixC` macros in `numbers.tex` (ψ-scale, regime change, ML-residual diagnostics) are generated for reproducibility and companion sync; the empirical manuscript does not cite them in `sections/*.tex`.
 
-### Standalone SI figures (S1–S2)
+### Standalone SI figures (S3–S4)
 
-If S1–S2 need regenerating without a full pipeline run:
+If S3–S4 need regenerating without a full pipeline run:
 
 ```bash
 cd scripts/matlab_figures
-/Applications/MATLAB_R2025b.app/bin/matlab -batch "generate_figure_S1_info_sensitivity"
-/Applications/MATLAB_R2025b.app/bin/matlab -batch "generate_figure_S2_labelled_kpis"
+/Applications/MATLAB_R2025b.app/bin/matlab -batch "generate_figure_S3_info_sensitivity"
+/Applications/MATLAB_R2025b.app/bin/matlab -batch "generate_figure_S4_labelled_kpis"
 ```
 
 ## Companion sync (§7 validation inputs)

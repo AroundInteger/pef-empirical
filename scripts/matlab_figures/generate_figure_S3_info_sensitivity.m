@@ -1,13 +1,13 @@
-%% generate_figure_S1_info_sensitivity.m
+%% generate_figure_S3_info_sensitivity.m
 %
-% Supplementary Figure S1: Sensitivity of I(X;Y) to delta/sigma_A.
+% Supplementary Figure S3: Sensitivity of I(X;Y) to delta/sigma_A.
 % Three panels at delta/sigma_A = 0.5, 1.0, 2.0 (centre matches main Fig. 2).
 %
 % Theory panels only: controlled I(X;Y) surfaces with optional idealised
 % factorial (kappa, rho) design points. Empirical KPI overlays live in the
-% landscape SI figures (S2--S3), not on this pedagogical surface.
+% landscape SI figures (S4--S5), not on this pedagogical surface.
 %
-% Output: figures/Figure_1_SI.png  (300 dpi, pef_figure_style)
+% Output: figures/Figure_S3_info_sensitivity.png  (300 dpi, pef_figure_style)
 
 close all; clc;
 
@@ -60,7 +60,7 @@ cb.Label.FontSize = ST.fs_label;
 cb.FontSize = ST.fs_tick;
 cb.Ticks = 0:0.2:1;
 
-out_png = fullfile(fig_dir, 'Figure_1_SI.png');
+out_png = fullfile(fig_dir, 'Figure_S3_info_sensitivity.png');
 pef_figure_style.export_figure(fig, out_png);
 close(fig);
 fprintf('Saved: %s (theory surfaces + idealised design points only)\n', out_png);

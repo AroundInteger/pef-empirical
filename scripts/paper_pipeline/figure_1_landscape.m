@@ -1,7 +1,8 @@
 function figure_1_landscape(pef_2s, pef_per_season, domain_summary, fpath, ~)
-%FIGURE_1_LANDSCAPE  PEF landscape with four confirmatory exemplars (tab:exemplars).
+%FIGURE_1_LANDSCAPE  PEF landscape with four confirmatory exemplars.
 %  Surface grid: rho in [-0.999, 0.999], kappa in [0.001, 3].
-%  Four quadrant exemplars with 23/24 -> 24/25 drift segments.
+%  Full action-KPI cloud lives in SI Figure S4. Four quadrant exemplars
+%  with 23/24 -> 24/25 drift segments; supporting-domain mean markers.
 
     RHO_MIN = -0.999;
     RHO_MAX =  0.999;
@@ -15,9 +16,11 @@ function figure_1_landscape(pef_2s, pef_per_season, domain_summary, fpath, ~)
     FS_LABEL  = ST.fs_label;
     FS_TICK   = ST.fs_tick;
     FS_QUAD   = ST.fs_quad;
+    FS_CONTOUR = ST.fs_contour;
 
     fig = figure('Color', 'w', 'Position', [100 100 1400 820]);
-    ax  = axes('Parent', fig, 'Position', [0.07 0.10 0.46 0.84]);
+    ax  = axes('Parent', fig, 'Position', [0.09 0.13 0.44 0.81]);
+    ax.Toolbar.Visible = 'off';
     hold(ax, 'on');
 
     n_r = 500;
@@ -44,7 +47,7 @@ function figure_1_landscape(pef_2s, pef_per_season, domain_summary, fpath, ~)
     eta_contour_levels = [0.5 0.75 1 1.25 1.5 2 3 5];
     [C, h] = contour(ax, R, K, eta_s, eta_contour_levels, ...
         'k-', 'LineWidth', 0.7);
-    clabel(C, h, 'FontSize', FS_TICK, 'Color', [0.25 0.25 0.25]);
+    clabel(C, h, 'FontSize', FS_CONTOUR, 'Color', [0.25 0.25 0.25]);
     h.HandleVisibility = 'off';
 
     k_bnd = linspace(KAP_MIN, KAP_MAX, 300);
@@ -67,7 +70,7 @@ function figure_1_landscape(pef_2s, pef_per_season, domain_summary, fpath, ~)
             rd = domain_summary.rho_mean(di);
             kd = domain_summary.kappa_mean(di);
             if isnan(rd) || isnan(kd), continue; end
-            scatter(ax, rd, kd, 110, dom_pal(di, :), '^', 'filled', ...
+            scatter(ax, rd, kd, ST.ms_domain, dom_pal(di, :), '^', 'filled', ...
                 'MarkerEdgeColor', 'k', 'LineWidth', 0.8, ...
                 'DisplayName', domain_summary.domain{di});
         end
@@ -80,30 +83,30 @@ function figure_1_landscape(pef_2s, pef_per_season, domain_summary, fpath, ~)
 
     xlim(ax, [RHO_MIN RHO_MAX]);
     ylim(ax, [KAP_MIN KAP_MAX]);
+    xticks(ax, -0.8:0.2:0.8);
+    yticks(ax, 0.5:0.5:3.0);
+    set(ax, 'FontSize', FS_TICK, 'Box', 'on', ...
+        'LabelFontSizeMultiplier', FS_LABEL / FS_TICK);
     xlabel(ax, 'Pairwise correlation \rho', 'FontSize', FS_LABEL);
     ylabel(ax, 'Variance ratio \kappa = \sigma_B^2/\sigma_A^2', 'FontSize', FS_LABEL);
-    set(ax, 'FontSize', FS_TICK);
+    pef_figure_style.apply_decimal_ticks(ax, 1);
     grid(ax, 'on');
-    box(ax, 'on');
 
     cb = colorbar(ax, 'Location', 'east');
     eta_ticks = [0.5 1 2 3 5 10];
     cb.Ticks      = log10(eta_ticks);
-    cb.TickLabels = arrayfun(@(v) sprintf('%.0g', v), eta_ticks, 'UniformOutput', false);
+    cb.TickLabels = pef_figure_style.decimal_labels(eta_ticks, 1);
     cb.FontSize   = FS_TICK;
-    cb.Position   = [0.545 0.10 0.022 0.84];
+    cb.Position   = [0.545 0.13 0.022 0.81];
     cb.Label.String = '';
     cb_pos = cb.Position;
-    eta_lbl_x = cb_pos(1) + cb_pos(3) + 0.008;
-    eta_lbl_y = cb_pos(2) + cb_pos(4) * 0.5 - 0.02;
-    annotation(fig, 'textbox', [eta_lbl_x, eta_lbl_y, 0.04, 0.04], ...
+    annotation(fig, 'textbox', ...
+        [cb_pos(1) + cb_pos(3) + 0.010, cb_pos(2) + cb_pos(4) - 0.08, 0.05, 0.07], ...
         'String', '\eta', 'EdgeColor', 'none', 'FitBoxToText', 'on', ...
         'FontSize', FS_LABEL, 'HorizontalAlignment', 'left', ...
         'VerticalAlignment', 'middle', 'Interpreter', 'tex');
 
-    lgd = legend(ax, 'Location', 'none', 'Box', 'off', 'FontSize', ST.fs_panel, ...
-        'Interpreter', 'tex');
-    lgd.Position = [0.60 0.05 0.38 0.90];
+    pef_figure_style.apply_side_legend(ax, ST, [0.60, 0.32, 0.38, 0.40]);
 
     hold(ax, 'off');
 

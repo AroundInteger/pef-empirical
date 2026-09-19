@@ -1,4 +1,4 @@
-%% regenerate_figure_S4_overlay.m
+%% regenerate_figure_S1_overlay.m
 % Idealised grid in PEF coordinates:
 %   (A) locator of the 16 (rho, tau) design points, tau = (1/2) log kappa
 %   (B) I vs DeltaML (log x): colour = delta/sigma_A; marker = sign of rho;
@@ -15,7 +15,7 @@
 % sufficient); DeltaML = 100*(g(d_rel)/Phi(d_rel/sqrt2) - 1) as r->0 (absolute
 % feature reduced to the majority-class baseline).
 %
-% Output: figures/Figure_S4b_idealised_I_vs_dML_overlay.png
+% Output: figures/Figure_S1_idealised_I_vs_dML_overlay.png
 % Safe to run() from finalize diagnostics (does not clear the workspace).
 
 THIS = fileparts(mfilename('fullpath'));
@@ -170,7 +170,7 @@ text(axC, 0.97, 0.78, {'floor: \DeltaML = 0', '(r\rightarrow1, Bayes-sufficient)
     'Units', 'normalized', 'HorizontalAlignment', 'right', ...
     'FontSize', ST.fs_annot, 'Interpreter', 'tex', 'Color', [0.25, 0.25, 0.25]);
 
-out = fullfile(FIG, 'Figure_S4b_idealised_I_vs_dML_overlay.png');
+out = fullfile(FIG, 'Figure_S1_idealised_I_vs_dML_overlay.png');
 pef_figure_style.export_figure(fig, out);
 close(fig);
 fprintf('Saved %s\n', out);

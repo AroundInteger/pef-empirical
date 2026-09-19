@@ -23,6 +23,8 @@ function [paired, kpi_names] = load_football_paired(csv_dir, season_files)
 %       - The function infers a uniform schema by taking the intersection
 %         of numeric columns across all season files.
 %       - Match-level identifier columns are stripped from the KPI set.
+%       - Score, cards, xG, shots on target, and OBV are dropped by
+%         pef_drop_outcome_kpis (circular with Y = home_win).
 
     metadata_cols = { ...
         'match_id','competition_country_name','competition_name', ...
@@ -141,4 +143,6 @@ function [paired, kpi_names] = load_football_paired(csv_dir, season_files)
         paired.([kpi_names{k} '_home']) = home_vals(:,k);
         paired.([kpi_names{k} '_away']) = away_vals(:,k);
     end
+
+    [paired, kpi_names] = pef_drop_outcome_kpis(paired, kpi_names);
 end

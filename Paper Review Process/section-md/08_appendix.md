@@ -1,4 +1,4 @@
-# SI Note S3 (Mathematical Derivations)
+# SI §1 Mathematical Derivations
 
 > **Review copy** from LaTeX. Source of truth: `sections/appendix.tex`.
 > Propose edits in chat (or annotate this file); agreed changes go into the `.tex`.
@@ -6,11 +6,9 @@
 
 ---
 
-## Supplementary Note S3: Mathematical Derivations
+The algebraic derivation of the PEF formula ((eq:pef)) from the variance of correlated differences, together with its reduction to Fisher's classical case at $\kappa=1$, is given in full in (sec:theory) (2.1). This section records the omitted information-content algebra and the Pitman asymptotic relative efficiency proof.
 
- The algebraic derivation of the PEF formula ((eq:pef)) from the variance of correlated differences, together with its reduction to Fisher's classical case at $\kappa=1$, is given in full in (sec:theory) (2.1). This note records the material not reproduced in the main text: the step-by-step information content derivation, the boundary analysis, the statistical properties of the PEF estimator, and the Pitman asymptotic relative efficiency proof.
-
-### Information Content Derivation
+## Information Content Derivation
 
 Setup
 
@@ -68,162 +66,9 @@ $$
 
 $$
 
-### Boundary Analysis
+## Connection to Pitman Asymptotic Relative Efficiency
 
-Fisher Regime ($\kappa=1$, $\rho=0$)
-
-$$
-
-  \eta = 1,\quad \Var(X) = 2\sigma^2_A,\quad
-  I(X;Y) = 1 - H\left(\Phi\left(\delta2\sigma_Asqrt(2)\right)\right).
-
-$$
-
-Independent measurements with equal variances; relativisation is neutral.
-
-Variance Ratio Extremities
-
-**$\kappa\to 0$** (entity B negligible variance):
-
-$$
-
-  \eta\to 1,\quad \Var(X)\to\sigma^2_A,\quad
-  I(X;Y)\to 1 - H\left(\Phi\left(\delta2\sigma_A\right)\right).
-
-$$
-
-Reduces to measurement of entity A alone.
-
-**$\kappa\to\infty$** (entity B dominates):
-
-$$
-
-  \eta\to 1,\quad \Var(X)≈ \kappa\sigma^2_A,\quad I(X;Y)\to 0.
-
-$$
-
-Signal drowns in noise from entity B's extreme variability.
-
-Correlation Extremities
-
-**$\rho\to -1$** (perfect negative correlation):
-
-$$
-
-  \eta\to1+\kappa(sqrt(\kappa)+1)^2,\quad
-  \Var(X)\to\sigma^2_A(sqrt(\kappa)+1)^2.
-
-$$
-
-For $\kappa=1$: $\eta=0.5$, variance quadrupled. Yet $I(X;Y)$ may remain substantial if $\delta$ is sufficiently large.
-
-**$\rho\to +1$** (perfect positive correlation):
-
-$$
-
-  \eta\to1+\kappa(sqrt(\kappa)-1)^2\to\infty,\quad
-  \Var(X)\to\sigma^2_A(sqrt(\kappa)-1)^2\to 0.
-
-$$
-
-Variance vanishes, information content approaches unity.
-
-Summary of Special Cases
-
-center
-tabular@lccc@
-
-  **Condition** & $\eta$ & $\Var(X)$ & $I(X;Y)$ \\
-
-  $\kappa=1$, $\rho=0$ (Fisher) & $1$ & $2\sigma^2_A$ & Depends on $\delta/\sigma_A$ \\
-  $\kappa=1$, $\rho\to +1$     & $\to\infty$ & $\to 0$ & $\to 1$ \\
-  $\kappa=1$, $\rho=-1$        & $0.5$ & $4\sigma^2_A$ & Reduced but non-zero \\
-  $\kappa\to 0$                & $1$ & $\sigma^2_A$ & Depends on $\delta/\sigma_A$ \\
-  $\kappa\to\infty$            & $1$ & $\to\infty$ & $\to 0$ \\
-
-tabular
-center
-
-### Statistical Properties of the PEF Estimator
-
-Estimators
-
-For paired observations $(X_A,i,X_B,i)$, $i=1,…,n$,
-
-$$
-
-  \eta = 1+1+\kappa-2\kappa \rho,
-
-$$
-
-where $\kappa=s^2_B/s^2_A$ and $\rho$ is the Pearson sample correlation.
-
-Asymptotic Distribution
-
-Under bivariate normality and independence, the delta method [lehmann1999] gives
-
-$$
-
-  sqrt(n) (\eta-\eta) d N(0,\sigma^2_\eta),
-
-$$
-
-where $\sigma^2_\eta = g^\top \Sigma_(\kappa,\rho) g$ and $g = (\partial\eta/\partial\kappa, \partial\eta/\partial\rho)^\top$ is evaluated at the true parameter values. Writing $D=1+\kappa-2sqrt(\kappa) \rho$ for the denominator of $\eta$, the partial derivatives are
-
-$$
-
-  (\partial\eta)/(\partial\kappa)
-    &= D - (1+\kappa)\bigl(1 - \rho/sqrt(\kappa)\bigr)D^2
-     = (1+\kappa)\rho/sqrt(\kappa) - 2sqrt(\kappa) \rhoD^2,
-   \\
-  (\partial\eta)/(\partial\rho)
-    &= 2sqrt(\kappa)(1+\kappa)D^2.
-
-$$
-
-The asymptotic covariance matrix $\Sigma_(\kappa,\rho)$ can be obtained from the delta method applied to $(s^2_A,s^2_B,\rho)$, or estimated directly via bootstrap (see below).
-
-Theoretical Guarantees
-
-- **Consistency:** $\etap\eta$ as $n\to\infty$ (continuous mapping theorem).
-
-- **Bias:** $\eta$ is generally biased due to nonlinearity of the PEF formula; the bias is $O(1/n)$ and vanishes asymptotically. For $\eta>1$ the bias is typically positive (by Jensen's inequality, since $\eta$ is convex in $\rho$ from (eq:d2etadrho2)).
-
-- **Efficiency:** $\eta$ is a continuous function of the MLEs $(\kappa,\rho)$ under bivariate normality; by the invariance of the MLE, $\eta$ is itself the MLE of $\eta$ and is asymptotically efficient [lehmann1999].
-
-Bootstrap Confidence Intervals
-
-$$
-
-  CI_1-\alpha = \bigl[\eta^*_(\alpha/2),\eta^*_(1-\alpha/2)\bigr],
-
-$$
-
-where $\eta^*_(p)$ denotes the $p$th quantile of the bootstrap distribution from resampling paired observations.
-
-### Connection to Classical Tests
-
-The paired $t$-statistic is
-
-$$
-
-  t = Dsqrt(\Var(D)/n),\quad D=X_A-X_B.
-
-$$
-
-Higher $\eta$ (lower $\Var(D)$) increases the $t$-statistic and hence test power. Cohen's $d$ for paired designs,
-
-$$
-
-  d = Dsqrt(\Var(D)),
-
-$$
-
-also increases with $\eta$, yielding larger detectable effect sizes.
-
-### Connection to Pitman Asymptotic Relative Efficiency
-
-This note establishes that, under bivariate normality and equal group sizes, the PEF equals the Pitman asymptotic relative efficiency (ARE) of the paired $t$-test relative to the independent two-sample $t$-test. We state this as a proposition, give a self-contained proof, verify the classical reduction, and record the qualifications that bound the result.
+This section establishes that, under bivariate normality and equal group sizes, the PEF equals the Pitman asymptotic relative efficiency (ARE) of the paired $t$-test relative to the independent two-sample $t$-test. We state this as a proposition, give a self-contained proof, verify the classical reduction, and record the qualifications that bound the result.
 
 Proposition
 

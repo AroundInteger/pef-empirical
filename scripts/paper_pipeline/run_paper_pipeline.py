@@ -25,7 +25,7 @@ Outputs
 -------
 figures/Figure_1.png          PEF landscape: KPI segments (23/24->24/25)
 figures/Figure_2.png          I(X;Y) information surface
-figures/Figure_3.png          PEF-to-ML mapping + empirical scatter
+figures/Figure_3.png          confirmatory eta vs DeltaML (exemplars)
 outputs/pef_landscape_2season.csv
 outputs/pef_landscape_per_season.csv
 outputs/normality_primary_2season.csv
@@ -208,8 +208,6 @@ else:
     ml_all = pd.DataFrame()
     print("   Skipped (scikit-learn not installed).")
 
-ml_surface = build_ml_surface()
-
 # ======================================================================
 # [7/7]  Figures + table_numbers.csv
 # ======================================================================
@@ -219,7 +217,7 @@ figure_1_landscape(pef_2s_all, pef_per_season, domain_summary,
 print("   Figure 1 saved.")
 figure_2_info_surface(FIG_DIR / "Figure_2.png")
 print("   Figure 2 saved.")
-figure_3_ml_mapping(ml_all, ml_surface, FIG_DIR / "Figure_3.png")
+figure_3_ml_mapping(ml_all, FIG_DIR / "Figure_3.png")
 print("   Figure 3 saved.")
 figure_si_normality(norm_primary, norm_si, OUT_DIR / "normality_summary_SI.png")
 print("   SI normality figure saved.")
@@ -436,12 +434,6 @@ def join_pef_to_ml(ml: pd.DataFrame, pef: pd.DataFrame) -> pd.DataFrame:
     return ml.merge(pef[cols].drop_duplicates("kpi"), on="kpi", how="left")
 
 
-def build_ml_surface() -> dict:
-    eta = np.linspace(0.3, 4, 200)
-    ml  = 0.234*(eta-1) + 0.089*(eta-1)**2
-    return {"eta": eta, "ml_improvement": ml}
-
-
 # ---- Figure 1: PEF landscape with KPI segments ----------------------
 def figure_1_landscape(pef_2s: pd.DataFrame, pef_per_season: pd.DataFrame,
                        domain_summary: pd.DataFrame, fpath: Path) -> None:
@@ -536,56 +528,75 @@ def figure_2_info_surface(fpath: Path) -> None:
     plt.close(fig)
 
 
-# ---- Figure 3: PEF-to-ML mapping ------------------------------------
-def figure_3_ml_mapping(ml_all: pd.DataFrame, ml_surface: dict,
-                        fpath: Path) -> None:
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+# ---- Figure 3: confirmatory eta vs DeltaML --------------------------
+def figure_3_ml_mapping(ml_all: pd.DataFrame, fpath: Path) -> None:
+    """Four quadrant exemplars plus the rucks-won low-signal foil."""
+    q_col = {"Q1": (0.20, 0.63, 0.17), "Q2": (0.12, 0.47, 0.71),
+             "Q3": (0.89, 0.47, 0.07), "Q4": (0.77, 0.15, 0.16)}
+    x_left, x_gap, x_right0, x_right1 = 3.40, 0.16, 5.05, 5.75
 
-    q_col  = {"Q1":(0.20,0.63,0.17),"Q2":(0.12,0.47,0.71),
-               "Q3":(0.89,0.47,0.07),"Q4":(0.77,0.15,0.16)}
+    def map_eta(eta):
+        eta = np.asarray(eta, dtype=float)
+        xp = np.array(eta, copy=True)
+        right = eta > x_left
+        xp[right] = x_left + x_gap + (eta[right] - x_right0)
+        return xp if xp.shape else float(xp)
 
-    if not ml_all.empty and "eta" in ml_all.columns and "acc_improvement" in ml_all.columns:
-        valid = ml_all.dropna(subset=["eta","acc_improvement"])
-        for q, clr in q_col.items():
-            sub = valid[valid.get("quadrant","") == q] if "quadrant" in valid.columns else valid
-            if sub.empty: continue
-            ax1.scatter(sub.eta, sub.acc_improvement, s=55, color=clr,
-                        edgecolors="k", linewidths=0.4, alpha=0.85, label=q)
-
-    ax1.plot(ml_surface["eta"], 100*ml_surface["ml_improvement"],
-             "k-", linewidth=2, label="Polynomial fit")
-    ax1.axvline(1.0, color="k", linestyle=":", linewidth=1)
-    ax1.set_xlabel(r"$\eta$ (PEF)", fontsize=11)
-    ax1.set_ylabel("Acc. improvement (%)", fontsize=11)
-    ax1.set_title(r"Empirical ML improvement vs $\eta$", fontsize=11)
-    ax1.legend(frameon=False, fontsize=9); ax1.grid(True, alpha=0.4)
-
-    quads = list(q_col.keys())
-    q_means = []
-    q_ns    = []
-    if not ml_all.empty and "quadrant" in ml_all.columns:
-        for q in quads:
-            sub = ml_all[ml_all.quadrant == q]["acc_improvement"].dropna()
-            q_means.append(sub.mean() if len(sub) else 0.0)
-            q_ns.append(len(sub))
-    else:
-        q_means = [0.0]*4; q_ns = [0]*4
-
-    colors_bar = [q_col[q] for q in quads]
-    bars = ax2.bar(quads, q_means, color=colors_bar, edgecolor="k", linewidth=0.6)
-    for bar, n, v in zip(bars, q_ns, q_means):
-        ax2.text(bar.get_x()+bar.get_width()/2,
-                 v + 0.3*np.sign(v) + 0.3, f"n={n}",
-                 ha="center", fontsize=9)
-    ax2.set_xlabel("Quadrant", fontsize=11)
-    ax2.set_ylabel("Mean acc. improvement (%)", fontsize=11)
-    ax2.set_title("Mean improvement by quadrant", fontsize=11)
-    ax2.grid(True, alpha=0.4, axis="y")
-
-    fig.suptitle("PEF-to-ML mapping (empirical, 23/24 + 24/25)",
-                 fontsize=12, fontweight="bold")
-    plt.tight_layout()
-    fig.savefig(fpath, dpi=200, bbox_inches="tight")
+    rows = [
+        ("rugby", "kick_metres", "Q1: kick metres", False, 0.18, 0.55, "left"),
+        ("football", "long_balls", "Q2: long balls", False, 0.22, 0.45, "left"),
+        ("football", "passes", "Q3: passes", False, 0.00, -1.20, "center"),
+        ("football", "goalkeeper_long_balls", "Q4: gk long balls", False, 0.22, 0.35, "left"),
+        ("rugby", "rucks_won", "rucks won", True, 0.10, 0.70, "left"),
+    ]
+    fig, ax = plt.subplots(figsize=(8.2, 5.6))
+    ax.axvline(float(map_eta(1.0)), color="k", linestyle=":", linewidth=1.0)
+    ax.axhline(0.0, color="k", linestyle=":", linewidth=0.8)
+    if ml_all is None or ml_all.empty:
+        fig.savefig(fpath, dpi=300, bbox_inches="tight", facecolor="w")
+        plt.close(fig)
+        return
+    work = ml_all.copy()
+    if "sport" in work.columns:
+        work["sport"] = work["sport"].astype(str)
+    if "kpi" in work.columns:
+        work["kpi"] = work["kpi"].astype(str)
+    for sport, kpi, label, is_foil, xoff, yoff, ha in rows:
+        sub = work
+        if "sport" in work.columns:
+            sub = sub[sub["sport"] == sport]
+        sub = sub[sub["kpi"] == kpi] if "kpi" in sub.columns else sub
+        if sub.empty or "eta" not in sub.columns:
+            continue
+        xe = float(map_eta(float(sub["eta"].iloc[0])))
+        ye = float(sub["acc_improvement"].iloc[0])
+        ax.plot([xe, xe], [0, ye], color=(0.70, 0.70, 0.70), linewidth=1.0)
+        if is_foil:
+            ax.scatter(xe, ye, s=230, marker="D", facecolors="none",
+                       edgecolors=(0.45, 0.45, 0.45), linewidths=1.8, zorder=3)
+            ax.text(xe + xoff, ye + yoff, label, fontsize=12, fontweight="bold",
+                    color=(0.35, 0.35, 0.35), ha=ha, va="center")
+        else:
+            q = str(sub["quadrant"].iloc[0]) if "quadrant" in sub.columns else "Q1"
+            ax.scatter(xe, ye, s=230, color=q_col.get(q, (0.4, 0.4, 0.4)),
+                       edgecolors="k", linewidths=0.8, zorder=3, label=q)
+            ax.text(xe + xoff, ye + yoff, label, fontsize=12, fontweight="bold",
+                    ha=ha, va="center")
+    ax.text(2.55, 6.72, "relativisation helps", fontsize=12, color=(0.4, 0.4, 0.4),
+            ha="center")
+    ax.text(2.05, -2.70, "relativisation hurts", fontsize=12, color=(0.4, 0.4, 0.4),
+            ha="center")
+    eta_ticks = np.array([0.0, 1.0, 2.0, 3.0, 5.2, 5.6])
+    ax.set_xticks(map_eta(eta_ticks))
+    ax.set_xticklabels([f"{v:g}" for v in eta_ticks])
+    ax.set_xlim(0, float(map_eta(x_right1)))
+    ax.set_ylim(-3.5, 7.1)
+    ax.set_xlabel(r"$\eta$ (PEF)", fontsize=12)
+    ax.set_ylabel(r"$\Delta$ML accuracy (%)", fontsize=12)
+    ax.tick_params(labelsize=10)
+    ax.legend(frameon=False, fontsize=12, loc="upper left")
+    ax.grid(True, alpha=0.2)
+    fig.savefig(fpath, dpi=300, bbox_inches="tight", facecolor="w")
     plt.close(fig)
 
 

@@ -13,19 +13,17 @@
 %   outputs/finalize_bootstrap_pef.csv
 %   outputs/finalize_q4_bayes_gap.csv
 %   outputs/finalize_season_drift.csv
-%   figures/Figure_S3_Ipred_vs_dML.png
-%   figures/Figure_S4_idealised_I_vs_dML_stratified.png
-%   figures/Figure_S5_iso_eta_I_tension.png
-%   figures/Figure_finalize_bootstrap_exemplars.png
-%   figures/Figure_S6_q4_bayes_gap.png
-%   figures/Figure_S7_season_drift_alignment.png
+%   figures/Figure_S5_Ipred_vs_dML.png
+%   figures/Figure_idealised_I_vs_dML_stratified.png  (diagnostic; SI uses overlay)
+%   figures/Figure_S2_iso_eta_I_tension.png
+%   figures/Figure_S1_idealised_I_vs_dML_overlay.png  (via regenerate_figure_S1_overlay.m)
 %
 % Run:
 %   cd scripts/paper_pipeline
 %   /Applications/MATLAB_R2025b.app/bin/matlab -batch "run('run_pef_finalize_diagnostics.m')"
 %
-% Set THEORY_FIGURES_ONLY=true to regenerate S3--S5 (incl. controlled-grid S5)
-% without the bootstrap / Q4 / drift blocks.
+% Set THEORY_FIGURES_ONLY=true to regenerate S5, the S1 overlay, and S2
+% without the bootstrap / Q4 / drift CSV blocks.
 
 clear; clc; close all;
 rng(20260521, 'twister');
@@ -40,7 +38,7 @@ addpath(fullfile(THIS_DIR, 'lib'));
 
 N_BOOT    = 300;
 QUICK_MODE = false;   % set true for smoke test (N_BOOT=50)
-THEORY_FIGURES_ONLY = false;  % true: stop after S3--S5 (no bootstrap)
+THEORY_FIGURES_ONLY = false;  % true: stop after S5 / S1 overlay / S2 (no bootstrap CSVs)
 REUSE_BOOTSTRAP = isfile(fullfile(OUT_DIR, 'finalize_bootstrap_pef.csv'));
 if QUICK_MODE
     N_BOOT = 50;
@@ -77,9 +75,9 @@ fprintf('Wrote finalize_kpi_information.csv (%d rows)\n', height(kpi_tbl));
 valid = isfinite(kpi_tbl.I_pred) & isfinite(kpi_tbl.acc_improvement);
 corr_lines = write_correlation_summary(kpi_tbl, valid, fullfile(OUT_DIR, 'finalize_correlations.txt'));
 
-fig_s3 = fullfile(FIG_DIR, 'Figure_S3_Ipred_vs_dML.png');
-plot_Ipred_vs_dML(kpi_tbl, valid, fig_s3);
-fprintf('Wrote %s\n', fig_s3);
+fig_s5 = fullfile(FIG_DIR, 'Figure_S5_Ipred_vs_dML.png');
+plot_Ipred_vs_dML(kpi_tbl, valid, fig_s5);
+fprintf('Wrote %s\n', fig_s5);
 
 median_dr = median(kpi_tbl.delta_ratio, 'omitnan');
 fprintf('Median empirical delta/sigma_A = %.3f\n\n', median_dr);
@@ -87,11 +85,11 @@ fprintf('Median empirical delta/sigma_A = %.3f\n\n', median_dr);
 %% ---- Item 2: Stratified idealised sim -------------------------------------
 [strat_tbl, pooled_r] = stratify_idealised_grid(ideal);
 writetable(strat_tbl, fullfile(OUT_DIR, 'finalize_idealised_stratified.csv'));
-fig_s4 = fullfile(FIG_DIR, 'Figure_S4_idealised_I_vs_dML_stratified.png');
-plot_idealised_stratified(ideal, fig_s4);
-fprintf('Wrote finalize_idealised_stratified.csv and %s\n', fig_s4);
+fig_strat = fullfile(FIG_DIR, 'Figure_idealised_I_vs_dML_stratified.png');
+plot_idealised_stratified(ideal, fig_strat);
+fprintf('Wrote finalize_idealised_stratified.csv and %s\n', fig_strat);
 fprintf('Pooled corr(I, dML) = %.3f; stratified slices in CSV\n\n', pooled_r);
-overlay_script = fullfile(SCRIPTS, 'matlab_figures', 'regenerate_figure_S4_overlay.m');
+overlay_script = fullfile(SCRIPTS, 'matlab_figures', 'regenerate_figure_S1_overlay.m');
 if isfile(overlay_script)
     run(overlay_script);
 end
@@ -103,17 +101,17 @@ else
     iso_dr = median_dr;
 end
 write_iso_delta_sidecar(fullfile(OUT_DIR, 'finalize_iso_delta_ratio.txt'), iso_dr, median_dr);
-fig_s5 = fullfile(FIG_DIR, 'Figure_S5_iso_eta_I_tension.png');
+fig_s2 = fullfile(FIG_DIR, 'Figure_S2_iso_eta_I_tension.png');
 % Theory panel: controlled surface + factorial design points only (no empirical KPI overlay).
-plot_iso_eta_I_tension(ideal, iso_dr, fig_s5);
-fprintf('Wrote %s (delta/sigma_A = %.3f; grid design points only)\n\n', fig_s5, iso_dr);
+plot_iso_eta_I_tension(ideal, iso_dr, fig_s2);
+fprintf('Wrote %s (delta/sigma_A = %.3f; grid design points only)\n\n', fig_s2, iso_dr);
 
 if THEORY_FIGURES_ONLY
-    fprintf('THEORY_FIGURES_ONLY: skipping bootstrap / Q4 / drift blocks.\n');
+    fprintf('THEORY_FIGURES_ONLY: skipping bootstrap / Q4 / drift CSV blocks.\n');
     return;
 end
 
-%% ---- Items 4-5: Bootstrap + Q4 Bayes gap ----------------------------------
+%% ---- Items 4-5: Bootstrap + Q4 Bayes gap (tables only; no SI figures) -----
 boot_csv = fullfile(OUT_DIR, 'finalize_bootstrap_pef.csv');
 if REUSE_BOOTSTRAP
     boot_tbl = readtable(boot_csv);
@@ -124,23 +122,14 @@ else
     fprintf('Wrote finalize_bootstrap_pef.csv\n');
 end
 
-ex_top = confirmatory_exemplars_plus_rucks();
-fig_boot = fullfile(FIG_DIR, 'Figure_finalize_bootstrap_exemplars.png');
-plot_bootstrap_exemplars(boot_tbl, ex_top, fig_boot);
-fprintf('Wrote %s\n', fig_boot);
-
 q4_tbl = build_q4_bayes_gap(kpi_tbl);
 writetable(q4_tbl, fullfile(OUT_DIR, 'finalize_q4_bayes_gap.csv'));
-fig_s6 = fullfile(FIG_DIR, 'Figure_S6_q4_bayes_gap.png');
-plot_q4_bayes_gap(q4_tbl, fig_s6);
-fprintf('Wrote finalize_q4_bayes_gap.csv and %s\n\n', fig_s6);
+fprintf('Wrote finalize_q4_bayes_gap.csv\n\n');
 
-%% ---- Item 6: Season drift vs grad I ---------------------------------------
+%% ---- Item 6: Season drift vs grad I (table only; no SI figure) ------------
 drift_tbl = build_season_drift_table(pef_ps, kpi_tbl, H);
 writetable(drift_tbl, fullfile(OUT_DIR, 'finalize_season_drift.csv'));
-fig_s7 = fullfile(FIG_DIR, 'Figure_S7_season_drift_alignment.png');
-plot_season_drift(drift_tbl, fig_s7);
-fprintf('Wrote finalize_season_drift.csv and %s\n', fig_s7);
+fprintf('Wrote finalize_season_drift.csv\n');
 fprintf('Quadrant-crossing KPIs: %d\n', sum(drift_tbl.quadrant_crossed));
 
 fprintf('\nFinalize diagnostics complete.\n');
@@ -279,10 +268,10 @@ function plot_Ipred_vs_dML(tbl, valid, fpath)
     xlabel(ax, 'I_{pred}(X;Y)  [bits]', 'FontSize', ST.fs_label);
     ylabel(ax, '\DeltaML improvement  (%, relative minus absolute)', ...
         'FontSize', ST.fs_label);
-    legend(ax, 'Location', 'northwest', 'Box', 'off', 'FontSize', ST.fs_panel);
+    legend(ax, 'Location', 'northeast', 'Box', 'off', 'FontSize', ST.fs_panel);
     pef_figure_style.style_scatter_axes(ax, ST);
 
-    % Annotate high-|DeltaML| outliers (often outcome-adjacent KPIs).
+    % Annotate high-|DeltaML| outliers among retained action KPIs.
     sub = tbl(valid, :);
     [~, ord] = sort(abs(sub.acc_improvement), 'descend');
     n_ann = min(5, height(sub));
@@ -531,72 +520,6 @@ function [boot_tbl, paired_all] = run_bootstrap_all_kpis(REPO, kpi_tbl, H, nBoot
 end
 
 % =========================================================================
-function ex = confirmatory_exemplars_plus_rucks()
-    % Four tab:exemplars KPIs plus the rucks-won counter-example.
-    spec = { ...
-        "rugby",    "kick_metres",           "Q1"; ...
-        "football", "long_balls",            "Q2"; ...
-        "football", "passes",                "Q3"; ...
-        "football", "goalkeeper_long_balls", "Q4"; ...
-        "rugby",    "rucks_won",             "Q2"};
-    ex = table(string(spec(:,1)), string(spec(:,2)), string(spec(:,3)), ...
-        'VariableNames', {'sport','kpi','quadrant'});
-end
-
-% =========================================================================
-function plot_bootstrap_exemplars(boot_tbl, ex_top, fpath)
-    ST = pef_figure_style.config();
-    labels = strings(height(ex_top), 1);
-    colors = zeros(height(ex_top), 3);
-    for i = 1:height(ex_top)
-        labels(i) = pef_figure_style.exemplar_label( ...
-            ex_top.sport(i), ex_top.kpi(i), ex_top.quadrant(i));
-        colors(i, :) = pef_figure_style.quadrant_color(ex_top.quadrant(i));
-    end
-
-    fig = pef_figure_style.new_figure(980, 560);
-    tiledlayout(2, 1, 'Padding', 'compact', 'TileSpacing', 'compact');
-
-    ax1 = nexttile;
-    hold(ax1, 'on');
-    for i = 1:height(ex_top)
-        m = boot_tbl.sport == string(ex_top.sport(i)) & ...
-            boot_tbl.kpi == string(ex_top.kpi(i));
-        if ~any(m), continue; end
-        row = boot_tbl(find(m, 1), :);
-        errorbar(ax1, i, row.eta_med, row.eta_med - row.eta_lo, ...
-            row.eta_hi - row.eta_med, 'o', 'Color', colors(i, :), ...
-            'MarkerFaceColor', colors(i, :), 'LineWidth', 1.2, 'CapSize', 8);
-    end
-    yline(ax1, 1, 'k--', 'LineWidth', 1.0, 'HandleVisibility', 'off');
-    set(ax1, 'XTick', 1:height(ex_top), 'XTickLabel', labels, ...
-        'XTickLabelRotation', 25, 'FontSize', ST.fs_panel);
-    ylabel(ax1, '\eta', 'FontSize', ST.fs_label);
-    pef_figure_style.add_panel_letter(ax1, '(A)', ST);
-    pef_figure_style.style_scatter_axes(ax1, ST);
-
-    ax2 = nexttile;
-    hold(ax2, 'on');
-    for i = 1:height(ex_top)
-        m = boot_tbl.sport == string(ex_top.sport(i)) & ...
-            boot_tbl.kpi == string(ex_top.kpi(i));
-        if ~any(m), continue; end
-        row = boot_tbl(find(m, 1), :);
-        errorbar(ax2, i, row.I_med, row.I_med - row.I_lo, ...
-            row.I_hi - row.I_med, 'o', 'Color', colors(i, :), ...
-            'MarkerFaceColor', colors(i, :), 'LineWidth', 1.2, 'CapSize', 8);
-    end
-    set(ax2, 'XTick', 1:height(ex_top), 'XTickLabel', labels, ...
-        'XTickLabelRotation', 25, 'FontSize', ST.fs_panel);
-    ylabel(ax2, 'I_{pred}  [bits]', 'FontSize', ST.fs_label);
-    pef_figure_style.add_panel_letter(ax2, '(B)', ST);
-    pef_figure_style.style_scatter_axes(ax2, ST);
-
-    pef_figure_style.export_figure(fig, fpath);
-    close(fig);
-end
-
-% =========================================================================
 function q4 = build_q4_bayes_gap(kpi_tbl)
     % Confirmatory Q4 KPI plus one additional Q4 inventory case.
     spec = { ...
@@ -613,37 +536,6 @@ function q4 = build_q4_bayes_gap(kpi_tbl)
     q4 = cell2table(rows, 'VariableNames', ...
         {'sport','kpi','eta','I_pred','delta_ratio','acc_abs','acc_rel', ...
          'acc_improvement','bayes_acc','bayes_gap_pp'});
-end
-
-% =========================================================================
-function plot_q4_bayes_gap(q4, fpath)
-    if isempty(q4) || height(q4) == 0
-        return
-    end
-    ST = pef_figure_style.config();
-    labels = strings(height(q4), 1);
-    for i = 1:height(q4)
-        labels(i) = pef_figure_style.exemplar_label(q4.sport(i), q4.kpi(i), 'Q4');
-    end
-    Y = [100 * q4.acc_abs, 100 * q4.acc_rel, 100 * q4.bayes_acc];
-
-    fig = pef_figure_style.new_figure(920, 480);
-    ax = axes('Parent', fig);
-    bh = bar(ax, Y, 'grouped');
-    for bi = 1:numel(bh)
-        bh(bi).FaceColor = ST.bar_series(bi, :);
-        bh(bi).EdgeColor = [0.15, 0.15, 0.15];
-        bh(bi).LineWidth = 0.6;
-    end
-    set(ax, 'XTickLabel', labels, 'XTickLabelRotation', 20, 'FontSize', ST.fs_panel);
-    legend(ax, {'Accuracy A (%)', 'Accuracy A-B (%)', ...
-        'Equal-prior Bayes bound on A (%)'}, ...
-        'Location', 'northwest', 'Box', 'off', 'FontSize', ST.fs_panel);
-    ylabel(ax, 'Accuracy (%)', 'FontSize', ST.fs_label);
-    pef_figure_style.ylim_bars_from_zero(ax, max(Y(:)));
-    pef_figure_style.style_scatter_axes(ax, ST);
-    pef_figure_style.export_figure(fig, fpath);
-    close(fig);
 end
 
 % =========================================================================
@@ -702,38 +594,4 @@ function drift = build_season_drift_table(pef_ps, kpi_tbl, H)
         {'sport','kpi','season1','season2','rho1','kappa1','rho2','kappa2', ...
          'quadrant1','quadrant2','d_rho','d_logkappa','drift_length', ...
          'gradI_rho','gradI_kappa','gradI_norm','alignment','quadrant_crossed'});
-end
-
-% =========================================================================
-function plot_season_drift(drift, fpath)
-    if isempty(drift) || height(drift) == 0
-        return
-    end
-    ST = pef_figure_style.config();
-    fig = pef_figure_style.new_figure(760, 480);
-    ax = axes('Parent', fig);
-    hold(ax, 'on');
-    al = drift.alignment;
-    ok = isfinite(al);
-    histogram(ax, al(ok), 18, 'FaceColor', pef_figure_style.quadrant_color('Q2'), ...
-        'EdgeColor', [0.15, 0.15, 0.15], 'FaceAlpha', 0.75, ...
-        'DisplayName', 'All KPIs');
-    xc = drift.alignment(drift.quadrant_crossed & isfinite(drift.alignment));
-    if ~isempty(xc)
-        for j = 1:numel(xc)
-            xline(ax, xc(j), 'Color', ST.migrate, 'LineWidth', 1.4, ...
-                'HandleVisibility', 'off');
-        end
-        plot(ax, nan, nan, 'Color', ST.migrate, 'LineWidth', 2, ...
-            'DisplayName', 'Quadrant-crossing KPIs');
-    end
-    xlabel(ax, 'Alignment:  season drift \cdot \nabla I / (|\Delta| |\nabla I|)', ...
-        'FontSize', ST.fs_label);
-    ylabel(ax, 'Count', 'FontSize', ST.fs_label);
-    yl = ylim(ax);
-    ylim(ax, [0, max(yl(2), 1) * 1.22]);
-    legend(ax, 'Location', 'northeast', 'Box', 'off', 'FontSize', ST.fs_panel);
-    pef_figure_style.style_scatter_axes(ax, ST);
-    pef_figure_style.export_figure(fig, fpath);
-    close(fig);
 end

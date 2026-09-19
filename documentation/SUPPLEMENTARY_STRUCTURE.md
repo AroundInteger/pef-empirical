@@ -1,51 +1,43 @@
 # Supplementary Information — agreed structure
 
-The SI is organised into **thematic sections** ordered by the main paper narrative. **Figure, table, and note labels (S1–S8, Notes S1–S4) are fixed** for cross-references; section order differs from numeric S-order where grouping requires it. Each figure environment sets `\setcounter{figure}{...}` so printed labels stay S1–S8.
+The SI is organised into **three scientific blocks** that follow the main paper: theory, idealised probit validation, then empirical analysis. **Figures S1–S5 are numbered in order of appearance.** File names on disk retain generator tags and need not match the printed S-number. There are no numbered “Note S” labels; cite SI sections. Log-transform ratios and Q4 bootstrap intervals sit in SI §3 (`sec:si_qc`). Table S1 is the only SI table. Main-text citations use `\cref{fig:si_...}` and `\cref{sec:si_...}` so printed numbers follow the SI counter.
+
+Former printed figures S6–S8 and Table S2 are not included. Former `sec:si_note_s*` labels are kept as silent aliases.
 
 ## Roadmap (section order in PDF)
 
-| SI section | Main paper anchor | Contents (fixed labels) |
+| SI section | Main paper anchor | Contents (printed labels) |
 |---|---|---|
-| **§1 Idealised probit validation** | Introduction (contributions); Methods Tier 1; Results (foundation, `\cref{sec:eff_power}`) | Note S2; Figure S4; Figure S5 |
-| **§2 Mathematical derivations** | Theory (`\cref{sec:theory}`); Introduction (Pitman ARE) | Note S3 (`sections/appendix.tex`); `\cref{sec:pitman}` |
-| **§3 Information surface (theory)** | Theory (`\cref{sec:theory}`, `\cref{fig:info_surface}`, `\cref{sec:signal_strength}`) | Figure S1 |
-| **§4 Sports KPI landscape** | Methods (`\cref{sec:outcome_defs}`); Results landscape; Discussion (stationarity) | Figure S2; Figure S3; Table S1; Table S2 (ranked by $\|\hat\eta-1\|$); inventory CSVs; Figure S8 |
-| **§5 Efficiency–power diagnostics** | Results (`\cref{sec:eff_power}`); `\cref{tab:exemplars}` | Figure S6; Figure S7 |
-| **§6 Quality control** | Methods (`\cref{sec:qc}`); Discussion (limitations) | Paired-difference Shapiro--Wilk note; Note S1 |
-| **§7 Practitioner diagnostic** | Discussion (`\cref{sec:practical_guidance}`); `\cref{sec:data_availability}` | Note S4 |
+| **§1 Theoretical derivations** | Theory (`\cref{sec:theory}`); Fig.~2; Introduction (Pitman ARE) | \(I(X;Y)\) algebra; `\cref{sec:pitman}`; Figure S1 (disk: `Figure_S3_info_sensitivity.png`) |
+| **§2 Idealised probit validation** | Methods Tier 1; Results | Specification; Validations 2–4; Figure S2 (disk: `Figure_S1_idealised_I_vs_dML_overlay.png`); Figure S3 (disk: `Figure_S2_iso_eta_I_tension.png`) |
+| **§3 Empirical analysis** | Methods; Results; Discussion | Figure S4; Figure S5; Table S1; QC (Shapiro–Wilk, log-transform, Q4 bootstrap) |
 
 ## Design rules
 
-1. **Thematic grouping** — notes and figures for the same analysis appear in the same SI section (e.g. probit Note S2 with Figures S4–S5).
+1. **Thematic grouping** — specification and figures for the same analysis appear in the same SI section (e.g. the probit specification with printed Figures S2–S3).
 2. **Bridge paragraphs** — each SI section opens with 2–4 sentences linking to main-text sections (see `sections/supplementary.tex`).
-3. **Stable S-labels** — main text cites `\cref{fig:si_...}`, `\cref{tab:si_...}`, `\cref{sec:si_note_...}`; avoid hard-coded “Figure~S2” in body `.tex` where possible.
-4. **Reproducibility detail** — script paths and CSV names live in SI notes and `README.md`, not in the main paper body.
-5. **Note S3** — mathematical derivations formerly in the main-text appendix (`sections/appendix.tex`). Figure and table S-numbers are unchanged. The KPI inventory remains prose under §4 (landscape), not a numbered note.
+3. **Cite labels, not hard-coded S-numbers** — main text cites `\cref{fig:si_...}`, `\cref{tab:si_...}`, `\cref{sec:si_...}`.
+4. **Reproducibility detail** — script paths, CSV names, and the practitioner schema live in `README.md`, not in the SI body.
+5. **SI §1** — information-content derivation and Pitman ARE (`sections/appendix.tex`). QC sits under §3.
+6. **Sequential figures** — do not use `\setcounter{figure}` to freeze old S-numbers. The SI counter runs from S1 at the first figure environment.
 
 ## Label reference
 
 | Label | Printed as |
 |---|---|
-| `sec:si_probit` | SI §1 |
-| `sec:si_maths` | SI §2 |
-| `sec:si_note_s3` (`sec:appendix` alias) | Note S3 |
-| `sec:pitman` | Pitman ARE (inside Note S3) |
-| `sec:si_theory` | SI §3 |
-| `sec:si_landscape` | SI §4 |
-| `sec:si_effpower` | SI §5 |
-| `sec:si_qc` | SI §6 |
-| `sec:si_practitioner` | SI §7 |
+| `sec:si_maths` | SI §1 |
+| `sec:si_note_s3` (`sec:appendix` alias) | SI §1 (silent alias) |
+| `sec:pitman` | Pitman ARE (inside SI §1) |
+| `sec:si_theory` | Information surface (inside SI §1) |
+| `sec:si_probit` (`sec:si_note_s2` alias) | SI §2 |
+| `sec:si_landscape` | SI §3 |
+| `sec:si_qc` | Quality control (inside SI §3) |
+| `sec:si_practitioner` (`sec:si_note_s4` alias) | Repository pointer (inside SI §3) |
 | `fig:si_info_sensitivity` | Figure S1 |
-| `fig:si_kpi_labelled` | Figure S2 |
-| `fig:si_ipred_vs_dml` | Figure S3 |
-| `fig:si_idealised_stratified` | Figure S4 |
-| `fig:si_iso_eta_I` | Figure S5 |
-| `fig:si_bootstrap_exemplars` | Figure S6 |
-| `fig:si_q4_bayes_gap` | Figure S7 |
-| `fig:si_season_drift` | Figure S8 |
+| `fig:si_idealised_stratified` | Figure S2 |
+| `fig:si_iso_eta_I` | Figure S3 |
+| `fig:si_kpi_labelled` | Figure S4 |
+| `fig:si_ipred_vs_dml` | Figure S5 |
 | `tab:si_quad_landscape` | Table S1 |
-| `tab:si_quad_ranked` | Table S2 |
-| `sec:si_normality` | Paired-difference Shapiro--Wilk note |
-| `sec:si_note_s1` | Note S1 |
-| `sec:si_note_s2` | Note S2 |
-| `sec:si_note_s4` | Note S4 |
+| `sec:si_normality` | Paired-difference Shapiro--Wilk |
+| `sec:si_landscape_qc` (`sec:si_note_s1` alias) | Log-transform and Q4 bootstrap (in SI §3) |

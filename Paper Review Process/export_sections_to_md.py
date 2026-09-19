@@ -23,7 +23,7 @@ ORDER = [
     ("05_discussion", "sections/discussion.tex", "Discussion"),
     ("06_conclusion", "sections/conclusion.tex", "Conclusion"),
     ("07_data_availability", "sections/data_availability.tex", "Data Availability"),
-    ("08_appendix", "sections/appendix.tex", "SI Note S3 (Mathematical Derivations)"),
+    ("08_appendix", "sections/appendix.tex", "SI §1 Mathematical Derivations"),
     ("09_tables_and_figures", "sections/tables_and_figures.tex", "Tables and Figures"),
     ("10_supplementary", "sections/supplementary.tex", "Supplementary Information"),
 ]
@@ -49,7 +49,7 @@ def load_macros() -> dict[str, str]:
 
 
 def expand_inputs(tex: str) -> str:
-    """Inline \\input{...} so SI review copies include Note S3."""
+    """Inline \\input{...} so SI review copies include SI §1 derivations."""
 
     def repl(m: re.Match[str]) -> str:
         rel = m.group(1)

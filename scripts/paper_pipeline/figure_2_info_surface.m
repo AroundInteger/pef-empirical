@@ -14,9 +14,11 @@ function figure_2_info_surface(pef_2s, pef_per_season, domain_summary, fpath)
     FS_LABEL  = ST.fs_label;
     FS_TICK   = ST.fs_tick;
     FS_QUAD   = ST.fs_quad;
+    FS_CONTOUR = ST.fs_contour;
 
     fig = figure('Color', 'w', 'Position', [100 100 1400 820]);
-    ax  = axes('Parent', fig, 'Position', [0.07 0.10 0.46 0.84]);
+    ax  = axes('Parent', fig, 'Position', [0.09 0.13 0.44 0.81]);
+    ax.Toolbar.Visible = 'off';
     hold(ax, 'on');
 
     % ---- I(X;Y) surface ----------------------------------------------------
@@ -38,7 +40,7 @@ function figure_2_info_surface(pef_2s, pef_per_season, domain_summary, fpath)
     % ---- Iso-I contours ----------------------------------------------------
     I_levels = [0.01 0.02 0.05 0.08 0.10 0.15 0.20 0.25];
     [C, h] = contour(ax, R, K, I_xy, I_levels, 'k-', 'LineWidth', 0.7);
-    clabel(C, h, 'FontSize', FS_TICK, 'Color', [0.25 0.25 0.25]);
+    clabel(C, h, 'FontSize', FS_CONTOUR, 'Color', [0.25 0.25 0.25]);
     h.HandleVisibility = 'off';
 
     % ---- Admissibility boundary --------------------------------------------
@@ -64,44 +66,48 @@ function figure_2_info_surface(pef_2s, pef_per_season, domain_summary, fpath)
             rd = domain_summary.rho_mean(di);
             kd = domain_summary.kappa_mean(di);
             if isnan(rd) || isnan(kd), continue; end
-            scatter(ax, rd, kd, 110, dom_pal(di, :), '^', 'filled', ...
+            scatter(ax, rd, kd, ST.ms_domain, dom_pal(di, :), '^', 'filled', ...
                 'MarkerEdgeColor', 'k', 'LineWidth', 0.8, ...
                 'DisplayName', domain_summary.domain{di});
         end
     end
 
     % ---- Quadrant labels ---------------------------------------------------
-    text(ax,  0.88, 2.65, 'Q1', 'FontSize', FS_QUAD, 'FontWeight', 'bold', 'Color', [0.2 0.2 0.2]);
+    text(ax,  0.90, 2.88, 'Q1', 'FontSize', FS_QUAD, 'FontWeight', 'bold', 'Color', [0.2 0.2 0.2]);
     text(ax,  0.88,  0.35, 'Q2', 'FontSize', FS_QUAD, 'FontWeight', 'bold', 'Color', [0.2 0.2 0.2]);
     text(ax, -0.92,  0.35, 'Q3', 'FontSize', FS_QUAD, 'FontWeight', 'bold', 'Color', [0.2 0.2 0.2]);
     text(ax, -0.92, 2.38, 'Q4', 'FontSize', FS_QUAD, 'FontWeight', 'bold', 'Color', [0.2 0.2 0.2]);
 
     xlim(ax, [RHO_MIN RHO_MAX]);
     ylim(ax, [KAP_MIN KAP_MAX]);
+    xticks(ax, -0.8:0.2:0.8);
+    yticks(ax, 0.5:0.5:3.0);
+    set(ax, 'FontSize', FS_TICK, 'Box', 'on', ...
+        'LabelFontSizeMultiplier', FS_LABEL / FS_TICK);
     xlabel(ax, 'Pairwise correlation \rho', 'FontSize', FS_LABEL);
     ylabel(ax, 'Variance ratio \kappa = \sigma_B^2/\sigma_A^2', 'FontSize', FS_LABEL);
-    set(ax, 'FontSize', FS_TICK);
+    pef_figure_style.apply_decimal_ticks(ax, 1);
     grid(ax, 'on');
-    box(ax, 'on');
 
     % ---- Colorbar ------------------------------------------------------------
     cb = colorbar(ax, 'Location', 'east');
+    I_ticks = 0:0.05:0.30;
+    cb.Ticks = I_ticks;
+    cb.TickLabels = pef_figure_style.decimal_labels(I_ticks, 2);
     cb.FontSize = FS_TICK;
-    cb.Position = [0.545 0.10 0.022 0.84];
+    cb.Position = [0.545 0.13 0.022 0.81];
     cb.Label.String = '';
     cb_pos = cb.Position;
-    % Wide label: place well right of tick numerals
-    lbl_x = cb_pos(1) + cb_pos(3) + 0.042;
-    lbl_y = cb_pos(2) + cb_pos(4) * 0.5 - 0.02;
-    annotation(fig, 'textbox', [lbl_x, lbl_y, 0.08, 0.05], ...
+    % Horizontal label above the side legend (16 pt is too wide to sit
+    % in the mid-bar gap used for the single-character \eta in Figure 1).
+    annotation(fig, 'textbox', ...
+        [cb_pos(1) + cb_pos(3) + 0.010, cb_pos(2) + cb_pos(4) - 0.09, 0.22, 0.08], ...
         'String', 'I(X;Y) (bits)', 'EdgeColor', 'none', 'FitBoxToText', 'on', ...
         'FontSize', FS_LABEL, 'HorizontalAlignment', 'left', ...
         'VerticalAlignment', 'middle', 'Interpreter', 'tex');
 
     % ---- Legend --------------------------------------------------------------
-    lgd = legend(ax, 'Location', 'none', 'Box', 'off', 'FontSize', ST.fs_panel, ...
-        'Interpreter', 'tex');
-    lgd.Position = [0.63 0.05 0.36 0.90];
+    pef_figure_style.apply_side_legend(ax, ST, [0.64, 0.28, 0.34, 0.40]);
 
     hold(ax, 'off');
 

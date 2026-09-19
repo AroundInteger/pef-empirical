@@ -22,7 +22,7 @@
 
   \medskip
   \begin{minipage}{0.95\linewidth}\small
-    \textit{Note:} Landscape efficiency rate: proportion of units with $\hat\eta>1$ (\cref{sec:outcome_defs}). $^{\dagger}$Paired {NHANES} oscillometric records (participants; systolic vs diastolic, first reading); SD column gives a bootstrap standard error for the pooled $\eta$ (not a cross-unit sample SD). $^{\ddagger}$Genes in the ranked subset of the {GSE47462} paired design (see Methods). $^{\S}$Axis-wise paired process features per {Bosch} production cycle ({OpenML} 752); SD is the sample {SD} of $\eta$ across pairings. Primary empirical tier: landscape characterisation in Figures~\ref{fig:pef_landscape}--\ref{fig:pef_ml} and Supplementary~\cref{fig:si_kpi_labelled,fig:si_ipred_vs_dml}; mechanistic confirmation via quadrant exemplars (\cref{tab:exemplars}). Supporting tier: parameter estimation and PEF calculation summarised here and in \cref{sec:results}; mean $(\kappa,\rho)$ overlay in \cref{fig:pef_landscape}.
+    \textit{Note:} Landscape efficiency rate: proportion of units with $\hat\eta>1$ (\cref{sec:outcome_defs}). $^{\dagger}$Paired {NHANES} oscillometric records (participants; systolic vs diastolic, first reading); SD column gives a bootstrap standard error for the pooled $\eta$ (not a cross-unit sample SD). $^{\ddagger}$Genes in the ranked subset of the {GSE47462} paired design (see Methods). $^{\S}$Axis-wise paired process features per {Bosch} production cycle ({OpenML} 752); SD is the sample {SD} of $\eta$ across pairings. Primary empirical tier: landscape characterisation in Figures~\ref{fig:pef_landscape}--\ref{fig:info_surface} and Supplementary~\cref{fig:si_kpi_labelled,fig:si_ipred_vs_dml}; mechanistic confirmation via \cref{fig:pef_ml,tab:exemplars}. Supporting tier: parameter estimation and PEF calculation summarised here and in \cref{sec:results}; mean $(\kappa,\rho)$ overlay in \cref{fig:pef_landscape}.
   \end{minipage}
 \end{table}
 
@@ -74,7 +74,7 @@
   \includegraphics[width=0.95\linewidth]{figures/Figure_1.png}
   \caption{PEF landscape: $\eta$ as a function of $\rho$ and $\kappa$, with four quadrants labelled.
     Background shading uses a $\log_{10}$ colour mapping of $\eta$ (tick labels show $\eta$) so that
-    the admissibility blow-up as $\rho\to +1$ (Supplementary~\cref{sec:si_note_s3}) remains visible; contour
+    the admissibility blow-up as $\rho\to +1$ (Supplementary~\cref{sec:si_maths}) remains visible; contour
     lines are in raw $\eta$.
     The dotted curve marks the admissibility boundary $1+\kappa-2\sqrt{\kappa}\,\rho=0$, beyond which
     $\eta$ is undefined.
@@ -84,7 +84,7 @@
     on filled markers; pooled two-season $\hat\eta$ in the legend).
     \textbf{Supporting domains} (triangles): mean $(\kappa,\rho)$ for healthcare, clinical genomics,
     finance, and manufacturing.
-    The full KPI cloud appears in Supplementary~\cref{fig:si_kpi_labelled}.}
+    The full action-KPI cloud is in Supplementary~\cref{fig:si_kpi_labelled}.}
   \label{fig:pef_landscape}
 \end{figure}
 
@@ -106,12 +106,15 @@
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=0.95\linewidth]{figures/Figure_3.png}
-  \caption{Observed machine learning improvement $\Delta\mathrm{ML}$ (relative minus absolute features, team-blocked five-fold CV logistic; \cref{sec:ml_cv}) versus $\hat\eta$ across the full sports KPI inventory ($N=\PEFtotalStudies$; landscape characterisation, \cref{sec:outcome_defs}).
-    (A)~Per-KPI scatter with annotated quadrant exemplars and the high-$\eta$ rucks-won counter-example.
-    (B)~Quadrant means with \emph{upper} 1\,SE only (within-quadrant $\Delta\mathrm{ML}$ is highly heterogeneous; SE summarises inventory spread, not confirmatory uncertainty).
-    Rugby URC and football Championship points are coloured by quadrant. The inventory is Q3-dominant ($\PEFlandscapeQthreePct\%$ of KPIs).
-    Four exemplars at comparable $\delta/\sigma_{\mathrm{A}}$ (\cref{tab:exemplars}) provide a directional check at matched signal, not a large Q4 gain. Relative improvement despite $\eta<1$ is visible in the scatter. Per-KPI detail in Supplementary~\cref{fig:si_kpi_labelled,fig:si_ipred_vs_dml}.
+  \includegraphics[width=0.72\linewidth]{figures/Figure_3.png}
+  \caption{Confirmatory machine-learning check: $\Delta\mathrm{ML}$ versus $\hat\eta$ for four quadrant exemplars at comparable $\delta/\sigma_{\mathrm{A}}$ (\cref{tab:exemplars}).
+    $\Delta\mathrm{ML}=100(\mathrm{acc}_{\mathrm{rel}}-\mathrm{acc}_{\mathrm{abs}})/\mathrm{acc}_{\mathrm{abs}}$ from team-blocked five-fold CV logistic regression (\cref{sec:ml_cv}).
+    The zero line is the decision: above it, use the relative feature; below it, keep the absolute feature.
+    Direction at matched signal: Q1 and Q2, $\eta>1$ with $\Delta\mathrm{ML}>0$; Q3, $\eta<1$ with $\Delta\mathrm{ML}<0$; Q4, $\eta<1$ with near-zero $\Delta\mathrm{ML}$.
+    Rucks won (diamond) is a high-$\eta$ foil with negligible $\delta/\sigma_{\mathrm{A}}$: pairing efficiency without signal still yields $\Delta\mathrm{ML}<0$.
+    The $x$-axis is broken between $3.4$ and $5.05$ to keep the foil on scale.
+    Colours match \cref{fig:pef_landscape,fig:info_surface}.
+    The full inventory, including cases with $\eta<1$ and $\Delta\mathrm{ML}>0$, is in Supplementary~\cref{fig:si_kpi_labelled,fig:si_ipred_vs_dml}.
     Fisher--Rao $\psi$-scale diagnostics are developed in the companion mathematics paper \parencite{brownPEFmath}.}
   \label{fig:pef_ml}
 \end{figure}

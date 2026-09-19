@@ -1,12 +1,12 @@
 === Finalize diagnostics: correlation summary ===
-Date: 15-Sep-2026 08:56:54
-N valid KPIs: 113
+Date: 17-Sep-2026 08:08:21
+N valid KPIs: 86
 
-corr(I_pred, acc_improvement)   = 0.1694
-corr(eta, acc_improvement)      = -0.0111
-corr(eta, I_pred)               = -0.2110
-corr(delta_ratio, acc_improvement) = 0.1076
+corr(I_pred, acc_improvement)   = -0.0460
+corr(eta, acc_improvement)      = 0.0396
+corr(eta, I_pred)               = -0.2261
+corr(delta_ratio, acc_improvement) = -0.1271
 
 I_pred correlates more strongly with ML improvement than eta (ranking only; not deterministic).
 
-Median delta/sigma_A = 0.2837
+Median delta/sigma_A = 0.2920
