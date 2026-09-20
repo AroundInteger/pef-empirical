@@ -1,6 +1,6 @@
 # Target journal matrix — `pef-empirical`
 
-**Date:** 2026-07-02 (CSF explore tier added)  
+**Date:** 2026-07-02 (CSF explore tier added); exemplar numbers refreshed 2026-09-19 from `numbers.tex` (generated 2026-09-16)  
 **Assumptions:** Bennett/Kilduff/Scott co-author group; sports-facing primary venue; Strand 2 = quadrant exemplars (not pooled *r*); `eq:dml_poly` retired from main text; companion (`pef-mathematics`) → AoAS or Series C.
 
 ---
@@ -125,16 +125,16 @@ Replacing pooled *r* = 0.033 with **one exemplar per quadrant** (with δ/σ_A, �
 
 | Quadrant | Exemplar (pipeline) | η | δ/σ_A | ΔML | Theory check |
 |----------|---------------------|---|-------|-----|----------------|
-| Q1 | rugby `kick_metres` | 2.84 | 0.19 | +4.8% | η > 1, positive ΔML ✓ |
-| Q2 | football `long_balls` | 1.30 | 0.16 | +4.4% | η > 1, positive ΔML ✓ |
-| Q3 | football `passes` | 0.61 | 0.32 | −0.5% | strong negative ρ, η < 1, negative ΔML ✓ |
-| Q4 | football `goalkeeper_long_balls` | 0.81 | 0.26 | +2.2% | η < 1 but positive ΔML — efficiency–power tension ✓ |
+| Q1 | rugby `kick_metres` | 2.84 | 0.19 | +4.3% | η > 1, positive ΔML ✓ |
+| Q2 | football `long_balls` | 1.30 | 0.16 | +5.5% | η > 1, positive ΔML ✓ |
+| Q3 | football `passes` | 0.61 | 0.32 | −0.8% | strong negative ρ, η < 1, negative ΔML ✓ |
+| Q4 | football `goalkeeper_long_balls` | 0.81 | 0.26 | −0.3% | η < 1 with near-zero ΔML — limited-signal Q4, not a tension demo |
 
-All four implemented in `tab:exemplars` in `results.tex` and annotated on Figure 3 (2026-06-25, Phase 1–2).
+All four implemented in `tab:exemplars` in `results.tex` and annotated on Figure 3. Inventory is **86** KPIs (22 rugby, 64 football); Q3-heavy (55/86). Do not quote the June 2026 ΔML row (+4.8 / +4.4 / −0.5 / +2.2).
 
-Counter-exemplar for Discussion: rugby `rucks_won` (Q2: η = 5.38, δ/σ_A = 0.07, ΔML = 0%) — highest η in dataset but zero ML gain due to negligible signal strength; confirms δ/σ_A is a necessary moderator even when η ≫ 1.
+Counter-exemplar for Discussion: rugby `rucks_won` (Q2: η = 5.38, δ/σ_A = 0.07, ΔML = −1.6%) — highest η in dataset but negative ML change at negligible signal strength; confirms δ/σ_A is a necessary moderator even when η ≫ 1.
 
-**`eq:dml_poly` retired** (2026-06-25, Phase 1): removes the main reviewer attack surface (“r = 0.033 contradicts your mapping equation”). Pooled correlation in `\PEFcorrEtaML` macro (Figure 3 caption); not a headline claim.
+**`eq:dml_poly` retired** (2026-06-25, Phase 1): removes the main reviewer attack surface (“r = 0.033 contradicts your mapping equation”). Pooled correlation is `\PEFmlCorr` = 0.040 (Figure 3 caption); not a headline claim.
 
 ---
 

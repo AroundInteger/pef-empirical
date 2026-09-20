@@ -1,0 +1,109 @@
+%% SI Section 1 (mathematical derivations). Input from sections/supplementary.tex.
+\label{sec:si_note_s3}
+\label{sec:appendix}
+
+\noindent The algebraic derivation of the PEF formula (\cref{eq:pef}) from the variance of correlated differences, together with its reduction to Fisher's classical case at $\kappa=1$, is given in full in \cref{sec:theory} (\S2.1). This section records the omitted information-content algebra and the Pitman asymptotic relative efficiency proof.
+
+\subsection*{Information Content Derivation}
+
+\paragraph*{Setup}
+
+Under Assumption~(A1), $X=X_{\mathrm{A}}-X_{\mathrm{B}}\sim\mathcal{N}\bigl(\delta,\sigma^{2}_{\mathrm{A}}(1+\kappa-2\sqrt{\kappa}\,\rho)\bigr)$ with $\delta=\mu_{\mathrm{A}}-\mu_{\mathrm{B}}$.
+
+The binary outcome $Y\in\{0,1\}$ is the match outcome; it is \emph{not} a deterministic function of $X$. Under Assumption~(A2) (Gaussian discriminant model, \cref{sec:mi_setup}), the class-conditional distributions are
+\[
+  X\mid Y=1\sim\mathcal{N}(+\delta/2,\,\Var(X)),\quad X\mid Y=0\sim\mathcal{N}(-\delta/2,\,\Var(X)),
+\]
+with equal priors. Mutual information:
+\begin{equation*}
+  I(X;Y) = H(Y) - H(Y\mid X).
+\end{equation*}
+
+\paragraph*{Unconditional Entropy}
+
+For equiprobable outcomes ($\mathbb{P}(Y=1)=\mathbb{P}(Y=0)=0.5$),
+\begin{equation*}
+  H(Y) = 1 \text{ bit}.
+\end{equation*}
+
+\paragraph*{Conditional Entropy}
+
+Under (A2), the posterior is $\mathbb{P}(Y=1\mid X=x)=\Phi(x/\sqrt{\Var(X)})$, so the expected conditional entropy is
+\begin{align*}
+  H(Y\mid X) &= \mathbb{E}_{X}\bigl[H\!\bigl(\mathbb{P}(Y=1\mid X)\bigr)\bigr].
+\end{align*}
+Evaluating this expectation under the marginal distribution of $X$ (which has mean $\delta/2$ under the equal-prior mixture) yields the closed-form approximation
+\begin{equation*}
+  H(Y\mid X) \approx H\!\left(\Phi\!\left(\frac{\delta}{2\sqrt{\Var(X)}}\right)\right),
+\end{equation*}
+where $H(p)=-p\log_{2}p-(1-p)\log_{2}(1-p)$ is the binary entropy function and the right-hand side equals the binary entropy of the Bayes error rate $\Phi(-\delta/(2\sqrt{\Var(X)}))$.
+
+\paragraph*{Substitution}
+
+From \cref{eq:pef}: $1+\kappa-2\sqrt{\kappa}\,\rho=(1+\kappa)/\eta$. Therefore $\Var(X)=\sigma^{2}_{\mathrm{A}}(1+\kappa)/\eta$, giving
+\begin{equation*}
+  I(X;Y) = 1 - H\!\left(\Phi\!\left(\frac{\delta}{2\sigma_{\mathrm{A}}\sqrt{(1+\kappa)/\eta}}\right)\right).
+\end{equation*}
+
+\subsection*{Connection to Pitman Asymptotic Relative Efficiency}
+\label{sec:pitman}
+
+This section establishes that, under bivariate normality and equal group sizes, the PEF equals the Pitman asymptotic relative efficiency (ARE) of the paired $t$-test relative to the independent two-sample $t$-test. We state this as a proposition, give a self-contained proof, verify the classical reduction, and record the qualifications that bound the result.
+
+\paragraph*{Proposition}
+
+\noindent\textbf{Proposition (PEF as Pitman ARE).} \emph{Under Assumption~(A1) and equal allocation ($n$ observations per group), the Pitman ARE of the paired $t$-test relative to the independent two-sample $t$-test equals}
+\begin{equation}
+  \mathrm{ARE}_{\mathrm{paired/indep}} = \frac{1+\kappa}{1+\kappa-2\sqrt{\kappa}\,\rho} = \eta.
+  \label{eq:are_pef}
+\end{equation}
+
+\paragraph*{Proof}
+
+Let $N=2n$ be the total number of observations available. Fix $\mu_{\mathrm{A}}-\mu_{\mathrm{B}}=\delta>0$ and let $n\to\infty$. We compare the noncentrality parameters of the two tests at the same total sample size.
+
+\medskip
+\noindent\textbf{Step 1: Paired test.} With $n$ matched pairs, differences $D_i=X_{\mathrm{A},i}-X_{\mathrm{B},i}\sim\mathcal{N}(\delta,\sigma^{2}_{\mathrm{A}}(1+\kappa-2\sqrt{\kappa}\,\rho))$ are i.i.d.\ under (A1). The noncentrality parameter of $T_p=\bar{D}/\sqrt{s^{2}_{D}/n}$ is
+\begin{equation}
+  \lambda_{p}(n) = \frac{\delta\sqrt{n}}{\sigma_{\mathrm{A}}\sqrt{1+\kappa-2\sqrt{\kappa}\,\rho}}.
+  \label{eq:ncp_paired}
+\end{equation}
+
+\noindent\textbf{Step 2: Independent two-sample test.} With $n$ independent observations per group (total $N=2n$, equal allocation), the noncentrality parameter of the Welch $t$-test $T_u=(\bar{X}_{\mathrm{A}}-\bar{X}_{\mathrm{B}})/\sqrt{s^{2}_{\mathrm{A}}/n+s^{2}_{\mathrm{B}}/n}$ is
+\begin{equation}
+  \lambda_{u}(n) = \frac{\delta\sqrt{n}}{\sigma_{\mathrm{A}}\sqrt{1+\kappa}}.
+  \label{eq:ncp_unpaired}
+\end{equation}
+
+\noindent\textbf{Step 3: ARE.} Both tests use the same total sample $N=2n$. The Pitman ARE is the limiting ratio of sample sizes required for equal power at fixed significance and effect size, which equals the ratio of squared noncentrality parameters per observation \parencite{lehmann1999}:
+\begin{equation}
+  \mathrm{ARE}_{\mathrm{paired/indep}}
+    = \lim_{n\to\infty}\frac{n_{u}^{*}}{n_{p}^{*}}
+    = \frac{\lambda_{p}^{2}(n)/n}{\lambda_{u}^{2}(n)/n}
+    = \frac{\delta^{2}/\bigl(\sigma^{2}_{\mathrm{A}}(1+\kappa-2\sqrt{\kappa}\,\rho)\bigr)}
+           {\delta^{2}/\bigl(\sigma^{2}_{\mathrm{A}}(1+\kappa)\bigr)}
+    = \frac{1+\kappa}{1+\kappa-2\sqrt{\kappa}\,\rho}
+    = \eta \phantom{00} \qedsymbol{}.
+\end{equation}
+
+\paragraph*{Classical Verification}
+
+Setting $\kappa=1$:
+\begin{equation*}
+  \mathrm{ARE}_{\mathrm{paired/indep}} = \frac{2}{2-2\rho} = \frac{1}{1-\rho},
+\end{equation*}
+recovering Fisher's classical paired-design efficiency \parencite{fisher1935}. The PEF is therefore the direct generalisation of Fisher's result to unequal variances, expressed in the language of Pitman efficiency.
+
+\paragraph*{Qualifications}
+
+Three conditions bound \cref{eq:are_pef}:
+
+\begin{enumerate}
+  \item \textbf{Normality.} Steps~1--2 use the normal noncentrality parameter. Under non-normality, the central limit theorem ensures the limiting noncentrality is still given by \cref{eq:ncp_paired,eq:ncp_unpaired} under finite second moments, so the ARE result is asymptotically robust; however, the small-sample comparison may differ.
+
+  \item \textbf{Equal group allocation.} Step~2 assumes $n_{\mathrm{A}}=n_{\mathrm{B}}=n$. Under Neyman-optimal allocation $n_{\mathrm{A}}/n_{\mathrm{B}}=\sigma_{\mathrm{A}}/\sigma_{\mathrm{B}}=1/\sqrt{\kappa}$, the noncentrality of the independent test becomes $\delta\sqrt{N}/(2\sigma_{\mathrm{A}}\sqrt{\kappa}/(1+\sqrt{\kappa})\cdot\sqrt{1+\kappa})$, which modifies the ARE. Equal allocation is the natural comparison when paired and unpaired designs collect data in the same proportions.
+
+  \item \textbf{Fixed alternative.} The result above uses a fixed $\delta$ and $n\to\infty$. Under local (Pitman) contiguous alternatives $\delta_{n}=c/\sqrt{n}$, the noncentrality parameters remain $O(1)$ and the same ratio $\eta$ is obtained in the limit, so the result is unchanged \parencite{lehmann1999}.
+\end{enumerate}
+
+\noindent The PEF formula is distribution-free (\cref{eq:pef}); only the ARE \emph{interpretation} in \cref{eq:are_pef} requires normality. The distribution-free efficiency characterisation (the variance ratio) is the primary result; the Pitman ARE connection provides a classical testing-theory corroboration.

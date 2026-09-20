@@ -1,0 +1,182 @@
+\section{Theoretical Framework}
+\label{sec:theory}
+
+This section develops the theoretical core sketched in the Introduction. We first define how pairing efficiency depends on the variance ratio $\kappa$ and the correlation $\rho$, using only second-moment algebra that requires no distributional assumptions. We then connect efficiency to predictive information under bivariate normality, and translate the resulting $(\kappa,\rho)$ geometry into quadrant-level guidance for relativisation. Readers focused on application may skim the formal derivations and proceed to the quadrant taxonomy (\cref{tab:quadrants}) and the signal-strength discussion (\cref{sec:signal_strength}).
+
+\subsection{The Paired Efficiency Factor}
+
+\subsubsection{Derivation}
+
+We begin from the variance of the difference between two measurements. When entity~A and entity~B are observed on the same occasion, their values may covary; the variance of $X_{\mathrm{A}}-X_{\mathrm{B}}$ captures how much noise remains after differencing. For random variables $X_{\mathrm{A}}$ and $X_{\mathrm{B}}$ with variances $\sigma^{2}_{\mathrm{A}}$, $\sigma^{2}_{\mathrm{B}}$ and correlation $\rho$,
+\begin{equation}
+  \Var(X_{\mathrm{A}} - X_{\mathrm{B}}) = \sigma^{2}_{\mathrm{A}} + \sigma^{2}_{\mathrm{B}} - 2\rho\sigma_{\mathrm{A}}\sigma_{\mathrm{B}}.
+  \label{eq:var_sum}
+\end{equation}
+The cross term $-2\rho\sigma_{\mathrm{A}}\sigma_{\mathrm{B}}$ is where correlation enters: positive $\rho$ shrinks the variance of the difference because shared fluctuations partially cancel, whilst negative $\rho$ amplifies it. Introducing $\kappa=\sigma^{2}_{\mathrm{B}}/\sigma^{2}_{\mathrm{A}}$ and factoring,
+\begin{equation}
+  \Var(X_{\mathrm{A}} - X_{\mathrm{B}}) = \sigma^{2}_{\mathrm{A}}\bigl(1 + \kappa - 2\sqrt{\kappa}\,\rho\bigr).
+  \label{eq:var_factored}
+\end{equation}
+The variance ratio $\kappa$ separates \emph{how unequal} the two entity variances are from \emph{how correlated} their measurements are; holding $\kappa$ fixed, $\rho$ alone determines whether differencing helps or harms efficiency.
+
+The efficiency question is how this paired variance compares with treating the two measurements as independent. For unpaired measurements ($\rho=0$), the baseline variance is $\sigma^{2}_{\mathrm{A}}(1+\kappa)$. The Paired Efficiency Factor is their ratio, i.e.\ the expression in~\cref{eq:pef}:
+\begin{equation*}
+  \eta = \frac{1+\kappa}{1+\kappa-2\sqrt{\kappa}\,\rho}.
+\end{equation*}
+\noindent with $\eta$, $\kappa$, and $\rho$ as defined for \cref{eq:pef} in \cref{sec:pef_def}.
+
+\medskip
+\noindent\textbf{Remark.} No distributional assumptions are required: \cref{eq:pef,eq:var_factored} hold for any random variables with finite second moments.
+
+\subsubsection{Properties}
+
+Intuitively, stronger positive correlation means that shared fluctuations cancel more completely in the difference, so efficiency gain rises as $\rho$ increases. Formally, PEF is strictly increasing in $\rho$ for fixed $\kappa>0$,
+\begin{equation}
+  \frac{\partial \eta}{\partial \rho} = \frac{2\sqrt{\kappa}(1+\kappa)}{\bigl(1+\kappa-2\sqrt{\kappa}\,\rho\bigr)^{2}} > 0,
+  \label{eq:detadrho}
+\end{equation}
+and convex in $\rho$,
+\begin{equation}
+  \frac{\partial^{2} \eta}{\partial \rho^{2}} = \frac{8\kappa(1+\kappa)}{\bigl(1+\kappa-2\sqrt{\kappa}\,\rho\bigr)^{3}} > 0.
+  \label{eq:d2etadrho2}
+\end{equation}
+The sign of $\eta$ relative to unity partitions pairing into three interpretable regimes:
+\begin{itemize}
+  \item $\eta>1$: pairing reduces variance (positive correlation dominates);
+  \item $\eta=1$: pairing provides no efficiency change (Fisher baseline);
+  \item $\eta<1$: pairing increases variance (negative correlation dominates).
+\end{itemize}
+\Cref{fig:pef_landscape} visualises the PEF landscape across the $(\rho,\kappa)$ parameter space.
+
+\subsubsection{Reduction to Classical Case}
+
+When the two competitors have equal variability ($\kappa=1$, so $\sigma_{\mathrm{A}}=\sigma_{\mathrm{B}}$), the general formula simplifies to Fisher's classical result:
+\begin{equation*}
+  \eta = \frac{2}{2-2\rho} = \frac{1}{1-\rho},
+\end{equation*}
+recovering the paired-efficiency formula from the Introduction \parencite{fisher1935}. That is, positive correlation shrinks the variance of the difference below the independent-measurement baseline ($\eta>1$), whilst negative correlation amplifies it ($\eta<1$). This is exactly the efficiency logic of the paired $t$-test \cite{student1908}. The PEF formula therefore \emph{contains} Fisher's result as a special case; unequal variances ($\kappa\neq 1$) are the ingredient the classical framework cannot represent on its own.
+
+\subsubsection{Provenance and Scope of Contribution}
+
+The variance-of-difference identity for unequal variances (\cref{eq:var_sum,eq:var_factored}) is a standard second-moment result, and the efficiency-of-pairing argument under equal variances is due to Fisher \parencite{fisher1935}; the same paired-margin machinery underlies the Pitman--Morgan test for equality of correlated variances \parencite{pitman1939,morgan1939}. Our contribution is not this algebra but its reframing: we collect it into a single closed-form efficiency ratio (\cref{eq:pef}), parameterised by $(\kappa,\rho)$, and repurpose it from an inferential setting toward feature construction and predictive information in competitive measurement.
+
+\subsection{The PEF--Information Content Relationship}
+
+Statistical efficiency ($\eta$) alone cannot explain why relative features sometimes improve prediction when $\eta<1$. To address that paradox, we need a second quantity: how much the KPI difference reduces uncertainty about the match outcome.
+
+\subsubsection{Setup and Assumptions}
+\label{sec:mi_setup}
+
+We now connect PEF with predictive power. Let $Y\in\{0,1\}$ denote the \textbf{binary match outcome} (whether entity~A outperforms entity~B on the measure of interest), and let $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ be the corresponding relative feature. The predictive setting introduces a quantity beyond the second-moment pair $(\kappa,\rho)$ that governs PEF: the \textbf{signal}, or mean separation $\delta=\mu_{\mathrm{A}}-\mu_{\mathrm{B}}$ between the two entities. Whereas $(\kappa,\rho)$ fix the variance geometry of the relative feature, it is the magnitude of $\delta$ relative to $\sigma_{\mathrm{A}}$ that determines how much of that geometry translates into predictive power; this distinction is the crux of the efficiency--power tension and its consequences are developed in \cref{sec:signal_strength}. To express that link in closed form, two distributional assumptions are needed: one on the paired measurements themselves, and one on how the relative feature relates to the match outcome.
+
+\begin{description}
+  \item[(A1)] $(X_{\mathrm{A}},X_{\mathrm{B}})$ follows a bivariate normal distribution with means $\mu_{\mathrm{A}}$, $\mu_{\mathrm{B}}$, variances $\sigma^{2}_{\mathrm{A}}$, $\sigma^{2}_{\mathrm{B}}$, and correlation $\rho$. Under (A1), $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ is normally distributed with mean $\delta=\mu_{\mathrm{A}}-\mu_{\mathrm{B}}$ and variance given by \cref{eq:var_factored}.
+  \item[(A2)] The class-conditional distributions of $X$ given $Y$ follow a symmetric Gaussian discriminant model:
+  \[
+    X \mid Y=1 \;\sim\; \mathcal{N}\!\left(+\tfrac{\delta}{2},\,\Var(X)\right),
+    \quad
+    X \mid Y=0 \;\sim\; \mathcal{N}\!\left(-\tfrac{\delta}{2},\,\Var(X)\right),
+  \]
+  with equal class priors $\mathbb{P}(Y=1)=\mathbb{P}(Y=0)=\tfrac{1}{2}$.
+\end{description}
+
+Under (A2), $Y$ is \emph{not} a deterministic function of $X$: the outcome depends on many factors beyond the single observed KPI difference, so $H(Y\mid X)>0$. The Gaussian discriminant model is the natural linear classifier for normally distributed features and is consistent with (A1) when the within-class variance equals the marginal $\Var(X)$.
+
+\medskip
+\noindent\textbf{Remark.} Assumption (A1) is empirically reasonable for the present data: the per-match paired difference series $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ in professional rugby and football are approximately normal, consistent with the central-limit behaviour of paired differences even where the individual team series are mildly skewed (\cref{sec:qc}; Supplementary~\cref{sec:si_normality}). Note that (A1) is required only for the information content derivation; the PEF formula itself (\cref{eq:pef}) is distribution-free. Assumption (A2) is an additional approximation for the predictive setting and is likewise not required for the PEF formula.
+
+\subsubsection{Derivation}
+
+Under (A1) and (A2), predictive information is quantified as the mutual information between the relative feature $X$ and the outcome $Y$. The mutual information \parencite{shannon1948,cover2006} between $X$ and $Y$ is
+\begin{equation}
+  I(X;Y) = H(Y) - H(Y\mid X).
+  \label{eq:mi_def}
+\end{equation}
+
+\noindent Here $I(X;Y)$ is the mutual information (in bits) between the relative feature $X$ and the binary outcome $Y$; $H(Y)$ is the Shannon entropy of $Y$; and $H(Y\mid X)=\mathbb{E}_{X}[H(Y\mid X=x)]$ is the conditional entropy. For equiprobable outcomes, $H(Y)=1$ bit. Under (A2), the posterior probability of winning given the observed KPI difference is
+\[
+  \mathbb{P}(Y=1\mid X=x) = \Phi\!\left(\frac{x}{\sqrt{\Var(X)}}\right),
+\]
+where $\Phi$ is the standard normal CDF. The Bayes error rate is accordingly $\Phi\!\bigl(-\delta/(2\sqrt{\Var(X)})\bigr)$, and the expected conditional entropy evaluates to
+\begin{equation}
+  H(Y\mid X) = H\!\left(\Phi\!\left(\frac{\delta}{2\sqrt{\Var(X)}}\right)\right),
+  \label{eq:hygx}
+\end{equation}
+where $H(p)=-p\log_{2}p-(1-p)\log_{2}(1-p)$ is the binary entropy function. (Full derivation in Supplementary~\cref{sec:si_maths}.) The PEF formula rearranges to $\Var(X)=\sigma^{2}_{\mathrm{A}}(1+\kappa)/\eta$, linking variance geometry directly to $\eta$. Substituting into \cref{eq:hygx} yields
+\begin{equation}
+  I(X;Y) = 1 - H\!\left(\Phi\!\left(\frac{\delta}{2\sigma_{\mathrm{A}}\sqrt{(1+\kappa)/\eta}}\right)\right).
+  \label{eq:mi_closed}
+\end{equation}
+
+\noindent Here $\delta$, $\sigma_{\mathrm{A}}$, $\Phi$, $H(p)$, $\kappa$, and $\eta$ retain their earlier definitions (\cref{sec:mi_setup}; \cref{eq:pef,eq:hygx}). This is the \textbf{PEF--information content relationship}. $\eta$ and $I(X;Y)$ are functionally linked through the signal-to-noise ratio $\delta/\bigl(2\sigma_{\mathrm{A}}\sqrt{(1+\kappa)/\eta}\bigr)$. In plain terms, $I(X;Y)$ measures how much knowing the relative KPI value~$X$ reduces uncertainty about who wins: higher mutual information means the feature carries more decision-relevant signal about the outcome. \Cref{fig:info_surface} visualises the information content surface $I(X;Y)$ across the $(\kappa,\rho)$ parameter space for the nominal case $\delta/\sigma_{\mathrm{A}}=1$; sensitivity of the surface to this parameter is examined in Supplementary~\cref{fig:si_info_sensitivity}.
+
+\subsubsection{The Efficiency--Power Tension}
+\label{sec:eff_power_theory}
+
+From \cref{eq:mi_closed}, $\eta$ enters the information content formula through the denominator $\sqrt{(1+\kappa)/\eta}$. Consider two effects of negative correlation ($\rho<0$):
+\begin{enumerate}
+  \item \textbf{Variance increases:} $\eta<1$, meaning $\Var(X)>\Var_{\text{unpaired}}(X)$. This harms statistical efficiency.
+  \item \textbf{Signal may increase relative to noise:} if the mean difference $\delta$ is large relative to the amplified standard deviation, $I(X;Y)$ can still be substantial.
+\end{enumerate}
+Predictive power depends on $I(X;Y)$, not $\eta$ alone. When $\delta$ is sufficiently large relative to the amplified standard deviation, the information content remains high despite increased variance. This accounts for cases where machine learning models benefit from relative features even when $\eta<1$.
+
+Statistical harm ($\eta<1$) and predictive harm ($\Delta\mathrm{ML}<0$; \cref{sec:ml_cv}) are not the same test. The first means the difference has larger variance than unpaired measurement. The second means the difference is a worse classifier than the absolute KPI. The two can disagree (\cref{sec:exemplars}).
+
+\subsection{Sources of Correlation in Paired Comparisons}
+
+Having linked $\eta$ to predictive information, we turn to the origins of $\rho$ itself. Paired measurements acquire correlation through three generic mechanisms, each of which appears across competitive and non-competitive domains:
+\begin{itemize}
+  \item \textbf{Shared exogenous factors.} Conditions common to both entities move their measurements together, inducing positive correlation. Examples include market-wide movements in finance, batch, instrument, or site effects in manufacturing and clinical measurement, and weather, venue, or officiating in sport.
+  \item \textbf{Zero-sum interaction.} When one entity's gain is the other's loss, their measurements move oppositely, inducing negative correlation. Examples include rivals competing for a fixed market share, and head-to-head contests in which possession or territory ceded by one competitor accrues directly to the other.
+  \item \textbf{Non-zero-sum (common-mode) constraints.} When both entities can succeed or fail together, positive correlation can arise even under competition. Examples include firms lifted or depressed by a common sector trend, and matches in which both teams perform well in open, high-tempo play.
+\end{itemize}
+The sign and magnitude of $\rho$ therefore reflect which mechanism dominates in a given setting. The PEF formula accommodates all correlation signs within a single expression, covering shared-factor regimes (typically $\rho>0$) and zero-sum competitive regimes (potentially $\rho<0$). The competitive sports KPIs analysed in \cref{sec:results} provide concrete instances spanning this range, including Quadrant~4 cases in which the efficiency--power tension (\cref{sec:eff_power_theory}) is most pronounced. In the primary sports application, each observation is a same-fixture home--away pair and each match contributes one point to the bivariate sample of size $n$; the estimated $\hat\rho$ therefore summarises cross-fixture co-movement between competitors (high home counts tending to co-occur with high or low away counts in the same fixture) rather than serial dependence of a single team's KPI across time. Estimation scope and the associated independence considerations are detailed in \cref{sec:methods}.
+
+\subsection{Quadrant Taxonomy}
+
+Each KPI occupies a position in the $(\kappa,\rho)$ plane shaped by these mechanisms. Dividing that plane at $\kappa=1$ and $\rho=0$ yields four quadrants with distinct statistical and predictive properties (\cref{tab:quadrants}). The same partition appears in \cref{fig:pef_landscape,fig:info_surface}, which map $\eta$ and $I(X;Y)$ respectively at nominal signal strength; the four confirmatory exemplars of \cref{tab:exemplars} (one per quadrant, with season-to-season drift segments) are annotated on both figures. The regimes are:
+
+\textbf{Quadrant 1 ($\kappa>1$, $\rho>0$): High efficiency, high information.} Positive correlation combined with variance asymmetry produces $\eta>1$ with high information content. Relative features outperform absolute features in this regime. Exemplified by market-adjusted returns and paired clinical trials.
+
+\textbf{Quadrant 2 ($\kappa<1$, $\rho>0$): High efficiency, moderate information.} Positive correlation provides variance reduction even with low variance ratio, though information content is lower than Quadrant~1. Exemplified by manufacturing control charts.
+
+\textbf{Quadrant 3 ($\kappa<1$, $\rho<0$): Low efficiency, low information.} Negative correlation with low variance asymmetry amplifies variance without commensurate information gain. Relativisation is then predictively harmful ($\Delta\mathrm{ML}<0$), so absolute features are preferred. Exemplified by high-volume invasion-game KPIs (passes, pressures, duels) and by weakly competitive or near-independent measurements.
+
+\textbf{Quadrant 4 ($\kappa>1$, $\rho<0$): Low efficiency, variable information.} This is where the efficiency--power tension is most pronounced. $\eta<1$ indicates statistical harm, yet information content may remain substantial when $\delta$ is large. The decision to relativise requires an estimate of $\delta/\sigma_{\mathrm{A}}$ and a cross-validated check; $I(X;Y)$ under (A1)--(A2) is a prior, not a substitute. Exemplified by asymmetric head-to-head pairings ($\kappa>1$ with $\rho<0$), including some sports KPIs and competitive business comparisons.
+
+\subsection{Signal Strength and the Limits of \texorpdfstring{$\eta$}{eta} as a Predictor}
+\label{sec:signal_strength}
+
+Quadrant position fixes the directional regime; signal strength fixes the magnitude of predictive gain within that regime. The PEF--information content relationship (\cref{eq:mi_closed}) shows that $\eta$ is not the sole determinant of predictive gain. The mutual information $I(X;Y)$ depends on $\eta$ through the denominator $\sqrt{(1+\kappa)/\eta}$, but also on the signal-to-noise ratio
+\begin{equation}
+  \frac{\delta}{\sigma_{\mathrm{A}}} = \frac{\mu_{\mathrm{A}} - \mu_{\mathrm{B}}}{\sigma_{\mathrm{A}}},
+  \label{eq:delta_ratio}
+\end{equation}
+the standardised mean difference between the two entities. Two KPIs with identical $(\kappa,\rho)$ positions, and therefore identical $\eta$, will yield different information content if their signal strengths differ.
+
+This has a practical consequence: $\eta$ alone does not determine ML gain. $\eta$ encodes the $(\kappa,\rho)$ position and identifies the quadrant regime, but two KPIs in the same quadrant will yield different ML outcomes if their signal strengths differ. The appropriate diagnostic is therefore the $(\kappa,\rho,\delta/\sigma_{\mathrm{A}})$ triple: quadrant for the directional prediction, $\delta/\sigma_{\mathrm{A}}$ estimated from data for the magnitude. Supplementary~\cref{fig:si_iso_eta_I} shows how iso-$\eta$ and iso-$I(X;Y)$ contours diverge once $\delta/\sigma_{\mathrm{A}}$ varies.
+
+The practical implication is that the four-quadrant taxonomy and the $I(X;Y)$ formula together constitute the appropriate predictive tool, with $\delta/\sigma_{\mathrm{A}}$ estimated from data. \Cref{sec:exemplars} illustrates this with four quadrant exemplars spanning the empirical range of $(\kappa,\rho,\delta/\sigma_{\mathrm{A}})$ values.
+
+\subsection{Cross-Domain Connections}
+
+The quadrant logic applies uniformly across fields. \Cref{tab:cross_domain} situates familiar methods on the $(\kappa,\rho)$ plane.
+
+\begin{table}[t]
+  \centering
+  \caption{Cross-domain mapping of familiar methods to typical PEF regimes.}
+  \label{tab:cross_domain}
+  \scalebox{0.9}{
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    \textbf{Field} & \textbf{Method} & \textbf{Correlation source} & \textbf{Typical PEF regime} \\
+    \midrule
+    Statistics & Paired $t$-test & Repeated measures & $\eta=1/(1-\rho)$ when $\kappa=1$ \\
+    Finance & Market-adjusted returns & Market factors & Q1: $\eta>1$, high $\rho$ \\
+    Healthcare & Paired clinical trials & Temporal/biological & Q1--Q2: $\eta\gg 1$ \\
+    Manufacturing & Control charts & Process dynamics & Q2: $\eta>1$, moderate $\rho$ \\
+    Sports & Relative metrics & Environmental/competitive & Q3-dominant; Q4 when $\kappa>1$ \\
+    \bottomrule
+  \end{tabular}}
+\end{table}
+When two domains share similar $(\kappa,\rho)$ values, techniques from one may transfer to the other, for example, methods from healthcare (high-$\rho$ settings) to manufacturing contexts with similar correlation structures.

@@ -1,0 +1,98 @@
+% Shared macros for the JQAS production and review compiles.
+% Pipeline numbers are generated; do not hand-edit those values.
+
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\DeclareMathOperator{\Corr}{Corr}
+\newcommand{\ind}{\mathbbm{1}}
+
+% Fallbacks if numbers.tex has not been generated.
+\newcommand{\PEFrugbyMeanEta}{???}    \newcommand{\PEFrugbySdEta}{???}
+\newcommand{\PEFrugbySuccess}{???}    \newcommand{\PEFrugbyNkpis}{???}
+\newcommand{\PEFrugbyNgames}{???}     \newcommand{\PEFrugbyCIlo}{???}
+\newcommand{\PEFrugbyCIhi}{???}
+\newcommand{\PEFfootMeanEta}{???}     \newcommand{\PEFfootSdEta}{???}
+\newcommand{\PEFfootSuccess}{???}     \newcommand{\PEFfootNkpis}{???}
+\newcommand{\PEFfootNgames}{???}      \newcommand{\PEFfootCIlo}{???}
+\newcommand{\PEFfootCIhi}{???}
+\newcommand{\PEFtotalStudies}{???}
+\newcommand{\PEFhealthMeanEta}{???}   \newcommand{\PEFhealthSdEta}{???}
+\newcommand{\PEFhealthSuccess}{???}   \newcommand{\PEFhealthN}{???}
+\newcommand{\PEFgenomicsMeanEta}{???} \newcommand{\PEFgenomicsSdEta}{???}
+\newcommand{\PEFgenomicsSuccess}{???} \newcommand{\PEFgenomicsN}{???}
+\newcommand{\PEFfinanceMeanEta}{???}  \newcommand{\PEFfinanceSdEta}{???}
+\newcommand{\PEFfinanceSuccess}{???}  \newcommand{\PEFfinanceN}{???}
+\newcommand{\PEFmfgMeanEta}{???}      \newcommand{\PEFmfgSdEta}{???}
+\newcommand{\PEFmfgSuccess}{???}      \newcommand{\PEFmfgN}{???}
+\newcommand{\PEFqOneMeanEta}{???}     \newcommand{\PEFqOneCIlo}{???}
+\newcommand{\PEFqOneCIhi}{???}        \newcommand{\PEFqOneMLimpr}{???}
+\newcommand{\PEFqTwoMeanEta}{???}     \newcommand{\PEFqTwoMLimpr}{???}
+\newcommand{\PEFqThreeMeanEta}{???}   \newcommand{\PEFqThreeMLimpr}{???}
+\newcommand{\PEFqFourMeanEta}{???}    \newcommand{\PEFqFourCIlo}{???}
+\newcommand{\PEFqFourCIhi}{???}       \newcommand{\PEFqFourMLimpr}{???}
+\newcommand{\PEFmlCorr}{???}          \newcommand{\PEFmlRsq}{???}
+\newcommand{\PEFmlMAE}{???}           \newcommand{\PEFmlRMSE}{???}
+
+\InputIfFileExists{numbers.tex}{}{%
+  \InputIfFileExists{scripts/paper_pipeline/outputs/numbers.tex}{}{%
+    \InputIfFileExists{../../scripts/paper_pipeline/outputs/numbers.tex}{}{}}}
+\InputIfFileExists{finalize_correlations.tex}{}{%
+  \InputIfFileExists{scripts/paper_pipeline/outputs/finalize_correlations.tex}{}{%
+    \InputIfFileExists{../../scripts/paper_pipeline/outputs/finalize_correlations.tex}{}{}}}
+
+% Exemplar / landscape macros. \providecommand is a no-op once numbers.tex has loaded.
+% Needed when that file is a broken Overleaf symlink.
+\providecommand{\PEFqOneNkpis}{12}
+\providecommand{\PEFqTwoNkpis}{12}
+\providecommand{\PEFqTwoCIlo}{0.857}
+\providecommand{\PEFqTwoCIhi}{2.237}
+\providecommand{\PEFqThreeNkpis}{55}
+\providecommand{\PEFqThreeCIlo}{0.759}
+\providecommand{\PEFqThreeCIhi}{0.818}
+\providecommand{\PEFqFourNkpis}{7}
+\providecommand{\PEFlandscapeQthreeN}{55}
+\providecommand{\PEFlandscapeQthreePct}{64.0}
+\providecommand{\PEFmedianDeltaRatio}{0.2920}
+\providecommand{\PEFcorrIpredML}{-0.046}
+\providecommand{\PEFexDeltaRatioLo}{0.16}
+\providecommand{\PEFexDeltaRatioHi}{0.32}
+\providecommand{\PEFexQoneKappa}{1.06}
+\providecommand{\PEFexQoneRho}{+0.65}
+\providecommand{\PEFexQoneEta}{2.84}
+\providecommand{\PEFexQoneDeltaRatio}{0.19}
+\providecommand{\PEFexQoneDml}{+4.3}
+\providecommand{\PEFexQtwoKappa}{0.91}
+\providecommand{\PEFexQtwoRho}{+0.23}
+\providecommand{\PEFexQtwoEta}{1.30}
+\providecommand{\PEFexQtwoDeltaRatio}{0.16}
+\providecommand{\PEFexQtwoDml}{+5.5}
+\providecommand{\PEFexQthreeKappa}{0.84}
+\providecommand{\PEFexQthreeRho}{-0.65}
+\providecommand{\PEFexQthreeEta}{0.61}
+\providecommand{\PEFexQthreeDeltaRatio}{0.32}
+\providecommand{\PEFexQthreeDml}{-0.8}
+\providecommand{\PEFexQfourKappa}{1.00}
+\providecommand{\PEFexQfourRho}{-0.24}
+\providecommand{\PEFexQfourEta}{0.81}
+\providecommand{\PEFexQfourDeltaRatio}{0.26}
+\providecommand{\PEFexQfourDml}{-0.3}
+\providecommand{\PEFexRucksKappa}{0.82}
+\providecommand{\PEFexRucksRho}{+0.82}
+\providecommand{\PEFexRucksEta}{5.38}
+\providecommand{\PEFexRucksDeltaRatio}{0.07}
+\providecommand{\PEFexRucksDml}{-1.6}
+
+% Blind-safe phrasing. Set \jqasblindtrue in the ScholarOne review file.
+\providecommand{\companioncite}{%
+  \ifjqasblind
+    a companion paper (in preparation)%
+  \else
+    a companion paper \parencite{brownPEFmath}%
+  \fi}
+
+\providecommand{\peftoolsurl}{%
+  \ifjqasblind
+    an anonymised public repository (URL supplied after review)%
+  \else
+    \url{https://github.com/AroundInteger/pef-tools}%
+  \fi}

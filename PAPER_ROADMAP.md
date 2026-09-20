@@ -31,7 +31,7 @@ This file tracks the two parallel paths to submission. Tick items in Git commits
 |------|---------|
 | **Title** | `When Should Team KPIs Be Absolute or Relative for Match-Outcome Prediction?` |
 | **Abstract** | Five-part lay structure; pooled `\PEFtotalStudies` scope (no league/match totals); data-informed diagnostic; indicate vs predict; information content terminology |
-| **Authors** | Placeholder block: Rowan Brown + Sports Analytics Group only (`ee6d332`; restore Bennett/Kilduff/Scott after D4) |
+| **Authors** | Brown, Kilduff, Scott (Bennett removed 2026-09-19). D4 sign-off on order still pending |
 | **Terminology** | data-informed (not data-driven); structured guidance (not actionable); abstract structure guide synced |
 | **Pipeline** | Team-blocked five-fold CV for ML; team-cluster bootstrap for PEF CIs; full rerun + finalize diagnostics (`1d75f33`) |
 | **Methods** | `\cref{sec:ml_cv}` documents team-blocked folds; robustness text matches code (removed unimplemented cluster-robust SE / mixed-effects claims) |
@@ -77,7 +77,7 @@ cd scripts/paper_pipeline
 | ID | Issue | Status |
 |----|-------|--------|
 | B1 | Game counts: Methods/appendix use 283 / 1114 (two-season pooled), not 240 / 552 | Done |
-| B2 | Study count: 113 KPI studies, not “47-study” | Done |
+| B2 | Study count: 86 action KPIs after circular-outcome filter (22 rugby, 64 football); older “113” figure is stale | Done (2026-09-16 `numbers.tex`) |
 | B3 | ML methods: logistic `glmfit`, team-blocked five-fold CV (MATLAB), not scikit-learn trio | Done (2026-07-03, `1d75f33`) |
 | B4 | η–*I* narrative: fixed-δ idealised *r* ≈ 0.87; heterogeneous KPI *r* ≈ −0.21; replace stale *r* = 0.900 | Done |
 | B5 | Scenario table: idealised probit ML % (≈ 9.4, 8.2, 8.6, 7.9), not legacy 15.2 / 25.3 | Done |
@@ -101,7 +101,7 @@ cd scripts/paper_pipeline
 | ID | Task | Status |
 |----|------|--------|
 | D1 | `latexmk -pdf` — zero undefined refs | **Pending** — not run locally (no TeX on shell PATH, 2026-07-28); use Overleaf or MacTeX |
-| D2 | Author block, affiliations, data/code statement | Partial — placeholder author block (`ee6d332`); final names/affiliations pending D4 |
+| D2 | Author block, affiliations, data/code statement | Names: Brown, Kilduff, Scott (Bennett removed 2026-09-19). Affiliations still generic Swansea; D4 sign-off pending |
 | D6 | Pre-review polish: title/abstract, CV grouping, exemplar local geometry, $\Delta\mathrm{ML}$ framing | **Done** (2026-07-03 chat, `5888d22`) |
 | D3 | Target journal + SI format | Partial — see [`TARGET_JOURNAL_MATRIX.md`](TARGET_JOURNAL_MATRIX.md) (JQAS primary; CSF explore tier) |
 | D4 | Co-author sign-off on weak η→ML framing | Pending |

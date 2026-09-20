@@ -82,7 +82,7 @@ Rucks won (rugby; Q2: $\kappa=0.82$, $\rho=+0.82$, $\eta=5.38$, $\delta/\sigma_A
 
 Having established the mechanism through the idealised simulation and single-KPI exemplars, we assess whether the same $(\kappa,\rho)$ structure recurs beyond sport. (tab:validation) summarises results across all six domains. The supporting domains illustrate how empirical $(\kappa,\rho)$ structures propagate into $\hat\eta$ and landscape efficiency rates (proportion with $\hat\eta>1$; (sec:outcome_defs)):
 
-- **Healthcare** [nhanes2017pbxo]: pooled $\eta=2.533$ (bootstrap 95\% CI: $[2.448,2.622]$) across $N=1$ NHANES participants pairing systolic and diastolic blood pressure from the same oscillometric measurement (Quadrant 2). Pulse pressure ($SBP-DBP$) is the clinically established relative feature.
+- **Healthcare** [nhanes2017pbxo]: pooled $\eta=2.533$ (bootstrap 95\% CI: $[2.448,2.622]$) across $N=10,352$ NHANES participants pairing systolic and diastolic blood pressure from the same oscillometric measurement (Quadrant 2). Pulse pressure ($SBP-DBP$) is the clinically established relative feature. The one healthcare row in (tab:validation) is that single paired study, not a participant count.
 
 - **Clinical genomics** [brunner2014earlybreast,geoGSE47462]: mean $\eta=2.696$ (SD $=1.601$) across $3500$ genes ranked by paired-differential signal in GSE47462; $97.0\%$ of genes yielded $\eta>1$.
 

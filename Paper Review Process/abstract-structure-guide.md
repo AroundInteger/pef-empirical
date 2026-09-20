@@ -15,7 +15,7 @@ Map the abstract to **exactly five rhetorical moves**. Unstructured JQAS abstrac
 | **1. Background** | Situate the reader in the application domain | 1–2 sentences | Para 1, sentence 1: absolute vs relative KPIs in head-to-head sport |
 | **2. Problem / objective** | State the gap or question | 1 sentence | Para 1, sentence 2: relativisation sometimes helps, sometimes not; no general account |
 | **3. Methods** | What you did, in plain language (not Methods-section paste) | 2–4 short sentences | Para 2: measurable properties → PEF → Fisher in words → efficiency vs information → deliberate univariate scope |
-| **4. Key results** | Findings with **some** numbers; honest scope | 2–4 sentences | Para 3: 113 KPIs, leagues, four regimes, Q3-dominant pattern, efficiency–information tension, exemplars, cross-domain |
+| **4. Key results** | Findings with **some** numbers; honest scope | 2–4 sentences | Para 3: 86 KPIs, leagues, four regimes, Q3-dominant pattern, efficiency–information tension, exemplars, cross-domain |
 | **5. Conclusion** | Broader impact; one idea only | 1 sentence | Para 4: ad hoc choice → transparent diagnostic |
 
 **Paragraph rule:** One paragraph per “block” above is fine, but **Methods** may need a full paragraph; **Conclusion** must stay a single sentence.
@@ -135,7 +135,7 @@ Check: read paragraph 2 aloud after paragraph 1; if the voice shifts, simplify p
 
 **Paragraph 3 — Key results**
 
-1. *Design:* 113 KPIs, two leagues (macros for match counts).  
+1. *Design:* 86 KPIs, two leagues (macros for match counts).  
 2. *Main pattern:* four regimes; anti-correlation dominant; absolute usually preferable.  
 3. *Tension:* variance can rise yet prediction improves; efficiency ≠ information.  
 4. *Validation:* exemplars confirm direction; cross-domain alignment (one sentence).

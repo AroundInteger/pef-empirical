@@ -1,0 +1,87 @@
+% !TeX program = pdflatex
+% !BIB program = biber
+% JQAS production compile (De Gruyter author template).
+% Identified. For ScholarOne review use manuscript_review.tex + title_page.tex.
+\documentclass[UKenglish]{article}
+
+% XeTeX/LuaTeX: inputenc is a no-op, so keep a dummy for dgruyter.sty.
+\providecommand{\DeclareUnicodeCharacter}[2]{}
+\usepackage[utf8]{inputenc}
+\usepackage[big,online]{dgruyter}
+\usepackage{lmodern}
+\usepackage{microtype}
+% dgruyter already loads amsmath (intlimits, tbtags), amssymb, amsthm, and hyperref.
+% Reloading amsmath/amssymb after that causes the equation-error cascade on XeLaTeX
+% (unicode-math) and can clash on pdfLaTeX. Load only the extras the root paper uses.
+\makeatletter
+\@ifpackageloaded{unicode-math}{}{\usepackage{mathtools}}
+\makeatother
+\usepackage{bbm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\graphicspath{{figures/}{../../figures/}}
+\usepackage{csquotes}
+\usepackage[style=authoryear,backend=biber,giveninits=true,maxcitenames=3,maxbibnames=99,uniquename=init,doi=true,isbn=false,url=false]{biblatex}
+\usepackage{nameref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\addbibresource{references.bib}
+\addbibresource{jqas_extra.bib}
+
+\newif\ifjqasblind
+\jqasblindfalse
+\newif\ifjqasincludesi
+\jqasincludesitrue
+
+\input{jqas_macros}
+\input{sections/abstract}
+
+\articletype{Research Article}
+\received{Month DD, YYYY}
+\revised{Month DD, YYYY}
+\accepted{Month DD, YYYY}
+\journalname{Journal of Quantitative Analysis in Sports}
+\journalyear{YYYY}
+\journalvolume{XX}
+\journalissue{X}
+\startpage{1}
+\aop
+\DOI{10.1515/jqas-YYYY-XXXX}
+
+\title{When Should Team KPIs Be Absolute or Relative for Match-Outcome Prediction?}
+\runningtitle{Paired efficiency of team KPIs}
+
+\author*[1]{Rowan Brown}
+\author[1]{Liam P. Kilduff}
+\author[1]{G. A. Scott}
+\runningauthor{R.~Brown et al.}
+\affil[1]{\protect\raggedright
+Swansea University, Swansea, UK, e-mail: m.r.brown@swansea.ac.uk}
+
+\abstract{\jqasabstractbody}
+
+\keywords{paired comparisons, rugby union, association football, feature engineering, logistic regression}
+
+\begin{document}
+\maketitle
+
+\input{sections/introduction}
+\input{sections/theoretical_framework}
+\input{sections/methodology}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+\input{sections/data_availability}
+\input{sections/tables_and_figures}
+
+\begin{funding}
+No specific funding was received for this work.
+\end{funding}
+
+\printbibliography[title={References}]
+
+\ifjqasincludesi
+\input{sections/supplementary}
+\fi
+
+\end{document}

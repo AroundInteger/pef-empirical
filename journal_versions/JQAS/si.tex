@@ -1,0 +1,49 @@
+% !TeX program = pdflatex
+% !BIB program = biber
+% Standalone Supplementary Information for a two-file JQAS upload.
+% Compile from this directory. Main-text labels are not defined here.
+\documentclass[12pt,letterpaper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{amsthm}
+\usepackage{bbm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\graphicspath{{figures/}{../../figures/}}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{csquotes}
+\usepackage[style=authoryear,backend=biber,giveninits=true,maxcitenames=3,maxbibnames=99]{biblatex}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\geometry{letterpaper,margin=1in}
+\onehalfspacing
+
+\addbibresource{references.bib}
+\addbibresource{jqas_extra.bib}
+
+\newif\ifjqasblind
+\jqasblindtrue
+\newif\ifjqasincludesi
+\jqasincludesifalse
+
+\input{jqas_macros}
+
+\title{Supplementary Information\\
+\large When Should Team KPIs Be Absolute or Relative for Match-Outcome Prediction?}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\input{sections/supplementary}
+
+\printbibliography[title={References}]
+\end{document}

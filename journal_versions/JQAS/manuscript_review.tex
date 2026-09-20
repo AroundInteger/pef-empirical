@@ -1,0 +1,80 @@
+% !TeX program = pdflatex
+% !BIB program = biber
+% JQAS ScholarOne review compile: US letter, 12 pt, single column, double-spaced,
+% de-identified, author-date references. Upload title_page.tex as a separate file.
+\documentclass[12pt,letterpaper]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{amsthm}
+\usepackage{bbm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\graphicspath{{figures/}{../../figures/}}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{csquotes}
+\usepackage[style=authoryear,backend=biber,giveninits=true,maxcitenames=3,maxbibnames=99,uniquename=init,doi=true,isbn=false,url=false]{biblatex}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\geometry{letterpaper,margin=1in}
+\doublespacing
+
+\addbibresource{references.bib}
+\addbibresource{jqas_extra.bib}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black,
+  pdftitle={When Should Team KPIs Be Absolute or Relative for Match-Outcome Prediction?}
+}
+
+\newif\ifjqasblind
+\jqasblindtrue
+\newif\ifjqasincludesi
+\jqasincludesitrue
+
+\input{jqas_macros}
+\input{sections/abstract}
+
+\title{When Should Team KPIs Be Absolute or Relative for Match-Outcome Prediction?}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+\textit{Manuscript prepared for the Journal of Quantitative Analysis in Sports.}\\
+Blinded for review. Author details appear on a separate title page.
+\end{center}
+
+\begin{abstract}
+\jqasabstractbody
+\end{abstract}
+
+\noindent\textbf{Keywords:} paired comparisons; rugby union; association football; feature engineering; logistic regression
+
+\input{sections/introduction}
+\input{sections/theoretical_framework}
+\input{sections/methodology}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+\input{sections/data_availability}
+\input{sections/tables_and_figures}
+
+\printbibliography[title={References}]
+
+\ifjqasincludesi
+\input{sections/supplementary}
+\fi
+
+\end{document}

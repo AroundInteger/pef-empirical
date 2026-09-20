@@ -8,7 +8,7 @@
   \small
   \begin{tabular}{@{}llccccl@{}}
     \toprule
-    \textbf{Domain} & \textbf{Tier} & \textbf{$n$ studies} & \textbf{Mean $\eta$} & \textbf{SD} & \textbf{Efficiency} & \textbf{Data source} \\
+    \textbf{Domain} & \textbf{Tier} & \textbf{$n$ studies} & \textbf{Mean $\eta$} & \textbf{SD} & \textbf{\% with $\eta>1$} & \textbf{Data source} \\
     \midrule
     Sports (Rugby)      & Primary    & \PEFrugbyNkpis  & \PEFrugbyMeanEta  & \PEFrugbySdEta  & \PEFrugbySuccess\%  & {URC} \\
     Sports (Football)   & Primary    & \PEFfootNkpis   & \PEFfootMeanEta   & \PEFfootSdEta   & \PEFfootSuccess\%   & English Championship \\
@@ -37,7 +37,7 @@
     Q1 & $\kappa>1$, $\rho>0$  & $>1$  & High     & Use relative features \\
     Q2 & $\kappa<1$, $\rho>0$  & $>1$  & Moderate & Use relative features \\
     Q3 & $\kappa<1$, $\rho<0$  & $<1$  & Low      & Prefer absolute features \\
-    Q4 & $\kappa>1$, $\rho<0$  & $<1$  & Variable & Analyse both $\eta$ and $I(X;Y)$ \\
+    Q4 & $\kappa>1$, $\rho<0$  & $<1$  & Variable & Estimate $\delta/\sigma_{\mathrm{A}}$; confirm with CV \\
     \bottomrule
   \end{tabular}
 
@@ -94,7 +94,8 @@
   \caption{Information-theoretic surface $I(X;Y)$ as a function of $\rho$ and $\kappa$
     (\cref{eq:mi_closed}), computed with nominal signal strength $\delta/\sigma_{\mathrm{A}}=1$.
     Layout matches \cref{fig:pef_landscape}: the same four confirmatory exemplars
-    (\cref{tab:exemplars}) with season 23/24--24/25 drift segments, supporting-domain triangles,
+    (\cref{tab:exemplars}) are plotted at their estimated $(\kappa,\rho)$ positions on this
+    $\delta/\sigma_{\mathrm{A}}=1$ surface, with season 23/24--24/25 drift segments, supporting-domain triangles,
     quadrant boundaries, and the admissibility boundary (dotted curve).
     Background shading uses a \emph{sequential} colour scale over $I(X;Y)\in[0,0.3]$~bits
     (low to high information); \cref{fig:pef_landscape} uses a \emph{diverging}
@@ -114,8 +115,7 @@
     Rucks won (diamond) is a high-$\eta$ foil with negligible $\delta/\sigma_{\mathrm{A}}$: pairing efficiency without signal still yields $\Delta\mathrm{ML}<0$.
     The $x$-axis is broken between $3.4$ and $5.05$ to keep the foil on scale.
     Colours match \cref{fig:pef_landscape,fig:info_surface}.
-    The full inventory, including cases with $\eta<1$ and $\Delta\mathrm{ML}>0$, is in Supplementary~\cref{fig:si_kpi_labelled,fig:si_ipred_vs_dml}.
-    Fisher--Rao $\psi$-scale diagnostics are developed in the companion mathematics paper \parencite{brownPEFmath}.}
+    The full inventory, including cases with $\eta<1$ and $\Delta\mathrm{ML}>0$, is in Supplementary~\cref{fig:si_kpi_labelled,fig:si_ipred_vs_dml}.}
   \label{fig:pef_ml}
 \end{figure}
 

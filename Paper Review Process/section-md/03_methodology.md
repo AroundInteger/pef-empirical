@@ -18,7 +18,7 @@ The primary analysis uses match-level KPI data from two professional leagues:
 
 - **Rugby union.** United Rugby Championship (URC): $n=283$ games pooled across seasons 23/24 and 24/25 ($m=16$ teams, double round-robin). KPIs include rucks won, kick metres, kicks from hand, carries, penalties conceded, turnovers won, and others (Supplementary (fig:si_kpi_labelled)).
 
-- **Football.** English Championship: $n=1114$ games pooled across the same two seasons ($m=24$ teams, double round-robin). KPIs include duels, cards, pressures, interceptions, fouls, and shots (Supplementary (fig:si_kpi_labelled)). Association-football score and outcome modelling has a long econometric lineage [dixon1997,boulier2003], with contemporary machine-learning approaches incorporating domain knowledge [berrar2019].
+- **Football.** English Championship: $n=1114$ games pooled across the same two seasons ($m=24$ teams, double round-robin). KPIs include duels, pressures, interceptions, fouls, and shot volume (Supplementary (fig:si_kpi_labelled)). Association-football score and outcome modelling has a long econometric lineage [dixon1997,boulier2003], with contemporary machine-learning approaches incorporating domain knowledge [berrar2019].
 
 Head-to-head matchups provide natural pairing through shared environmental conditions (weather, venue, officiating), and KPI variability across matches is well documented in professional sport [malcata2014]. Those rugby union lines of work motivate treating head-to-head KPIs as a primary testbed for the present framework [bennett2019descriptive,bennett2021predicting,scott2023urc,scott2023womens]. The sports data are well suited to testing the framework because the KPIs span a range of correlation values (including negative correlation from competitive dynamics) and variance ratios, populating all four quadrants.  To assess temporal stability, we compute $(\kappa,\rho)$ for each KPI in both seasons separately; (fig:pef_landscape,fig:info_surface) show the four confirmatory exemplars of (tab:exemplars) with season 23/24--24/25 drift segments, whilst Supplementary (fig:si_kpi_labelled) visualises the full KPI cloud.
 
@@ -65,19 +65,11 @@ To assess the relationship between quadrant position and ML performance, logisti
 
 **Team-blocked cross-validation.** Each match is one observation, but teams recur across fixtures, so random match-level folds can place the same side in both training and test sets and inflate accuracy. We therefore partition teams (not matches) into five disjoint sets with a fixed random seed. A match is assigned to the fold of its home team; for fold $f$, the test set comprises all matches whose home team belongs to set $f$, and the training set comprises the remaining matches. No home team therefore appears in both partitions within a fold. Away opponents may appear in training when facing a held-out home side, a mild, standard form of leakage in league settings that still removes the dominant source of dependence (repeated home-side observations). The same fold assignment is used for absolute and relative features so that $\DeltaML$ compares like with like. Landscape $\DeltaML$ values characterise the inventory; mechanistic claims rest on the quadrant exemplars at comparable $\delta/\sigma_A$ ((sec:exemplars)).
 
-## Statistical Rigour
+## Inference and Quality Control
 
-**Multiple comparison corrections.** Where hypothesis tests were applied across a fixed battery of sports KPI checks, three methods were considered: Bonferroni correction (family-wise error rate at $\alpha=0.05$), Benjamini--Hochberg FDR control [benjamini1995], and Holm--Bonferroni step-down procedure [holm1979]. The primary sports analysis reports per-KPI bootstrap intervals ((sec:results), Supplementary Information).
+The 86-KPI landscape is descriptive. It is not a family-wise hypothesis battery, so Bonferroni, FDR, and Holm corrections are not applied. Uncertainty for $(\hat\kappa,\hat\rho,\hat\eta)$ uses a team-cluster bootstrap: teams are resampled with replacement and all home-side matches for each drawn team are retained [efron1979]. Supplementary (sec:si_qc) reports the Quadrant 4 check ($B=300$). Predictive comparisons use team-blocked $\DeltaML$ ((sec:ml_cv)). The companion effect size is the standardised mean difference $\delta/\sigma_A$ ((eq:delta_ratio)), not Cohen's $d$ or partial $\eta^2$.
 
-**Effect sizes.** Cohen's $d=(\mu_relative-\mu_absolute)/\sigma_pooled$ [cohen1988] and partial eta-squared $\eta_p^2=SS_effect/(SS_effect+SS_error)$ quantified practical significance.
-
-**Bootstrap inference.** 10,000 resamples provided distribution-free confidence intervals [efron1979].
-
-**Power analysis.** Both post-hoc observed power and *a priori* required sample sizes were calculated for small ($d=0.2$), medium ($d=0.5$), and large ($d=0.8$) effect sizes [cohen1992].
-
-## Quality Control
-
-All datasets underwent normality testing (Shapiro--Wilk), outlier detection (Mahalanobis distance [mahalanobis1936]), and missing data analysis (Little's MCAR test). Statistical assumptions were verified through Q--Q plots, Durbin--Watson statistics, and Levene's test where applicable. Analysis code was version-controlled with fixed random seeds.
+Paired-difference series were checked with the Shapiro--Wilk test (Supplementary (sec:si_normality)). Analysis code was version-controlled.
 
 ## Sports Data: Independence Considerations
 
