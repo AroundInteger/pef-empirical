@@ -1,6 +1,3 @@
-% !TeX program = pdflatex
-% !BIB program = biber
-% Overleaf: set Compiler = pdfLaTeX, Main document = main.tex
 \documentclass[11pt,a4paper]{article}
 
 \usepackage[british]{babel}
@@ -32,12 +29,10 @@
 \usepackage[style=numeric,backend=biber,sorting=none,giveninits=true,maxbibnames=99]{biblatex}
 \addbibresource{references.bib}
 
-% --- Notation (UK English in prose; LaTeX maths per OVERLEAF_BEST_PRACTICES) ---
+
 \newcommand{\Var}{\operatorname{Var}}
 
-% Auto-populated empirical numbers from run_paper_pipeline.m
-% Fallback definitions ensure compilation before pipeline is run.
-% (Re-run run_paper_pipeline.m to replace ??? with real values.)
+
 \newcommand{\PEFrugbyMeanEta}{???}    \newcommand{\PEFrugbySdEta}{???}
 \newcommand{\PEFrugbySuccess}{???}    \newcommand{\PEFrugbyNkpis}{???}
 \newcommand{\PEFrugbyNgames}{???}     \newcommand{\PEFrugbyCIlo}{???}
