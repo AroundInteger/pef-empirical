@@ -47,7 +47,7 @@ To upload a shorter main PDF and a separate SI file, set `\jqasincludesifalse` i
 - Blind review wrapper + separate title page.
 - JQAS venue citations: Brill, Yurko and Wyner (2025); Baron et al. (2024); Guan, Sarkar and Swartz (2024).
 - Q4 recipe: estimate $\delta/\sigma_A$, then confirm with team-blocked CV. $I(X;Y)$ is a prior.
-- Companion geometry / $\psi$ / partition function reduced to one “in preparation” sentence (anonymised when blinded).
+- Companion geometry / $\psi$ / partition function omitted; SI derives the display remapping $\tau=\tfrac12\log\kappa$ instead of citing an unpublished companion.
 - Finance Methods match Results (S&P 100 vs S&P 500, 2020–2023, $n=18$).
 - Shapiro–Wilk numbers moved out of the Introduction.
 - Table 1 column renamed “% with $\eta>1$”.

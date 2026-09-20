@@ -8,7 +8,7 @@ Former printed figures S6–S8 and Table S2 are not included. Former `sec:si_not
 
 | SI section | Main paper anchor | Contents (printed labels) |
 |---|---|---|
-| **§1 Theoretical derivations** | Theory (`\cref{sec:theory}`); Fig.~2; Introduction (Pitman ARE) | \(I(X;Y)\) algebra; `\cref{sec:pitman}`; Figure S1 (disk: `Figure_S3_info_sensitivity.png`) |
+| **§1 Theoretical derivations** | Theory (`\cref{sec:theory}`); Fig.~2; Introduction (Pitman ARE) | \(\tau=\tfrac12\log\kappa\); \(I(X;Y)\) algebra; `\cref{sec:pitman}`; Figure S1 (disk: `Figure_S3_info_sensitivity.png`) |
 | **§2 Idealised probit validation** | Methods Tier 1; Results | Specification; Validations 2–4; Figure S2 (disk: `Figure_S1_idealised_I_vs_dML_overlay.png`); Figure S3 (disk: `Figure_S2_iso_eta_I_tension.png`) |
 | **§3 Empirical analysis** | Methods; Results; Discussion | Figure S4; Figure S5; Table S1; QC (Shapiro–Wilk, log-transform, Q4 bootstrap) |
 

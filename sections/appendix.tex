@@ -2,7 +2,17 @@
 \label{sec:si_note_s3}
 \label{sec:appendix}
 
-\noindent The algebraic derivation of the PEF formula (\cref{eq:pef}) from the variance of correlated differences, together with its reduction to Fisher's classical case at $\kappa=1$, is given in full in \cref{sec:theory} (\S2.1). This section records the omitted information-content algebra and the Pitman asymptotic relative efficiency proof.
+\noindent The algebraic derivation of the PEF formula (\cref{eq:pef}) from the variance of correlated differences, together with its reduction to Fisher's classical case at $\kappa=1$, is given in full in \cref{sec:theory} (\S2.1). This section records a log-ratio remapping of $\kappa$, the omitted information-content algebra, and the Pitman asymptotic relative efficiency proof.
+
+\subsection*{Log-ratio coordinate for the variance ratio}
+\label{sec:si_tau}
+
+The variance ratio $\kappa=\sigma_{\mathrm{B}}^{2}/\sigma_{\mathrm{A}}^{2}$ is multiplicative. An additive remapping that places equal variances at the origin is the log standard-deviation ratio
+\begin{equation}
+  \tau \;=\; \log\frac{\sigma_{\mathrm{B}}}{\sigma_{\mathrm{A}}} \;=\; \tfrac12\log\kappa.
+  \label{eq:tau_remap}
+\end{equation}
+The map $\kappa\mapsto\tau$ is strictly increasing on $(0,\infty)$, and $\tau=0$ if and only if $\kappa=1$. Interchanging the labels of A and B sends $\kappa\mapsto 1/\kappa$ and therefore $\tau\mapsto-\tau$. The four quadrants of the $(\kappa,\rho)$ plane then occupy the four open quadrants of the $(\rho,\tau)$ plane. \Cref{fig:si_idealised_stratified}A uses this coordinate so that the design points sit symmetrically about the Fisher line. All arguments in the main text remain in $(\kappa,\rho)$.
 
 \subsection*{Information Content Derivation}
 

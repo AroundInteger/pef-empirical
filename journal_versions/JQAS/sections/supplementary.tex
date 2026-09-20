@@ -16,7 +16,7 @@
   \toprule
   \textbf{SI block} & \textbf{Main paper} & \textbf{Contents} \\
   \midrule
-  \S1 Theory & Theory; Fig.~2; Intro.\ (Pitman) & Algebra; Pitman ARE; Fig.~S1 \\
+  \S1 Theory & Theory; Fig.~2; Intro.\ (Pitman) & Algebra; $\tau=\tfrac12\log\kappa$; Pitman ARE; Fig.~S1 \\
   \S2 Probit validation & Methods Tier~1; Results & Spec.; Figs~S2--S3 \\
   \S3 Empirical analysis & Methods; Results; Discussion & Figs~S4--S5; Table~S1; QC \\
   \bottomrule
@@ -130,9 +130,10 @@ The floor is exact. With $X$ Bayes-sufficient, relativisation cannot reduce accu
     Grid: $\kappa\in\{0.8,1.0,1.2,2.0\}$, $\rho\in\{-0.3,-0.15,0,0.4\}$,
     $\delta/\sigma_{\mathrm{A}}\in\{0.3,0.5,1.0,2.0\}$
     (64 cells; $n=5{,}000$, 50 trials, five-fold logistic CV).
-    (A)~The 16 $(\kappa,\rho)$ design points. The vertical axis is
-    $\tfrac12\log\kappa$, a monotone relabelling of $\kappa$;
-    this paper's arguments use $(\kappa,\rho)$. Dashed lines mark $\rho=0$ and $\kappa=1$.
+    (A)~The 16 $(\kappa,\rho)$ design points plotted against
+    $\tau=\tfrac12\log\kappa$ (\cref{eq:tau_remap}), so that $\kappa=1$ is the
+    horizontal axis. This paper's arguments use $(\kappa,\rho)$.
+    Dashed lines mark $\rho=0$ and $\tau=0$ (equivalently $\kappa=1$).
     Marker shape encodes $\mathrm{sign}(\rho)$ (circle $\rho>0$, square $\rho=0$, triangle $\rho<0$).
     (B)~$I(X;Y)$ versus mean $\Delta\mathrm{ML}$ (logarithmic $x$-axis).
     Colour is signal strength. Grey trajectories join the same $(\kappa,\rho)$ across the
@@ -148,7 +149,7 @@ The floor is exact. With $X$ Bayes-sufficient, relativisation cannot reduce accu
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\linewidth]{figures/Figure_S2_iso_eta_I_tension.png}
-  \caption{Idealised probit companion (SI~\S2): iso-$\eta$ vs.\ iso-$I(X;Y)$.
+  \caption{Idealised probit simulation (SI~\S2): iso-$\eta$ vs.\ iso-$I(X;Y)$.
     (A)~Surface at median empirical $\delta/\sigma_{\mathrm{A}}=0.28$ (solid: $\eta$; dashed: $I$);
     markers are factorial design points; yellow lines mark the cuts in (B)--(C).
     (B)~Cut at $\kappa=1$: $\eta(\rho)$ is signal-invariant while $I(\rho)$ rises from the
