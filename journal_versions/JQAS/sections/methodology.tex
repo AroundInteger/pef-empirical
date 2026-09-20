@@ -60,7 +60,7 @@ To assess the relationship between quadrant position and ML performance, logisti
 
 The 86-KPI landscape is descriptive. It is not a family-wise hypothesis battery, so Bonferroni, FDR, and Holm corrections are not applied. Uncertainty for $(\hat\kappa,\hat\rho,\hat\eta)$ uses a team-cluster bootstrap: teams are resampled with replacement and all home-side matches for each drawn team are retained \parencite{efron1979}. Supplementary~\cref{sec:si_qc} reports the Quadrant~4 check ($B=300$). Predictive comparisons use team-blocked $\Delta\mathrm{ML}$ (\cref{sec:ml_cv}). The companion effect size is the standardised mean difference $\delta/\sigma_{\mathrm{A}}$ (\cref{eq:delta_ratio}), not Cohen's $d$ or partial $\eta^{2}$.
 
-Paired-difference series were checked with the Shapiro--Wilk test. Mean $W$ was $0.977$ in rugby and $0.986$ in football, with mean skewness $0.028$ and $0.069$ (Supplementary~\cref{sec:si_normality}). Analysis code was version-controlled. The canonical run is \texttt{scripts/paper\_pipeline/run\_paper\_pipeline.m} in {MATLAB} {R2025b} with the Statistics and Machine Learning Toolbox. The team-blocked fold seed is documented in that script.
+Paired-difference series were checked with the Shapiro--Wilk test. Mean $W$ was $0.977$ in rugby and $0.986$ in football, with mean skewness $0.028$ and $0.069$ (Supplementary~\cref{sec:si_normality}). Analysis code was version-controlled. The canonical run is \texttt{run\_paper\_pipeline.m} in {MATLAB} {R2025b} with the Statistics and Machine Learning Toolbox (\cref{sec:data_availability}).
 
 \subsection{Sports Data: Independence Considerations}
 
