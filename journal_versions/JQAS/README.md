@@ -2,7 +2,7 @@
 
 De Gruyter / *Journal of Quantitative Analysis in Sports* submission files. The working draft in the repo root (`main.tex`, `sections/`) is unchanged.
 
-Compile **from this directory**. Overleaf: set the main document to `manuscript_review.tex` for ScholarOne, or `main.tex` for the production look.
+Compile **from this directory**. Overleaf: set the main document to `manuscript_review.tex` for ScholarOne, or `main.tex` for the production look. Do not use git symlinks here; Overleaf cannot import them. Figures are resolved from the repo-root `figures/` folder via `\graphicspath{{../../}}`. Publisher logos live in `logos/` as ordinary files.
 
 ## What to upload to ScholarOne
 
