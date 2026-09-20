@@ -46,6 +46,8 @@ Resolving this tension carries a concrete practical payoff. Feature engineering,
 
 The primary empirical analysis draws on KPI data from professional rugby union and football, where head-to-head matchups produce natural pairing across a range of $(\kappa,\rho)$ values, including negative within-match correlation. Performance-indicator construction in invasion games is well established \parencite{hughes2002}, and modern team-sports analytics emphasises spatiotemporal and match-context structure \parencite{bornn2021}. A complementary programme evaluates the statistical properties of sports metrics before they enter prediction models \parencite{franks2016,matteo2026}. We supplement this with validation data from healthcare ({NHANES} oscillometric systolic and diastolic readings on the same visit), transcriptomics ({GEO} {GSE47462}), finance, and manufacturing (real {CNC} process telemetry) to assess generalisability. Supporting-domain summaries appear in \cref{tab:validation}. The Supplementary Information records the mathematical derivations, the sports KPI landscape, and the simulation diagnostics.
 
+The empirical argument is organised around three questions. Why does relativisation improve outcome prediction for some KPIs and harm it for others? How can a relative feature with $\eta<1$ still carry more information about the outcome? Does the same $(\kappa,\rho)$ geometry appear outside invasion-game sport? \Cref{sec:results} addresses each. \Cref{sec:discussion} interprets the answers in that order. The theoretical framework and the methods underpin all three questions rather than answering them in sequence.
+
 This paper makes the following contributions:
 \begin{enumerate}
   \item \textbf{PEF generalisation.} We extend Fisher's paired efficiency to unequal variances through a distribution-free formula (\cref{eq:pef}).
@@ -57,4 +59,4 @@ This paper makes the following contributions:
 
 \subsection{Organisation}
 
-\Cref{sec:theory} develops the theoretical framework: the PEF formula, the PEF--information content relationship, and boundary analysis. \Cref{sec:methods} describes the validation methodology. \Cref{sec:results} presents results. \Cref{sec:discussion} discusses implications and limitations. Mathematical derivations with full intermediate steps appear in Supplementary~\cref{sec:si_maths}.
+\Cref{sec:theory} develops the PEF formula, the information-content relationship, and the quadrant taxonomy. \Cref{sec:methods} specifies the three-tier validation. Those sections supply the shared apparatus. \Cref{sec:results} addresses the three questions. \Cref{sec:discussion} interprets the answers. Mathematical derivations with full intermediate steps appear in Supplementary~\cref{sec:si_maths}.
