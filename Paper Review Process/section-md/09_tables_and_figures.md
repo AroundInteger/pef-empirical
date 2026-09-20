@@ -10,7 +10,7 @@
 
   llccccl@
 
-    **Domain** | **Tier** | **$n$ studies** | **Mean $\eta$** | **SD** | **Efficiency** | **Data source** |
+    **Domain** | **Tier** | **$n$ studies** | **Mean $\eta$** | **SD** | **\% with $\eta>1$** | **Data source** |
 | --- | --- | --- | --- | --- | --- | --- |
 | Sports (Rugby) | Primary | 22 | 1.342 | 1.037 | 54.5\% | URC |
 | Sports (Football) | Primary | 64 | 0.859 | 0.204 | 18.8\% | English Championship |

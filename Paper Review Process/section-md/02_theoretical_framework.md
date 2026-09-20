@@ -111,7 +111,7 @@ description
 
 Under (A2), $Y$ is *not* a deterministic function of $X$: the outcome depends on many factors beyond the single observed KPI difference, so $H(Y\mid X)>0$. The Gaussian discriminant model is the natural linear classifier for normally distributed features and is consistent with (A1) when the within-class variance equals the marginal $\Var(X)$.
 
-**Remark.** Assumption (A1) is empirically reasonable for the present data: the per-match paired difference series $X=X_A-X_B$ in professional rugby and football are approximately normal (mean Shapiro--Wilk $W$ of $0.98$, near-zero skewness), consistent with the central-limit behaviour of paired differences even where the individual team series are mildly skewed (Supplementary (sec:si_normality)). Note that (A1) is required only for the information content derivation; the PEF formula itself ((eq:pef)) is distribution-free. Assumption (A2) is an additional approximation for the predictive setting and is likewise not required for the PEF formula.
+**Remark.** Assumption (A1) is empirically reasonable for the present data: the per-match paired difference series $X=X_A-X_B$ in professional rugby and football are approximately normal, consistent with the central-limit behaviour of paired differences even where the individual team series are mildly skewed ((sec:qc); Supplementary (sec:si_normality)). Note that (A1) is required only for the information content derivation; the PEF formula itself ((eq:pef)) is distribution-free. Assumption (A2) is an additional approximation for the predictive setting and is likewise not required for the PEF formula.
 
 ### Derivation
 
