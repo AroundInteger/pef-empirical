@@ -147,16 +147,12 @@ Each KPI occupies a position in the $(\kappa,\rho)$ plane shaped by these mechan
 \subsection{Signal Strength and the Limits of \texorpdfstring{$\eta$}{eta} as a Predictor}
 \label{sec:signal_strength}
 
-Quadrant position fixes the directional regime; signal strength fixes the magnitude of predictive gain within that regime. The PEF--information content relationship (\cref{eq:mi_closed}) shows that $\eta$ is not the sole determinant of predictive gain. The mutual information $I(X;Y)$ depends on $\eta$ through the denominator $\sqrt{(1+\kappa)/\eta}$, but also on the signal-to-noise ratio
+Quadrant position fixes the directional regime; signal strength fixes the magnitude of predictive gain within that regime. From \cref{eq:mi_closed}, $I(X;Y)$ depends on $\eta$ through $\sqrt{(1+\kappa)/\eta}$, but also on the signal-to-noise ratio
 \begin{equation}
   \frac{\delta}{\sigma_{\mathrm{A}}} = \frac{\mu_{\mathrm{A}} - \mu_{\mathrm{B}}}{\sigma_{\mathrm{A}}},
   \label{eq:delta_ratio}
 \end{equation}
-the standardised mean difference between the two entities. Two KPIs with identical $(\kappa,\rho)$ positions, and therefore identical $\eta$, will yield different information content if their signal strengths differ.
-
-This has a practical consequence: $\eta$ alone does not determine ML gain. $\eta$ encodes the $(\kappa,\rho)$ position and identifies the quadrant regime, but two KPIs in the same quadrant will yield different ML outcomes if their signal strengths differ. The appropriate diagnostic is therefore the $(\kappa,\rho,\delta/\sigma_{\mathrm{A}})$ triple: quadrant for the directional prediction, $\delta/\sigma_{\mathrm{A}}$ estimated from data for the magnitude. Supplementary~\cref{fig:si_iso_eta_I} shows how iso-$\eta$ and iso-$I(X;Y)$ contours diverge once $\delta/\sigma_{\mathrm{A}}$ varies.
-
-The practical implication is that the four-quadrant taxonomy and the $I(X;Y)$ formula together constitute the appropriate predictive tool, with $\delta/\sigma_{\mathrm{A}}$ estimated from data. \Cref{sec:exemplars} illustrates this with four quadrant exemplars spanning the empirical range of $(\kappa,\rho,\delta/\sigma_{\mathrm{A}})$ values.
+the standardised mean difference between the two entities. Two KPIs with identical $(\kappa,\rho)$, and therefore identical $\eta$, can still differ in $I(X;Y)$ and in $\Delta\mathrm{ML}$ if $\delta/\sigma_{\mathrm{A}}$ differs. The diagnostic is therefore the $(\kappa,\rho,\delta/\sigma_{\mathrm{A}})$ triple: quadrant for direction, $\delta/\sigma_{\mathrm{A}}$ estimated from data for magnitude. Supplementary~\cref{fig:si_iso_eta_I} shows how iso-$\eta$ and iso-$I(X;Y)$ contours diverge once $\delta/\sigma_{\mathrm{A}}$ varies. \Cref{sec:exemplars} illustrates this with four quadrant exemplars.
 
 \subsection{Cross-Domain Connections}
 
