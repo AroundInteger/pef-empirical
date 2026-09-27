@@ -1,0 +1,91 @@
+\section{Results}
+\label{sec:results}
+
+The controlled mapping and the efficiency--power analyses show how a higher-variance relative feature can still inform. The sports landscape and the quadrant exemplars show why relativisation helps for some KPIs and harms others. The supporting domains show whether the same $(\kappa,\rho)$ geometry appears outside sport.
+
+\subsection{Theoretical Foundation: PEF--Information Content}
+
+The theoretical relationship between $\eta$ and information content (\cref{eq:mi_closed}) was examined in four named scenarios from the theory-aligned idealised probit simulation (\cref{fig:si_idealised_stratified}; Supplementary~\cref{sec:si_probit}) under assumptions (A1)--(A2), with $n=5{,}000$ per cell, 50 Monte Carlo trials, and five-fold logistic cross-validation matching the empirical protocol. The simulation's data-generating process, estimands, and parameter-recovery checks are specified in full in Supplementary~\cref{sec:si_probit}.
+
+\begin{table}[t]
+  \centering
+  \caption{Scenario-level confirmation from the idealised probit simulation (A1)--(A2).}
+  \label{tab:scenarios}
+  \begin{tabular}{@{}lccccc@{}}
+    \toprule
+    \textbf{Scenario} & $\kappa$ & $\rho$ & $\eta$ & $I(X;Y)$ (bits) & ML impr.$^{\dagger}$ \\
+    \midrule
+    High competitive dynamics      & 2.0  & $-0.3$  & 0.780 & 0.029 & 9.4\% \\
+    Moderate competitive dynamics  & 1.2  & $-0.15$ & 0.870 & 0.044 & 8.2\% \\
+    Environmental dynamics         & 1.1  & 0.4     & 1.665 & 0.087 & 8.6\% \\
+    Balanced (Fisher baseline)     & 1.0  & 0.0     & 1.000 & 0.056 & 7.9\% \\
+    \bottomrule
+  \end{tabular}
+
+  \medskip
+  \begin{minipage}{0.95\linewidth}\small
+    $^{\dagger}$Mean five-fold cross-validated accuracy improvement (relative minus absolute features) across 50 Monte Carlo trials per scenario cell ($\delta/\sigma_{\mathrm{A}}=1$). Standard errors are $\approx$0.8--1.0 percentage points (Supplementary~\cref{sec:si_probit}).
+  \end{minipage}
+\end{table}
+
+On the admissible $(\kappa,\rho)$ grid at fixed $\delta/\sigma_{\mathrm{A}}=1$, analytic $\eta$ and $I(X;Y)$ from \cref{eq:mi_closed} are strongly correlated ($r\approx 0.87$ across 16 grid cells in the idealised simulation). The four scenarios in \cref{tab:scenarios} span the quadrant space under controlled (A1)--(A2) conditions; the first two illustrate the efficiency--power tension ($\eta<1$ with positive mean ML improvement), consistent with \cref{sec:eff_power_theory}.
+
+\subsection{Sports KPI Landscape}
+
+This inventory is the empirical setting of the help-versus-harm question. The full sports inventory spans all four quadrants (Supplementary~\cref{fig:si_kpi_labelled}; $\PEFtotalStudies{}$ KPI studies, \cref{sec:outcome_defs}). Rugby union ({URC}) contributes $\PEFrugbyNkpis{}$ KPIs and football (English Championship) $\PEFfootNkpis{}$; per-KPI $(\hat\kappa,\hat\rho,\hat\eta)$ estimates and season-to-season drift appear in Supplementary~\cref{fig:si_kpi_labelled,fig:si_ipred_vs_dml}. Domain-level landscape summaries are collected in \cref{tab:validation}: rugby mean $\hat\eta=\PEFrugbyMeanEta$ (95\% CI: $[\PEFrugbyCIlo,\PEFrugbyCIhi]$; $\PEFrugbySuccess\%$ of KPIs with $\hat\eta>1$), football mean $\hat\eta=\PEFfootMeanEta$ (95\% CI: $[\PEFfootCIlo,\PEFfootCIhi]$; $\PEFfootSuccess\%$ with $\hat\eta>1$). These figures characterise the empirical $(\kappa,\rho)$ distribution, including the Q3-heavy structure of invasion-game KPIs ($\PEFlandscapeQthreeN{}$ of $\PEFtotalStudies{}$ studies; $\PEFlandscapeQthreePct\%$). They do not serve as the primary confirmatory test.
+
+KPIs with positive correlation (e.g., kicks from hand, carries) concentrate in Quadrants~1--2 and typically yield $\hat\eta>1$; KPIs with negative or near-zero correlation (e.g., turnovers won, penalties conceded) fall predominantly in Quadrants~3--4 with $\hat\eta\le 1$, yet several still show positive ML improvement in the full inventory (Supplementary~\cref{fig:si_ipred_vs_dml}), consistent with the efficiency--power tension (\cref{sec:eff_power_theory}). Mechanistic confirmation of the taxonomy's directional predictions is assessed through the four quadrant exemplars below (\cref{fig:pef_ml,sec:exemplars}), not through pooled success rates over the Q3-dominated inventory.
+
+\subsection{Efficiency--Power Alignment Across Quadrants}
+\label{sec:eff_power}
+
+This section addresses how a less efficient relative feature can still inform. The four quadrants differ not only in mean $\eta$ but in the relationship between efficiency and predictive gain. Three supplementary analyses characterise this structure.
+
+\textbf{Idealised simulation under (A1)--(A2).} On the theory-aligned probit grid (Supplementary~\cref{fig:si_idealised_stratified}; $n=5{,}000$, 50 trials, five-fold CV), all 16 Quadrant~4 cells with $\eta<1$ produced positive mean ML improvement. Pooled across $\delta/\sigma_{\mathrm{A}}$, the $\eta$--$I(X;Y)$ correlation is negative ($r=-0.70$), because signal strength shifts $I(X;Y)$ independently of the $(\kappa,\rho)$ position. Iso-$\eta$ and iso-$I(X;Y)$ contours therefore diverge once $\delta/\sigma_{\mathrm{A}}$ varies (Supplementary~\cref{fig:si_iso_eta_I}).
+
+\textbf{Quadrant distribution.} High-volume counts (passes, pressures, duels) are typically anti-correlated across opponents, which is why the landscape above is Q3-heavy. \Cref{tab:exemplars} therefore tests one KPI per quadrant rather than a pooled success rate (Supplementary~\cref{tab:si_quad_landscape}).
+
+\textbf{Quadrant~4 and the Bayes bound.} Team-stratified bootstrap intervals for tackles (rugby, Q4) lie entirely below $\eta=1$ (Supplementary~\cref{sec:si_qc}). Under (A1)--(A2) with equal priors, the Gaussian Bayes accuracy of the absolute feature is the theoretical comparator. For the Q4 confirmatory KPI, team-blocked CV accuracies for absolute and relative features are close to each other and sit below that bound. The gap is expected: real match outcomes are not generated from a single KPI by the probit link~(A2). Relativisation does not lift accuracy here, matching the Q4 row of \cref{tab:exemplars}. Relative gain despite $\eta<1$ appears in the simulation grid and in parts of the landscape (\cref{fig:si_idealised_stratified,fig:si_ipred_vs_dml}).
+
+\subsection{Quadrant Exemplars and Signal-Strength Context}
+\label{sec:exemplars}
+
+The confirmatory test is the sign of $\Delta\mathrm{ML}$ at matched signal. \Cref{fig:pef_ml,tab:exemplars} report four single-KPI logistic models ($X_{\mathrm{A}}$ versus $X_{\mathrm{A}}-X_{\mathrm{B}}$) at comparable $\delta/\sigma_{\mathrm{A}}$, with rucks won as a high-$\eta$ foil at negligible signal. Positive $\Delta\mathrm{ML}$ means the relative feature classifies more accurately; negative $\Delta\mathrm{ML}$ means the difference is the worse univariate classifier. The four KPIs occupy distinct $(\kappa,\rho)$ positions and illustrate local regime behaviour, not a uniform quadrant prescription.
+
+\begin{table}[t]
+  \centering
+  \caption{Quadrant exemplars: four KPIs spanning the $(\kappa,\rho)$ parameter space.}
+  \label{tab:exemplars}
+  \begin{tabular}{@{}llccccc@{}}
+    \toprule
+    \textbf{Q} & \textbf{KPI (sport)} & $\kappa$ & $\rho$ & $\eta$ & $\delta/\sigma_{\mathrm{A}}$ & $\Delta\mathrm{ML}$ (\%) \\
+    \midrule
+    Q1 & Kick metres (rugby)              & \PEFexQoneKappa   & $\PEFexQoneRho$   & \PEFexQoneEta   & \PEFexQoneDeltaRatio   & $\PEFexQoneDml$ \\
+    Q2 & Long balls (football)            & \PEFexQtwoKappa   & $\PEFexQtwoRho$   & \PEFexQtwoEta   & \PEFexQtwoDeltaRatio   & $\PEFexQtwoDml$ \\
+    Q3 & Passes (football)                & \PEFexQthreeKappa & $\PEFexQthreeRho$ & \PEFexQthreeEta & \PEFexQthreeDeltaRatio & $\PEFexQthreeDml$ \\
+    Q4 & Goalkeeper long balls (football) & \PEFexQfourKappa  & $\PEFexQfourRho$  & \PEFexQfourEta  & \PEFexQfourDeltaRatio  & $\PEFexQfourDml$ \\
+    \bottomrule
+  \end{tabular}
+
+  \medskip
+  \begin{minipage}{0.95\linewidth}\small
+    Two-season pooled estimates ($\kappa$, $\rho$, $\eta$, $\delta/\sigma_{\mathrm{A}}$) and team-blocked five-fold cross-validated logistic change ($\Delta\mathrm{ML}$; \cref{sec:ml_cv}). Signal strengths ($\delta/\sigma_{\mathrm{A}}\approx\PEFexDeltaRatioLo$--$\PEFexDeltaRatioHi$) are broadly comparable across exemplars. The table tests sign at matched signal: Q1 and Q2, $\Delta\mathrm{ML}>0$ with $\eta>1$; Q3, predictive harm ($\Delta\mathrm{ML}<0$) with $\eta<1$; Q4, $\eta<1$ with near-zero $\Delta\mathrm{ML}$. Relative gain despite $\eta<1$ is shown in the idealised grid and the full inventory (\cref{sec:eff_power,fig:si_ipred_vs_dml}), not by a large Q4 exemplar gain.
+  \end{minipage}
+\end{table}
+
+The Q4 exemplar (goalkeeper long balls, $\eta=\PEFexQfourEta$) has $\Delta\mathrm{ML}=\PEFexQfourDml\%$ at team-blocked cross-validation. Pairing inflates variance and signal is limited, so the change is near zero. Here $\kappa\approx\PEFexQfourKappa$, so $\eta<1$ is driven by negative correlation ($\rho=\PEFexQfourRho$) rather than variance asymmetry: the KPI sits on the Q3--Q4 boundary. Cases with $\eta<1$ and $\Delta\mathrm{ML}>0$ appear in the full inventory (\cref{fig:si_ipred_vs_dml,sec:eff_power}).
+
+The Q3 exemplar (passes, football; $\rho=\PEFexQthreeRho$, $\eta=\PEFexQthreeEta$) is the complementary result. Strong negative correlation places this KPI in the low-efficiency regime, and $\Delta\mathrm{ML}=\PEFexQthreeDml\%$ shows that the absolute feature is the better univariate classifier (\cref{tab:quadrants}). Under (A1)--(A2) the idealised probit grid cannot produce $\Delta\mathrm{ML}<0$ (Supplementary~\cref{sec:si_probit}): with a Bayes-sufficient relative feature, pairing does not reduce accuracy. Empirical harm is a property of real match outcomes. For high-volume counts such as passes, the difference can discard game volume or tempo.
+
+Rucks won (rugby; Q2: $\kappa=\PEFexRucksKappa$, $\rho=\PEFexRucksRho$, $\eta=\PEFexRucksEta$, $\delta/\sigma_{\mathrm{A}}=\PEFexRucksDeltaRatio$) shows that harm is not confined to $\eta<1$. Despite the highest $\eta$ in the dataset, $\Delta\mathrm{ML}=\PEFexRucksDml\%$ because the two teams are almost equally matched on average. Pairing efficiency without signal still yields a worse predictor than the absolute KPI.
+
+\subsection{Supporting Validation: Cross-Domain Results}
+
+The supporting domains ask whether similar $(\kappa,\rho)$ geometry appears beyond sport. They are second-moment checks, not match-outcome replications. \Cref{tab:validation} summarises results across all six domains. They show how empirical $(\kappa,\rho)$ structures propagate into $\hat\eta$ and landscape efficiency rates (proportion with $\hat\eta>1$; \cref{sec:outcome_defs}):
+\begin{itemize}
+  \item \textbf{Healthcare} \parencite{nhanes2017pbxo}: pooled $\eta=\PEFhealthMeanEta$ (bootstrap 95\% CI: $[2.448,2.622]$) across $N=10{,}352$ {NHANES} participants pairing systolic and diastolic blood pressure from the same oscillometric measurement (Quadrant~2). Pulse pressure ($\mathrm{SBP}-\mathrm{DBP}$) is the clinically established relative feature. The one healthcare row in \cref{tab:validation} is that single paired study, not a participant count.
+  \item \textbf{Clinical genomics} \parencite{brunner2014earlybreast,geoGSE47462}: mean $\eta=\PEFgenomicsMeanEta$ ({SD} $=\PEFgenomicsSdEta$) across $\PEFgenomicsN$ genes ranked by paired-differential signal in {GSE47462}; $\PEFgenomicsSuccess\%$ of genes yielded $\eta>1$.
+  \item \textbf{Finance}: mean $\eta=\PEFfinanceMeanEta$ ({SD} $=\PEFfinanceSdEta$) across $\PEFfinanceN$ {S\&P}~100 stocks relativised to daily {S\&P}~500 returns (2020--2023 pinned snapshot); $\PEFfinanceSuccess\%$ with $\hat\eta>1$.
+  \item \textbf{Manufacturing} \parencite{openml752bosch}: mean $\eta=\PEFmfgMeanEta$ ({SD} $=\PEFmfgSdEta$) on {Bosch} {OpenML} 752 {CNC} cycles ($N=\PEFmfgN$ axis-wise pairings). Approximately $\PEFmfgSuccess\%$ of pairings yielded $\eta>1$.
+\end{itemize}
+Summary statistics for all six domains are collected in \cref{tab:validation}; the sports landscape with supporting-domain overlay markers appears in \cref{fig:pef_landscape}. Detailed per-study breakdowns for the non-sports domains are not separately visualised given the cross-sectional nature of those datasets.

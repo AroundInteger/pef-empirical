@@ -1,0 +1,4 @@
+% Dummy biblatex datamodel for arXiv.
+% style=numeric has no extra datamodel; biblatex logs "numeric.dbx not found"
+% as Info. arXiv's missing-file checker treats that Info as an error.
+% An empty file is the default behaviour.

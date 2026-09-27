@@ -1,0 +1,47 @@
+arXiv submission fields — PEF empirical
+=======================================
+
+Title
+  When Should Team KPIs Be Absolute or Relative for Match-Outcome Prediction?
+
+Authors (in order)
+  Rowan Brown (corresponding; m.r.brown@swansea.ac.uk; Swansea University)
+  Liam P. Kilduff (Swansea University)
+  G. A. Scott (Swansea University)
+
+Primary category
+  stat.AP   (Statistics — Applications)
+
+Cross-lists
+  stat.ME   (Statistics — Methodology)
+
+Comments
+  3 figures plus supplementary information. Preprint intended for the Journal of Quantitative Analysis in Sports.
+
+License
+  CC BY 4.0  (matches JQAS Subscribe-to-Open)
+
+Source upload
+  Overleaf: arxiv/pef-empirical-overleaf.zip
+    New Project -> Upload Project. Compiler pdfLaTeX; bibliography biber.
+    Main file: main.tex. Style: arxiv.sty (NIPS-derived preprint template).
+  arXiv: same tree (arxiv/src/), or arxiv/pef-empirical-src.tar.gz once refreshed.
+  Compiler: pdflatex + biber (biblatex numeric)
+  Includes dummy numeric.dbx (arXiv flags biblatex's optional-file Info as missing)
+  Refreshed: 2026-09-23 (arxiv.sty preprint format; readability polish)
+
+Abstract (plain ASCII; 1529 characters with 86 KPIs; arXiv limit 1920)
+--------
+In rugby union and association football, team key performance indicators (KPIs) can be represented in absolute terms or relative to the opponent. Relativisation sometimes improves match-outcome prediction and sometimes harms it. There has been no general account of when each occurs.
+
+The answer depends on how much the two teams differ in variability and how strongly their KPI values rise and fall together. We combine these properties into the Paired Efficiency Factor (PEF), which generalises Fisher's paired-efficiency result to the unequal-variance conditions typical of competitive sport. The PEF also connects a KPI's statistical efficiency to how much information its relative form carries about the outcome. Combined KPIs can interact in complex ways, so we analyse each indicator on its own.
+
+Across 86 team KPIs from professional rugby union and association football, the PEF places every metric in one of four regimes. Anti-correlation is common, especially for high-volume competitive counts, and absolute measures are then usually preferable. Relativisation can still improve prediction when a noisier difference carries more outcome information. An idealised simulation and one representative KPI from each regime confirm both signs under team-blocked cross-validation. The same pairing geometry appears in healthcare, genomics, finance, and manufacturing.
+
+The PEF turns an ad hoc feature-engineering choice into a transparent, data-informed diagnostic for when to relativise performance metrics and when not to.
+
+Before click-submit
+-------------------
+1. Confirm Kilduff and Scott have agreed to be named on this preprint.
+2. First-time stat.AP submitters may need an endorser.
+3. JQAS is double-blind; the title will be public. That is normal but worth knowing.

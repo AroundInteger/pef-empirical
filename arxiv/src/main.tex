@@ -1,0 +1,110 @@
+% !TeX program = pdflatex
+% !BIB program = biber
+% !TeX TS-program = pdflatex
+\pdfoutput=1
+\documentclass{article}
+
+% Overleaf / arXiv preprint style (loads geometry and fancyhdr; do not reload them).
+\usepackage{arxiv}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[british]{babel}
+
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{amsthm}
+\usepackage{bbm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{csquotes}
+
+% Vancouver-style: numbered citations in order of first appearance
+\usepackage[style=numeric,backend=biber,sorting=none,giveninits=true,maxbibnames=99]{biblatex}
+\addbibresource{references.bib}
+
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+
+\newcommand{\Var}{\operatorname{Var}}
+
+
+\newcommand{\PEFrugbyMeanEta}{???}    \newcommand{\PEFrugbySdEta}{???}
+\newcommand{\PEFrugbySuccess}{???}    \newcommand{\PEFrugbyNkpis}{???}
+\newcommand{\PEFrugbyNgames}{???}     \newcommand{\PEFrugbyCIlo}{???}
+\newcommand{\PEFrugbyCIhi}{???}
+\newcommand{\PEFfootMeanEta}{???}     \newcommand{\PEFfootSdEta}{???}
+\newcommand{\PEFfootSuccess}{???}     \newcommand{\PEFfootNkpis}{???}
+\newcommand{\PEFfootNgames}{???}      \newcommand{\PEFfootCIlo}{???}
+\newcommand{\PEFfootCIhi}{???}
+\newcommand{\PEFtotalStudies}{???}
+\newcommand{\PEFhealthMeanEta}{???}   \newcommand{\PEFhealthSdEta}{???}
+\newcommand{\PEFhealthSuccess}{???}   \newcommand{\PEFhealthN}{???}
+\newcommand{\PEFgenomicsMeanEta}{???} \newcommand{\PEFgenomicsSdEta}{???}
+\newcommand{\PEFgenomicsSuccess}{???} \newcommand{\PEFgenomicsN}{???}
+\newcommand{\PEFfinanceMeanEta}{???}  \newcommand{\PEFfinanceSdEta}{???}
+\newcommand{\PEFfinanceSuccess}{???}  \newcommand{\PEFfinanceN}{???}
+\newcommand{\PEFmfgMeanEta}{???}      \newcommand{\PEFmfgSdEta}{???}
+\newcommand{\PEFmfgSuccess}{???}      \newcommand{\PEFmfgN}{???}
+\newcommand{\PEFqOneMeanEta}{???}     \newcommand{\PEFqOneCIlo}{???}
+\newcommand{\PEFqOneCIhi}{???}        \newcommand{\PEFqOneMLimpr}{???}
+\newcommand{\PEFqTwoMeanEta}{???}     \newcommand{\PEFqTwoMLimpr}{???}
+\newcommand{\PEFqThreeMeanEta}{???}   \newcommand{\PEFqThreeMLimpr}{???}
+\newcommand{\PEFqFourMeanEta}{???}    \newcommand{\PEFqFourCIlo}{???}
+\newcommand{\PEFqFourCIhi}{???}       \newcommand{\PEFqFourMLimpr}{???}
+\newcommand{\PEFmlCorr}{???}          \newcommand{\PEFmlRsq}{???}
+\newcommand{\PEFmlMAE}{???}           \newcommand{\PEFmlRMSE}{???}
+% Pipeline output overrides the fallbacks above via \renewcommand:
+\InputIfFileExists{scripts/paper_pipeline/outputs/numbers.tex}{}{}
+\providecommand{\PEFmedianDeltaRatio}{???}
+\InputIfFileExists{scripts/paper_pipeline/outputs/finalize_correlations.tex}{}{}
+\newcommand{\Cov}{\operatorname{Cov}}
+\DeclareMathOperator{\Corr}{Corr}
+\newcommand{\ind}{\mathbbm{1}}
+
+\title{When Should Team KPIs Be Absolute or Relative for Match-Outcome Prediction?}
+
+% Order and affiliations: confirm with Kilduff/Scott before submission (roadmap D4).
+\author{%
+  Rowan Brown\thanks{Corresponding author.} \\
+  Swansea University \\
+  Swansea, UK \\
+  \texttt{m.r.brown@swansea.ac.uk} \\
+  \And
+  Liam~P. Kilduff \\
+  Swansea University \\
+  Swansea, UK \\
+  \And
+  G.~A. Scott \\
+  Swansea University \\
+  Swansea, UK
+}
+
+\begin{document}
+\maketitle
+\input{sections/abstract}
+\keywords{paired efficiency \and key performance indicators \and feature engineering \and rugby union \and association football}
+
+\input{sections/introduction}
+\input{sections/theoretical_framework}
+\input{sections/methodology}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+\input{sections/data_availability}
+\input{sections/tables_and_figures}
+
+\printbibliography[title={References}]
+
+\input{sections/supplementary}
+
+\end{document}

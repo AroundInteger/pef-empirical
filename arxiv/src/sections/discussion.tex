@@ -1,0 +1,60 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Why Relativisation Helps and Harms}
+
+Relativisation helps or harms according to a KPI's $(\kappa,\rho)$ regime. At matched signal the exemplars confirm both signs (\cref{tab:exemplars}). The studies that motivated this work framed the choice as help versus no help \parencite{bennett2019descriptive,bennett2021predicting,mosey2020,scott2023urc,scott2023womens}. They did not classify a regime in which the difference is the worse classifier. The Quadrant~3 result is that missing regime.
+
+Quadrant membership remains a coarse guide. The PEF surface is nonlinear in $(\kappa,\rho)$ and $\delta/\sigma_{\mathrm{A}}$, so two KPIs in the same quadrant need not share the same $\Delta\mathrm{ML}$. The confirmatory table tests local agreement with the taxonomy, not a linear quadrant effect.
+
+The analysis is univariate by design. Those same motivating studies used multi-KPI classifiers, where inter-feature correlations and joint decision boundaries lie outside univariate PEF. Reported $\Delta\mathrm{ML}$ values here are therefore conservative: they benchmark one paired feature at a time (\cref{sec:ml_cv}), and the exemplars test directional agreement rather than match-outcome accuracy.
+
+\subsection{Efficiency versus Information}
+
+Statistical efficiency ($\eta$) and predictive power ($I(X;Y)$) are functionally related through \cref{eq:mi_closed}, yet they measure different things. Classical variance-reduction reasoning advises against relativisation when $\eta<1$. That rule addresses only one dimension of the feature choice. It does not account for information content.
+
+The PEF formula (\cref{eq:pef}) requires only finite second moments. The information-content relationship requires bivariate normality (A1). The efficiency characterisation is therefore the more general result. Relative gain when $\eta<1$ is a property of information content, not a failure of $\eta$.
+
+\subsection{Practical Guidance}
+\label{sec:practical_guidance}
+
+The first two answers yield a prior for the feature choice:
+\begin{enumerate}
+  \item Estimate $\kappa$ and $\rho$ from available data.
+  \item Compute $\eta$ using \cref{eq:pef}.
+  \item Identify the quadrant from \cref{tab:quadrants}.
+  \item For Quadrants~1--2, use relative features (they improve both statistical efficiency and information content).
+  \item For Quadrant~3, prefer absolute features: relativisation is predictively harmful.
+  \item For Quadrant~4, estimate $\delta/\sigma_{\mathrm{A}}$ from the same sample and confirm the sign of $\Delta\mathrm{ML}$ under team-blocked cross-validation. The (A1)--(A2) formula for $I(X;Y)$ is a prior for whether relativisation could help, not a substitute for that check.
+\end{enumerate}
+Possession-normalised rates are a different construction from opponent differences \parencite{sever2026}. They adjust for game state rather than pairing two teams' counts. The signed-harm recommendation in step~5 applies to opponent pairing, not to that rate construction. An open implementation is provided (Supplementary~\cref{sec:si_practitioner}; \cref{sec:data_availability}).
+
+\subsection{The Same Geometry Outside Sport}
+
+The third question is whether the same geometry appears outside sport. Market-adjusted returns, paired clinical designs, control charts, and relative sports metrics are instances of correlation-based variance reduction with different $(\kappa,\rho)$ values. A further analogue is value-added benchmarking in education, which compares teacher performance with that of comparable cohorts \parencite{hanushek2010}.
+
+Healthcare pairing sits in Quadrant~2 (\cref{tab:validation}), the high-$\rho$ regime in which the taxonomy recommends relative features. Invasion-game KPIs occupy all four quadrants and are Q3-heavy (\cref{sec:results}). Relativisation helps for some sports measurements and is harmful for others because $(\kappa,\rho)$ differs by KPI, not because sport is a single regime.
+
+\subsection{Limitations}
+
+\textbf{Distributional assumptions.} The PEF formula is distribution-free, but the information content relationship (\cref{eq:mi_closed}) assumes bivariate normality. Paired differences are often closer to normal than the raw series (Supplementary~\cref{sec:si_normality}). Strongly skewed or multimodal distributions may still need a non-parametric mapping. For count-based KPIs, $Z=\log(X+1)$ can improve normality whilst preserving the $(\kappa,\rho)$ structure. Across \PEFrugbyNkpis{} rugby KPIs the rank ordering by $\rho$ was largely preserved (Spearman $r_{s}=0.967$), and the aggregate PEF change was not significant ($\bar{\eta}_{\log}/\bar{\eta}=1.085$, $p=0.357$; Supplementary~\cref{sec:si_qc}). Individual count-based KPIs can still move substantially (rucks won).
+
+\textbf{Stationarity.} The framework treats $\kappa$ and $\rho$ as fixed. In the sports inventory, most KPIs drift modestly between seasons 23/24 and 24/25, though a minority of rugby KPIs cross quadrant boundaries (\cref{fig:pef_landscape,fig:info_surface}; Supplementary~\cref{fig:si_kpi_labelled}). Pooled two-season estimates (as in \cref{tab:exemplars}) therefore summarise a moving target.
+
+\textbf{Binary outcomes.} Both \cref{eq:mi_closed} and the sports protocol target binary classification: which team wins a head-to-head match. That choice matches the probit link under (A1)--(A2) and keeps the KPI comparison on a common scale. Multi-class outcomes and continuous targets would need a corresponding information-theoretic mapping. The per-KPI $(\kappa,\rho)$ diagnostic still applies wherever paired absolute and relative features can be formed.
+
+\textbf{Strategic interactions.} In invasion-game sport, teams respond to opponents' tactics and game state. The $(\kappa,\rho)$ structure of a KPI is therefore partly an equilibrium property of competition, not a fixed physical law. Parameters here are estimated from observed match data without a model of within-game adaptation. Where such dynamics are material, $(\kappa,\rho)$ should be read as descriptive summaries at the chosen time scale.
+
+\textbf{Primary evidence base.} The full KPI inventory, machine-learning validation, and quadrant exemplars rest on rugby union and football. Healthcare, clinical genomics, finance, and manufacturing show that the same $(\kappa,\rho)$ geometry recurs (\cref{tab:validation}), but without the same per-unit ML scrutiny or temporal replication.
+
+\subsection{Future Directions}
+
+A priority is a distribution-free analogue of $I(X;Y)$, for example a rank-based or permutation measure. Quadrant~4 decisions would then not rely on (A1)--(A2) when skewness or heavy tails are material (Supplementary~\cref{sec:si_qc}).
+
+Multivariate PEF-style summaries would show how per-KPI effects combine when several paired features enter one classifier. A complementary test is within-quadrant landscape design: stratify high and low $\kappa$ and high and low $|\rho|$ inside each quadrant, with $\delta/\sigma_{\mathrm{A}}$ held comparable. That design would ask whether $\Delta\mathrm{ML}$ tracks local iso-$\eta$ or iso-$I(X;Y)$ structure rather than quadrant labels alone.
+
+Rolling-window or state-space estimates of $(\kappa,\rho)$ would track parameter drift. Season-blocked or chronological cross-validation would tighten temporal leakage beyond the team-blocked folds used here (\cref{sec:ml_cv}).
+
+Relativisation is often justified as baseline cancellation rather than variance reduction. Connecting PEF geometry to causal estimands would show when differencing preserves a treatment or exposure contrast and when it introduces collider or selection bias.
+
+Deeper per-unit machine-learning checks in social-science panels, environmental paired measurements, and engineering telemetry would test whether the taxonomy transfers before the practical guidance is used outside invasion-game sport.
