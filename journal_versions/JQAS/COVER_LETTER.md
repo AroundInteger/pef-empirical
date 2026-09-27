@@ -14,7 +14,7 @@ We organise the choice with a paired efficiency factor that depends on the varia
 
 The paper is written as a practitioner diagnostic for feature construction, in the same spirit as JQAS work on the statistical properties of sports metrics (Franks, D’Amour, Cervone and Bornn, 2016), on the difficulty of estimating win probability (Brill, Yurko and Wyner, 2025), and on careful football-feature design (Baron et al., 2024; Guan, Sarkar and Swartz, 2024). It also formalises the “relative versus isolated KPI” contrast already shown empirically in the United Rugby Championship (Scott et al., 2023).
 
-The manuscript is original, not under review elsewhere, and approved by all authors. Sports data were analysed under agreement with the United Rugby Championship and Swansea City AFC and are not redistributed. Estimators and the MATLAB pipeline are documented for reproducibility. The review PDF is de-identified; author details are on a separate title page.
+The manuscript is original, not under review elsewhere, and approved by all authors. Rugby union KPIs were supplied by Oval Insights through access arranged with Scarlets RFC; football KPIs were analysed under agreement with Swansea City AFC. Neither dataset is redistributed. Estimators and the MATLAB pipeline are documented for reproducibility. The review PDF is de-identified; author details are on a separate title page.
 
 Yours sincerely,  
 Rowan Brown  

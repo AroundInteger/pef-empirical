@@ -16,7 +16,7 @@ The validation proceeds in three tiers of increasing empirical complexity. The f
 
 The primary analysis uses match-level KPI data from two professional leagues:
 
-- **Rugby union.** United Rugby Championship (URC): $n=283$ games pooled across seasons 23/24 and 24/25 ($m=16$ teams, double round-robin). KPIs include rucks won, kick metres, kicks from hand, carries, penalties conceded, turnovers won, and others (Supplementary (fig:si_kpi_labelled)).
+- **Rugby union.** United Rugby Championship (URC): $n=283$ games pooled across seasons 23/24 and 24/25 ($m=16$ teams; 18 regular-season rounds in which each team plays 12 opponents once and three opponents twice). KPIs include rucks won, kick metres, kicks from hand, carries, penalties conceded, turnovers won, and others (Supplementary (fig:si_kpi_labelled)).
 
 - **Football.** English Championship: $n=1114$ games pooled across the same two seasons ($m=24$ teams, double round-robin). KPIs include duels, pressures, interceptions, fouls, and shot volume (Supplementary (fig:si_kpi_labelled)). Association-football score and outcome modelling has a long econometric lineage [dixon1997,boulier2003], with contemporary machine-learning approaches incorporating domain knowledge [berrar2019].
 
