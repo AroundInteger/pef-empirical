@@ -2,7 +2,8 @@
 
 **Article type:** Research Article  
 **Title:** When Should Team KPIs Be Absolute or Relative for Match-Outcome Prediction?  
-**Corresponding author:** Rowan Brown, Swansea University, m.r.brown@swansea.ac.uk
+**Corresponding author:** M. R. Brown, Swansea University, m.r.brown@swansea.ac.uk  
+**Authors:** M. R. Brown, L. P. Kilduff, G. A. Scott, N. Dingle, M. Evans, D. O'Hara and D. Morris
 
 Dear Professor Fellingham and Editors,
 
@@ -17,5 +18,5 @@ The paper is written as a practitioner diagnostic for feature construction, in t
 The manuscript is original, not under review elsewhere, and approved by all authors. Rugby union KPIs were supplied by Oval Insights through access arranged with Scarlets RFC; football KPIs were analysed under agreement with Swansea City AFC. Neither dataset is redistributed. Estimators and the MATLAB pipeline are documented for reproducibility. The review PDF is de-identified; author details are on a separate title page.
 
 Yours sincerely,  
-Rowan Brown  
-(on behalf of Liam P. Kilduff and G. A. Scott)
+M. R. Brown  
+(on behalf of L. P. Kilduff, G. A. Scott, N. Dingle, M. Evans, D. O'Hara and D. Morris)

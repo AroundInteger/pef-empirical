@@ -5,9 +5,21 @@ Title
   When Should Team KPIs Be Absolute or Relative for Match-Outcome Prediction?
 
 Authors (in order)
-  Rowan Brown (corresponding; m.r.brown@swansea.ac.uk; Swansea University)
-  Liam P. Kilduff (Swansea University)
-  G. A. Scott (Swansea University)
+  M. R. Brown (corresponding; m.r.brown@swansea.ac.uk)
+  L. P. Kilduff
+  G. A. Scott
+  N. Dingle
+  M. Evans
+  D. O'Hara
+  D. Morris
+
+Affiliations (shared; listed once)
+  1  Swansea University, Swansea, UK
+     Brown, Kilduff, Scott, Dingle, O'Hara
+  2  Scarlets, Llanelli, UK
+     Evans
+  3  Swansea City AFC, Swansea, UK
+     Morris
 
 Primary category
   stat.AP   (Statistics — Applications)
@@ -42,6 +54,6 @@ The PEF turns an ad hoc feature-engineering choice into a transparent, data-info
 
 Before click-submit
 -------------------
-1. Confirm Kilduff and Scott have agreed to be named on this preprint.
+1. Confirm all seven authors have agreed to be named on this preprint.
 2. First-time stat.AP submitters may need an endorser.
 3. JQAS is double-blind; the title will be public. That is normal but worth knowing.

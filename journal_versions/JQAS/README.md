@@ -56,7 +56,7 @@ To upload a shorter main PDF and a separate SI file, set `\jqasincludesifalse` i
 
 ## Still open before upload
 
-- Co-author sign-off on order and departmental affiliations (roadmap D4).
+- Co-author sign-off on the listed order (Brown, Kilduff, Scott, Dingle, Evans, O'Hara, Morris).
 - Local `latexmk` / Overleaf compile; fix any undefined references.
 - Confirm `pef-tools` URL in the unblinded data statement.
 - Export figures as TIF/EPS if ScholarOne rejects PNG.
