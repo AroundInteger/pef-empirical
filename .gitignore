@@ -16,8 +16,14 @@
 
 # OS / IDE
 .DS_Store
+Thumbs.db
 .vscode/
 .idea/
+
+# Local extracts and exports (the tracked arXiv artefact is the zip)
+arxiv/pef-empirical-overleaf/
+sections/*.docx
+sections/*.html
 
 # Large raw data not in this repo (documented in README)
 Data/Football/Raw/20*_Data.csv
