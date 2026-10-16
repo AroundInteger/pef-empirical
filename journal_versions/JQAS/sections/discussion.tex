@@ -35,25 +35,25 @@ Possession-normalised rates are a different construction from opponent differenc
 
 The third question is whether the same geometry appears outside sport. Market-adjusted returns, paired clinical designs, control charts, and relative sports metrics are instances of correlation-based variance reduction with different $(\kappa,\rho)$ values. A further analogue is value-added benchmarking in education, which compares teacher performance with that of comparable cohorts \parencite{hanushek2010}.
 
-Healthcare pairing sits in Quadrant~2 (\cref{tab:validation}), the high-$\rho$ regime in which the taxonomy recommends relative features. Invasion-game KPIs occupy all four quadrants and are Q3-heavy (\cref{sec:results}). Relativisation helps for some sports measurements and is harmful for others because $(\kappa,\rho)$ differs by KPI, not because sport is a single regime.
+Healthcare pairing sits in Quadrant~2 (\cref{tab:validation}), the high-$\rho$ regime in which the taxonomy recommends relative features. Invasion-game KPIs occupy all four quadrants and concentrate in Quadrant~3 (\cref{sec:results}). Relativisation helps for some sports measurements and is harmful for others because $(\kappa,\rho)$ differs by KPI, not because sport is a single regime.
 
 \subsection{Limitations}
 
 \textbf{Distributional assumptions.} The PEF formula is distribution-free, but the information content relationship (\cref{eq:mi_closed}) assumes bivariate normality. Paired differences are often closer to normal than the raw series (Supplementary~\cref{sec:si_normality}). Strongly skewed or multimodal distributions may still need a non-parametric mapping. For count-based KPIs, $Z=\log(X+1)$ can improve normality whilst preserving the $(\kappa,\rho)$ structure. Across \PEFrugbyNkpis{} rugby KPIs the rank ordering by $\rho$ was largely preserved (Spearman $r_{s}=0.967$), and the aggregate PEF change was not significant ($\bar{\eta}_{\log}/\bar{\eta}=1.085$, $p=0.357$; Supplementary~\cref{sec:si_qc}). Individual count-based KPIs can still move substantially (rucks won).
 
-\textbf{Stationarity.} The framework treats $\kappa$ and $\rho$ as fixed. In the sports inventory, most KPIs drift modestly between seasons 23/24 and 24/25, though a minority of rugby KPIs cross quadrant boundaries (\cref{fig:pef_landscape,fig:info_surface}; Supplementary~\cref{fig:si_kpi_labelled}). Pooled two-season estimates (as in \cref{tab:exemplars}) therefore summarise a moving target.
+\textbf{Stationarity.} The framework treats $\kappa$ and $\rho$ as fixed. Among the rugby and football KPIs, most drift modestly between seasons 23/24 and 24/25, though a minority of rugby KPIs cross quadrant boundaries (\cref{fig:pef_landscape,fig:info_surface}; Supplementary~\cref{fig:si_kpi_labelled}). Pooled two-season estimates (as in \cref{tab:exemplars}) therefore summarise a moving target.
 
 \textbf{Binary outcomes.} Both \cref{eq:mi_closed} and the sports protocol target binary classification: which team wins a head-to-head match. That choice matches the probit link under (A1)--(A2) and keeps the KPI comparison on a common scale. Multi-class outcomes and continuous targets would need a corresponding information-theoretic mapping. The per-KPI $(\kappa,\rho)$ diagnostic still applies wherever paired absolute and relative features can be formed.
 
 \textbf{Strategic interactions.} In invasion-game sport, teams respond to opponents' tactics and game state. The $(\kappa,\rho)$ structure of a KPI is therefore partly an equilibrium property of competition, not a fixed physical law. Parameters here are estimated from observed match data without a model of within-game adaptation. Where such dynamics are material, $(\kappa,\rho)$ should be read as descriptive summaries at the chosen time scale.
 
-\textbf{Primary evidence base.} The full KPI inventory, machine-learning validation, and quadrant exemplars rest on rugby union and football. Healthcare, clinical genomics, finance, and manufacturing show that the same $(\kappa,\rho)$ geometry recurs (\cref{tab:validation}), but without the same per-unit ML scrutiny or temporal replication.
+\textbf{Primary evidence base.} The rugby and football KPIs, the machine-learning validation, and the quadrant exemplars are the primary evidence. Healthcare, clinical genomics, finance, and manufacturing show that the same $(\kappa,\rho)$ geometry recurs (\cref{tab:validation}), but without the same per-unit ML scrutiny or temporal replication.
 
 \subsection{Future Directions}
 
 A priority is a distribution-free analogue of $I(X;Y)$, for example a rank-based or permutation measure. Quadrant~4 decisions would then not rely on (A1)--(A2) when skewness or heavy tails are material (Supplementary~\cref{sec:si_qc}).
 
-Multivariate PEF-style summaries would show how per-KPI effects combine when several paired features enter one classifier. A complementary test is within-quadrant landscape design: stratify high and low $\kappa$ and high and low $|\rho|$ inside each quadrant, with $\delta/\sigma_{\mathrm{A}}$ held comparable. That design would ask whether $\Delta\mathrm{ML}$ tracks local iso-$\eta$ or iso-$I(X;Y)$ structure rather than quadrant labels alone.
+Multivariate PEF-style summaries would show how per-KPI effects combine when several paired features enter one classifier. A complementary test is within-quadrant sampling: stratify high and low $\kappa$ and high and low $|\rho|$ inside each quadrant, with $\delta/\sigma_{\mathrm{A}}$ held comparable. That design would ask whether $\Delta\mathrm{ML}$ tracks local iso-$\eta$ or iso-$I(X;Y)$ structure rather than quadrant labels alone.
 
 Rolling-window or state-space estimates of $(\kappa,\rho)$ would track parameter drift. Season-blocked or chronological cross-validation would tighten temporal leakage beyond the team-blocked folds used here (\cref{sec:ml_cv}).
 

@@ -1,7 +1,25 @@
 \section{Conclusion}
 
-The paper asked why relativisation helps for some KPIs and harms others, how a less efficient relative feature can still inform, and whether the same geometry appears beyond sport.
+The paper asked three questions about the absolute-versus-relative choice.
+Why does relativisation help for some KPIs and harm others?
+How can a relative feature with $\eta<1$ still inform?
+Does the same pairing geometry appear beyond sport?
 
-The Paired Efficiency Factor $\eta=(1+\kappa)/(1+\kappa-2\sqrt{\kappa}\,\rho)$ extends Fisher's paired efficiency to unequal variances. The formula is distribution-free. Under bivariate normality, $\eta$ and information content are related but distinct, which is why a relative feature can improve prediction when $\eta<1$.
+Help and harm follow from two properties of each paired KPI: the variance ratio $\kappa=\sigma^{2}_{\mathrm{B}}/\sigma^{2}_{\mathrm{A}}$ and the within-match correlation $\rho$.
+The Paired Efficiency Factor $\eta=(1+\kappa)/(1+\kappa-2\sqrt{\kappa}\,\rho)$ compares the variance of the difference with unpaired measurement.
+The formula is distribution-free and contains Fisher's equal-variance result as the case $\kappa=1$.
+Positive $\rho$ reduces that variance ($\eta>1$); negative $\rho$ inflates it ($\eta<1$).
+That is why some KPIs should be relativised on efficiency grounds and others should not.
+Efficiency is not the same as information about the outcome.
+Under bivariate normality, $\eta$ and $I(X;Y)$ are related through the signal strength $\delta/\sigma_{\mathrm{A}}$, the standardised mean difference between the two entities.
+A relative feature can therefore improve prediction when $\eta<1$, provided the mean separation remains large relative to the amplified noise.
 
-The sports inventory occupies all four $(\kappa,\rho)$ quadrants and is Q3-heavy. Four exemplars at comparable signal strength confirm both help and harm (\cref{tab:exemplars}). The same geometry appears, with different mean $\hat\eta$, in healthcare, clinical genomics, finance, and manufacturing (\cref{tab:validation}). Read with $\delta/\sigma_{\mathrm{A}}$, the taxonomy is a prior for when relative features should be used and when they should not.
+For the rugby and football KPIs, $\kappa$ is the variance ratio of the two teams.
+The correlation $\rho$ measures whether their values rise and fall together or against each other.
+Those coordinates place every KPI in one of four quadrants.
+Rugby and football occupy all four and concentrate in Quadrant~3, where $\kappa<1$ and $\rho<0$, so absolute features are preferred.
+Four exemplars at comparable $\delta/\sigma_{\mathrm{A}}$ confirm both help and harm (\cref{tab:exemplars}).
+The same $(\kappa,\rho)$ geometry appears in healthcare, clinical genomics, finance, and manufacturing, with different mean $\hat\eta$ (\cref{tab:validation}).
+Quadrant membership is a first-pass guide for the feature choice.
+Signal strength $\delta/\sigma_{\mathrm{A}}$ then scales how much of that geometry appears in prediction.
+In Quadrant~4 it is required before a relative feature is retained.

@@ -164,7 +164,7 @@ The floor is exact. With $X$ Bayes-sufficient, relativisation cannot reduce accu
 \section*{SI Section 3: Empirical Analysis}
 \label{sec:si_landscape}
 
-\noindent This section supports landscape characterisation (\cref{sec:outcome_defs,sec:results}): the full $\PEFtotalStudies{}$-KPI inventory on the $(\kappa,\rho)$ plane and quadrant aggregates. Main-text Figures~1--2 map exemplars on the PEF and information surfaces; Figure~3 is the confirmatory $\eta$--$\Delta\mathrm{ML}$ check. This section gives per-KPI detail (\cref{fig:si_kpi_labelled,fig:si_ipred_vs_dml}), quadrant-level aggregates (Table~S1), and quality-control checks. Throughout, $I_{\mathrm{pred}}(X;Y)$ denotes the plug-in of \cref{eq:mi_closed} at the estimated $(\hat\kappa,\hat\rho,\hat\delta,\hat\sigma_{\mathrm{A}})$. It is not a fitted mutual-information estimator, and it is not a global predictor of $\Delta\mathrm{ML}$.
+\noindent This section supports the descriptive mapping (\cref{sec:outcome_defs,sec:results}) of the $\PEFtotalStudies{}$ rugby and football KPIs on the $(\kappa,\rho)$ plane, with quadrant aggregates. Main-text Figures~1--2 map exemplars on the PEF and information surfaces; Figure~3 is the confirmatory $\eta$--$\Delta\mathrm{ML}$ check. This section gives per-KPI detail (\cref{fig:si_kpi_labelled,fig:si_ipred_vs_dml}), quadrant-level aggregates (Table~S1), and quality-control checks. Throughout, $I_{\mathrm{pred}}(X;Y)$ denotes the plug-in of \cref{eq:mi_closed} at the estimated $(\hat\kappa,\hat\rho,\hat\delta,\hat\sigma_{\mathrm{A}})$. It is not a fitted mutual-information estimator, and it is not a global predictor of $\Delta\mathrm{ML}$.
 
 \begin{figure}[h]
   \centering
@@ -173,7 +173,7 @@ The floor is exact. With $X$ Bayes-sufficient, relativisation cannot reduce accu
     seasons 23/24--24/25). (A, B)~rugby; (C, D)~football. Markers are coloured by quadrant
     (Q1 green, Q2 blue, Q3 orange, Q4 red). (E)~share of KPIs in each quadrant, by season.
     Year-on-year identity is not traced: arrows overstate small moves across $\kappa=1$ or $\rho=0$.
-    A minority of rugby KPIs cross a quadrant boundary between seasons. Football remains Q3-heavy.
+    A minority of rugby KPIs cross a quadrant boundary between seasons. Football remains concentrated in Quadrant~3.
     Main-text \cref{fig:pef_landscape,fig:info_surface} show four confirmatory exemplars only (\cref{tab:exemplars}).}
   \label{fig:si_kpi_labelled}
 \end{figure}
@@ -185,7 +185,7 @@ The floor is exact. With $X$ Bayes-sufficient, relativisation cannot reduce accu
   \includegraphics[width=0.85\linewidth]{figures/Figure_S5_Ipred_vs_dML.png}
   \caption{Plug-in $I_{\mathrm{pred}}(X;Y)$ versus team-blocked five-fold $\Delta\mathrm{ML}$
     across $N=\PEFtotalStudies$ sports KPIs (pooled seasons 23/24--24/25).
-    Landscape characterisation only (\cref{sec:outcome_defs}). The inventory is Q3-heavy.
+    Descriptive mapping only (\cref{sec:outcome_defs}). Most of these KPIs lie in Quadrant~3.
     Linear correlation is weak ($r=\PEFcorrIpredML$). Labelled points are the five largest
     $|\Delta\mathrm{ML}|$ values among action KPIs.
     This panel does not support a global $I$ or $\eta$ mapping onto machine-learning gain.}
@@ -196,7 +196,7 @@ The floor is exact. With $X$ Bayes-sufficient, relativisation cannot reduce accu
 
 \begin{table}[h]
   \centering
-  \caption{Descriptive quadrant-level statistics across the sports KPI inventory (seasons 23/24--24/25 pooled).}
+  \caption{Descriptive quadrant-level statistics across the rugby and football KPIs (seasons 23/24--24/25 pooled).}
   \label{tab:si_quad_landscape}
   \begin{tabular}{@{}lccccc@{}}
     \toprule
@@ -211,7 +211,7 @@ The floor is exact. With $X$ Bayes-sufficient, relativisation cannot reduce accu
 
   \medskip
   \begin{minipage}{0.95\linewidth}\small
-    Mean $\Delta\mathrm{ML}$: team-blocked five-fold cross-validated accuracy improvement (relative minus absolute features), pooled across KPIs in the quadrant (\cref{sec:ml_cv}). 95\% CIs are $\pm1.96$ standard errors of the within-quadrant mean $\hat\eta$. Landscape characterisation only; mechanistic confirmation uses \cref{tab:exemplars}. It is not a recommendation to relativise generic Q3 KPIs.
+    Mean $\Delta\mathrm{ML}$: team-blocked five-fold cross-validated accuracy improvement (relative minus absolute features), pooled across KPIs in the quadrant (\cref{sec:ml_cv}). 95\% CIs are $\pm1.96$ standard errors of the within-quadrant mean $\hat\eta$. Descriptive mapping only; confirmatory checks use \cref{tab:exemplars}. It is not a recommendation to relativise generic Q3 KPIs.
   \end{minipage}
 \end{table}
 
