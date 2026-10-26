@@ -1,7 +1,8 @@
 function figure_2_info_surface(pef_2s, pef_per_season, domain_summary, fpath)
 %FIGURE_2_INFO_SURFACE  I(X;Y) surface with Figure-1 layout.
 %  Same four confirmatory exemplars and season drift as figure_1_landscape.
-%  Nominal signal strength delta/sigma_A = 1 (eq:mi_closed).
+%  Nominal signal strength delta/sigma_A = 1. I(X;Y) is the exact
+%  probit mutual information (pef_theory_helpers.mi_exact).
 
     RHO_MIN = -0.999;
     RHO_MAX =  0.999;
@@ -119,14 +120,6 @@ end
 
 % ---- Vectorised I(X;Y) on (kappa, rho) grid -------------------------------
 function I_xy = compute_mi_grid(K, R, delta, sigmaA)
-    den   = 1 + K - 2 * sqrt(K) .* R;
-    eta_s = (1 + K) ./ den;
-    bad   = ~isfinite(eta_s) | eta_s <= 0 | den <= 0;
-    eta_s(bad) = NaN;
-
-    sep = normcdf(delta ./ (2 * sigmaA * sqrt((1 + K) ./ eta_s)));
-    sep = min(max(sep, 1e-12), 1 - 1e-12);
-    H   = -sep .* log2(sep) - (1 - sep) .* log2(1 - sep);
-    I_xy = 1 - H;
-    I_xy(bad) = NaN;
+    H = pef_theory_helpers();
+    I_xy = H.mi_exact_grid(K, R, delta, sigmaA);
 end

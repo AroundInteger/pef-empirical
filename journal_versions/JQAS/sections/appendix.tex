@@ -2,7 +2,7 @@
 \label{sec:si_note_s3}
 \label{sec:appendix}
 
-\noindent The algebraic derivation of the PEF formula (\cref{eq:pef}) from the variance of correlated differences, together with its reduction to Fisher's classical case at $\kappa=1$, is given in full in \cref{sec:theory} (\S2.1). This section records a log-ratio remapping of $\kappa$, the omitted information-content algebra, and the Pitman asymptotic relative efficiency proof.
+\noindent The algebraic derivation of the PEF formula (\cref{eq:pef}) from the variance of correlated differences, together with its reduction to Fisher's classical case at $\kappa=1$, is given in full in \cref{sec:theory}. This section records a log-ratio remapping of $\kappa$, the information-content integral and its Jensen bound, and the Pitman asymptotic relative efficiency argument.
 
 \subsection*{Log-ratio coordinate for the variance ratio}
 \label{sec:si_tau}
@@ -12,48 +12,36 @@ The variance ratio $\kappa=\sigma_{\mathrm{B}}^{2}/\sigma_{\mathrm{A}}^{2}$ is m
   \tau \;=\; \log\frac{\sigma_{\mathrm{B}}}{\sigma_{\mathrm{A}}} \;=\; \tfrac12\log\kappa.
   \label{eq:tau_remap}
 \end{equation}
-The map $\kappa\mapsto\tau$ is strictly increasing on $(0,\infty)$, and $\tau=0$ if and only if $\kappa=1$. Interchanging the labels of A and B sends $\kappa\mapsto 1/\kappa$ and therefore $\tau\mapsto-\tau$. The four quadrants of the $(\kappa,\rho)$ plane then occupy the four open quadrants of the $(\rho,\tau)$ plane. \Cref{fig:si_idealised_stratified}A uses this coordinate so that the design points sit symmetrically about the Fisher line. All arguments in the main text remain in $(\kappa,\rho)$.
+The map $\kappa\mapsto\tau$ is strictly increasing on $(0,\infty)$, and $\tau=0$ if and only if $\kappa=1$. Interchanging the labels of A and B sends $\kappa\mapsto 1/\kappa$ and therefore $\tau\mapsto-\tau$. The four quadrants of the $(\kappa,\rho)$ plane then occupy the four open quadrants of the $(\rho,\tau)$ plane. The main text stays in $(\kappa,\rho)$.
 
 \subsection*{Information Content Derivation}
+\label{sec:si_maths_detail}
 
 \paragraph*{Setup}
 
-Under Assumption~(A1), $X=X_{\mathrm{A}}-X_{\mathrm{B}}\sim\mathcal{N}\bigl(\delta,\sigma^{2}_{\mathrm{A}}(1+\kappa-2\sqrt{\kappa}\,\rho)\bigr)$ with $\delta=\mu_{\mathrm{A}}-\mu_{\mathrm{B}}$.
+Under (A1), $X\sim\mathcal{N}\bigl(\delta,\sigma^{2}_{\mathrm{A}}(1+\kappa-2\sqrt{\kappa}\,\rho)\bigr)$ with $\delta=\mu_{\mathrm{A}}-\mu_{\mathrm{B}}$. Under (A2), $\mathbb{P}(Y=1\mid X=x)=\Phi(x/\sqrt{\Var(X)})$. Let $U\sim\mathcal{N}(0,1)$ and $d_{\mathrm{rel}}=|\delta|/\sqrt{\Var(X)}$ as in \cref{eq:drel}. Then $X/\sqrt{\Var(X)}$ has the same distribution as $d_{\mathrm{rel}}+U$ or as $-(d_{\mathrm{rel}}+U)$, and binary entropy satisfies $h(p)=h(1-p)$, so the sign of $\delta$ does not change $I(X;Y)$.
 
-The binary outcome $Y\in\{0,1\}$ is the match outcome; it is \emph{not} a deterministic function of $X$. Under Assumption~(A2) (Gaussian discriminant model, \cref{sec:mi_setup}), the class-conditional distributions are
-\[
-  X\mid Y=1\sim\mathcal{N}(+\delta/2,\,\Var(X)),\quad X\mid Y=0\sim\mathcal{N}(-\delta/2,\,\Var(X)),
-\]
-with equal priors. Mutual information:
+\paragraph*{Marginal entropy}
+
+The marginal success probability is the Gaussian identity $\mathbb{E}[\Phi(d_{\mathrm{rel}}+U)]=\Phi(d_{\mathrm{rel}}/\sqrt{2})$. Therefore
 \begin{equation*}
-  I(X;Y) = H(Y) - H(Y\mid X).
+  H(Y) = h\!\left(\Phi\!\left(\frac{d_{\mathrm{rel}}}{\sqrt{2}}\right)\right).
 \end{equation*}
+This equals $1$ bit only at $d_{\mathrm{rel}}=0$.
 
-\paragraph*{Unconditional Entropy}
+\paragraph*{Conditional entropy and the integral}
 
-For equiprobable outcomes ($\mathbb{P}(Y=1)=\mathbb{P}(Y=0)=0.5$),
 \begin{equation*}
-  H(Y) = 1 \text{ bit}.
+  H(Y\mid X) = \mathbb{E}\bigl[h\bigl(\Phi(d_{\mathrm{rel}}+U)\bigr)\bigr]
+  = \int_{-\infty}^{\infty} h\bigl(\Phi(d_{\mathrm{rel}}+u)\bigr)\,\phi(u)\,du,
 \end{equation*}
+where $\phi$ is the standard normal density. The reported values of \cref{eq:mi_closed} are this integral minus nothing further: $I(X;Y)=H(Y)-H(Y\mid X)$, computed by adaptive quadrature on $[-10,10]$. From \cref{eq:pef}, $\Var(X)=\sigma^{2}_{\mathrm{A}}(1+\kappa)/\eta$, which is the route from $(\kappa,\rho)$ to $d_{\mathrm{rel}}$ in \cref{eq:drel}.
 
-\paragraph*{Conditional Entropy}
+\paragraph*{Jensen bound}
 
-Under (A2), the posterior is $\mathbb{P}(Y=1\mid X=x)=\Phi(x/\sqrt{\Var(X)})$, so the expected conditional entropy is
-\begin{align*}
-  H(Y\mid X) &= \mathbb{E}_{X}\bigl[H\!\bigl(\mathbb{P}(Y=1\mid X)\bigr)\bigr].
-\end{align*}
-Evaluating this expectation under the marginal distribution of $X$ (which has mean $\delta/2$ under the equal-prior mixture) yields the closed-form approximation
-\begin{equation*}
-  H(Y\mid X) \approx H\!\left(\Phi\!\left(\frac{\delta}{2\sqrt{\Var(X)}}\right)\right),
-\end{equation*}
-where $H(p)=-p\log_{2}p-(1-p)\log_{2}(1-p)$ is the binary entropy function and the right-hand side equals the binary entropy of the Bayes error rate $\Phi(-\delta/(2\sqrt{\Var(X)}))$.
+Let $p(x)=\Phi(x/\sqrt{\Var(X)})$ and $m(x)=\min(p(x),1-p(x))\in[0,1/2]$. Then $h(p(x))=h(m(x))$, and $h$ is concave on $[0,1/2]$, so Jensen's inequality gives $H(Y\mid X)=\mathbb{E}[h(m(X))]\le h(\mathbb{E}[m(X)])=h(P_{e})$. Rearrangement is \cref{eq:mi_bound}. The Bayes error here is $P_{e}=1-\mathbb{E}[\Phi(|d_{\mathrm{rel}}+U|)]$, the error of the sign rule, not $\Phi(-d_{\mathrm{rel}}/2)$.
 
-\paragraph*{Substitution}
-
-From \cref{eq:pef}: $1+\kappa-2\sqrt{\kappa}\,\rho=(1+\kappa)/\eta$. Therefore $\Var(X)=\sigma^{2}_{\mathrm{A}}(1+\kappa)/\eta$, giving
-\begin{equation*}
-  I(X;Y) = 1 - H\!\left(\Phi\!\left(\frac{\delta}{2\sigma_{\mathrm{A}}\sqrt{(1+\kappa)/\eta}}\right)\right).
-\end{equation*}
+The expression $1-h(\Phi(d_{\mathrm{rel}}/2))$ assumes $H(Y)=1$ and a different error rate. It is not a lower bound under (A1)--(A2), and it is not used for any reported information value.
 
 \subsection*{Connection to Pitman Asymptotic Relative Efficiency}
 \label{sec:pitman}
@@ -111,7 +99,7 @@ Three conditions bound \cref{eq:are_pef}:
 \begin{enumerate}
   \item \textbf{Normality.} Steps~1--2 use the normal noncentrality parameter. Under non-normality, the central limit theorem ensures the limiting noncentrality is still given by \cref{eq:ncp_paired,eq:ncp_unpaired} under finite second moments, so the ARE result is asymptotically robust; however, the small-sample comparison may differ.
 
-  \item \textbf{Equal group allocation.} Step~2 assumes $n_{\mathrm{A}}=n_{\mathrm{B}}=n$. Under Neyman-optimal allocation $n_{\mathrm{A}}/n_{\mathrm{B}}=\sigma_{\mathrm{A}}/\sigma_{\mathrm{B}}=1/\sqrt{\kappa}$, the noncentrality of the independent test becomes $\delta\sqrt{N}/(2\sigma_{\mathrm{A}}\sqrt{\kappa}/(1+\sqrt{\kappa})\cdot\sqrt{1+\kappa})$, which modifies the ARE. Equal allocation is the natural comparison when paired and unpaired designs collect data in the same proportions.
+  \item \textbf{Equal group allocation.} Step~2 assumes $n_{\mathrm{A}}=n_{\mathrm{B}}=n$. Unequal allocation, including Neyman allocation $n_{\mathrm{A}}/n_{\mathrm{B}}=\sigma_{\mathrm{A}}/\sigma_{\mathrm{B}}$, changes the noncentrality of the independent test and therefore changes the ARE. Equal allocation is the comparison used here, because the paired and unpaired designs are then given the same total sample in the same proportions.
 
   \item \textbf{Fixed alternative.} The result above uses a fixed $\delta$ and $n\to\infty$. Under local (Pitman) contiguous alternatives $\delta_{n}=c/\sqrt{n}$, the noncentrality parameters remain $O(1)$ and the same ratio $\eta$ is obtained in the limit, so the result is unchanged \parencite{lehmann1999}.
 \end{enumerate}

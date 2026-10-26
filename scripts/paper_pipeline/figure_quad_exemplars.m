@@ -15,11 +15,7 @@ function figure_quad_exemplars(ax, pef_2s, pef_per_season, metric, delta, sigmaA
     rugby_clr = [0.12 0.47 0.71];
     foot_clr  = [0.90 0.40 0.05];
 
-    spec = { ...
-        'Q1', "rugby",    "kick_metres",           'Kick metres (rugby)',          rugby_clr, 'o'; ...
-        'Q2', "football", "long_balls",            'Long balls (football)',        foot_clr,  's'; ...
-        'Q3', "football", "passes",                'Passes (football)',            foot_clr,  's'; ...
-        'Q4', "football", "goalkeeper_long_balls", 'GK long balls (football)',     foot_clr,  's'};
+    spec = confirmatory_spec(rugby_clr, foot_clr);
 
     ST = pef_figure_style.config();
     FS_MARKER = ST.fs_annot;
@@ -113,13 +109,40 @@ end
 
 % -------------------------------------------------------------------------
 function Ixy = mi_at_point(kappa, rho, delta, sigmaA)
-    den = 1 + kappa - 2 * sqrt(kappa) * rho;
-    if den <= 0 || ~isfinite(kappa) || ~isfinite(rho)
-        Ixy = NaN;
+    H = pef_theory_helpers();
+    Ixy = H.mi_exact(kappa, rho, delta, sigmaA);
+end
+
+function spec = confirmatory_spec(rugby_clr, foot_clr)
+    csv = fullfile(fileparts(mfilename('fullpath')), 'outputs', 'confirmatory_exemplars.csv');
+    if isfile(csv)
+        conf = readtable(csv, 'TextType', 'string');
+        spec = cell(height(conf), 6);
+        for i = 1:height(conf)
+            sport = conf.sport(i);
+            kpi = conf.kpi(i);
+            if sport == "rugby"
+                clr = rugby_clr;
+                mk = 'o';
+            else
+                clr = foot_clr;
+                mk = 's';
+            end
+            leg = sprintf('%s (%s)', pretty_kpi(kpi), sport);
+            spec(i, :) = {char(conf.quadrant_target(i)), sport, kpi, leg, clr, mk};
+        end
         return
     end
-    eta = (1 + kappa) / den;
-    sep = normcdf(delta / (2 * sigmaA * sqrt((1 + kappa) / eta)));
-    sep = min(max(sep, 1e-12), 1 - 1e-12);
-    Ixy = 1 - (-sep * log2(sep) - (1 - sep) * log2(1 - sep));
+    spec = { ...
+        'Q1', "rugby",    "kick_metres",           'Kick metres (rugby)',      rugby_clr, 'o'; ...
+        'Q2', "football", "long_balls",            'Long balls (football)',    foot_clr,  's'; ...
+        'Q3', "football", "passes",                'Passes (football)',        foot_clr,  's'; ...
+        'Q4', "football", "goalkeeper_long_balls", 'GK long balls (football)', foot_clr,  's'};
+end
+
+function label = pretty_kpi(kpi)
+    label = char(strrep(string(kpi), '_', ' '));
+    if ~isempty(label)
+        label(1) = upper(label(1));
+    end
 end

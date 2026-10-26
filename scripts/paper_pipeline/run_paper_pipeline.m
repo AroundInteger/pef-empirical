@@ -20,12 +20,11 @@
 %
 %  Outputs
 %  -------
-%  figures/Figure_1.png  -- PEF landscape with KPI segments (23/24->24/25)
-%                           + non-sports domain triangles + exemplar labels
-%  figures/Figure_2.png  -- I(X;Y) information surface (theoretical)
-%  figures/Figure_3.png  -- confirmatory eta vs DeltaML (exemplars + rucks foil)
-%  figures/Figure_3b.png -- psi-stratified residual diagnostic (companion-paper
-%                           bridge; two-panel: eta-scale + psi-scale)
+%  figures/Figure_1.png  -- retained generator; the manuscript uses Figure_S4
+%                           (full KPI cloud) as the main-text landscape
+%  figures/Figure_2.png  -- retained generator; not a manuscript figure
+%  figures/Figure_3.png  -- retained generator; exemplars are a table
+%  figures/Figure_3b.png -- psi residual (companion paper; not in this manuscript)
 %  outputs/normality_primary_2season.csv   -- normality at 2-season scope
 %  outputs/normality_si_4season.csv        -- normality at 4-season scope (SI)
 %  outputs/normality_commentary.csv        -- key % stats for paper text
@@ -130,8 +129,8 @@ fprintf('   4-season: %d matches  |  2-season (primary): %d matches  |  %d KPIs\
 % -----------------------------------------------------------------------
 fprintf('\n[3/9] Computing PEF landscape...\n');
 
-pef_rugby_2s = compute_pef(rugby_2s, rugby_kpis, "rugby");
-pef_foot_2s  = compute_pef(foot_2s,  foot_kpis,  "football");
+pef_rugby_2s = compute_pef(rugby_2s, rugby_kpis, "rugby", 'home_win');
+pef_foot_2s  = compute_pef(foot_2s,  foot_kpis,  "football", 'home_win');
 pef_2s       = [pef_rugby_2s; pef_foot_2s];
 
 % Per-season (for Figure 1 KPI segments)
@@ -140,15 +139,15 @@ for sport_cell = {{'rugby', rugby_2s, rugby_kpis}, {'football', foot_2s, foot_kp
     si = sport_cell{1};
     for s = unique(string(si{2}.season))'
         sub = si{2}(si{2}.season == s, :);
-        pp  = compute_pef(sub, si{3}, si{1});
+        pp  = compute_pef(sub, si{3}, si{1}, 'home_win');
         pp.season = repmat(s, height(pp), 1);
         pef_per_season = [pef_per_season; pp]; %#ok<AGROW>
     end
 end
 
 % 4-season pooled (supplementary)
-pef_rugby_4s = compute_pef(rugby_all, rugby_kpis, "rugby");
-pef_foot_4s  = compute_pef(foot_all,  foot_kpis,  "football");
+pef_rugby_4s = compute_pef(rugby_all, rugby_kpis, "rugby", 'home_win');
+pef_foot_4s  = compute_pef(foot_all,  foot_kpis,  "football", 'home_win');
 pef_4s       = [pef_rugby_4s; pef_foot_4s];
 
 writetable(pef_2s,         fullfile(OUT_DIR, 'pef_landscape_2season.csv'));
@@ -185,6 +184,15 @@ role_map('football') = struct( ...
 
 pef_exemplars = curate_exemplars(pef_2s, role_map, 3);
 writetable(pef_exemplars, fullfile(OUT_DIR, 'pef_exemplars.csv'));
+confirmatory = select_confirmatory_exemplars(pef_2s, log(1.05));
+writetable(confirmatory, fullfile(OUT_DIR, 'confirmatory_exemplars.csv'));
+fprintf('   Confirmatory exemplars (one per quadrant, |log kappa| margin):\n');
+for ci = 1:height(confirmatory)
+    fprintf('     %s  %s / %s  kappa=%.3f  d_Y=%.3f  margin=%.3f\n', ...
+        confirmatory.quadrant_target(ci), confirmatory.sport(ci), ...
+        confirmatory.kpi(ci), confirmatory.kappa(ci), confirmatory.d_Y(ci), ...
+        confirmatory.margin_used(ci));
+end
 fprintf('   Exemplars curated: %d rows (rugby+football, quadrant+role).\n', height(pef_exemplars));
 
 % -----------------------------------------------------------------------
@@ -317,7 +325,8 @@ fprintf('   SI normality figure saved.\n');
 stats = collate_table_numbers(pef_2s, pef_per_season, norm_commentary, ...
                                domain_summary, ml_all, norm_primary, ...
                                height(rugby_2s), height(foot_2s), ...
-                               audit, pool, psi_ml);
+                               audit, pool, psi_ml, confirmatory);
+write_referee_csv(pef_2s, ml_all, fullfile(OUT_DIR, 'referee_kpi_summary.csv'));
 writetable(stats, fullfile(OUT_DIR, 'table_numbers.csv'));
 fprintf('   table_numbers.csv written (%d rows).\n', height(stats));
 
@@ -477,7 +486,6 @@ function tbl = load_nonsports(ns_dir)
     specs = { ...
         'Healthcare',       'real_biology_pef_results.csv'; ...
         'Finance',          'real_finance_pef_results.csv'; ...
-        'Manufacturing',    'manufacturing_pef_results.csv'; ...
         'Clinical Genomics','real_gene_expression_tcga_study.csv'; ...
     };
     rows = {};
@@ -494,18 +502,25 @@ function tbl = load_nonsports(ns_dir)
         kc = find_kappa_col(t);
         if isempty(ec), continue; end
         eta = t.(ec);
-        eta = eta(isfinite(eta) & eta > 0);
+        keep = isfinite(eta) & eta > 0;
+        eta = eta(keep);
         rho_mean   = NaN; kappa_mean = NaN;
+        ci_lo = NaN; ci_hi = NaN;
         if ~isempty(rc), rho_mean   = mean(t.(rc),   'omitnan'); end
         if ~isempty(kc), kappa_mean = mean(t.(kc),   'omitnan'); end
+        if ismember('ci_lo', t.Properties.VariableNames)
+            ci_lo = t.ci_lo(1);
+            ci_hi = t.ci_hi(1);
+        end
         rows(end+1,:) = {dom, numel(eta), mean(eta), std(eta), ...
-            100*mean(eta>1), rho_mean, kappa_mean}; %#ok<AGROW>
+            100*mean(eta>1), rho_mean, kappa_mean, ci_lo, ci_hi}; %#ok<AGROW>
     end
     if isempty(rows)
         tbl = table();
     else
         tbl = cell2table(rows, 'VariableNames', ...
-            {'domain','n','mean_eta','sd_eta','success_pct','rho_mean','kappa_mean'});
+            {'domain','n','mean_eta','sd_eta','success_pct','rho_mean','kappa_mean', ...
+             'ci_lo','ci_hi'});
     end
 end
 
@@ -533,9 +548,15 @@ function ml_tbl = ml_empirical(paired, kpis, outcome_col, k, cv_seed)
         cv_seed = 20260511;
     end
     ML_VARS  = {'kpi','n','acc_abs','acc_rel','acc_improvement', ...
-                'auc_abs','auc_rel','auc_improvement'};
+                'auc_abs','auc_rel','auc_improvement', ...
+                'brier_abs','brier_rel','logloss_abs','logloss_rel', ...
+                'acc_pair','acc_majority','home_win_rate', ...
+                'dml_fold_mean','dml_fold_se','dml_ci_lo','dml_ci_hi'};
     ML_TYPES = {'string','double','double','double','double', ...
-                'double','double','double'};
+                'double','double','double', ...
+                'double','double','double','double', ...
+                'double','double','double', ...
+                'double','double','double','double'};
     empty_ml = @() table('Size',[0 numel(ML_VARS)], ...
                          'VariableTypes', ML_TYPES, 'VariableNames', ML_VARS);
 
@@ -559,12 +580,27 @@ function ml_tbl = ml_empirical(paired, kpis, outcome_col, k, cv_seed)
         fold = assign_team_cv_folds(paired.home_team(ok), k, cv_seed);
         if numel(y) < 20 || numel(unique(y)) < 2, continue; end
         D   = A - B;   % relative (difference) feature
-        [acc_a, auc_a] = cv_logistic(A, y, k, fold);
-        [acc_r, auc_r] = cv_logistic(D, y, k, fold);
+        [acc_a, auc_a, ex_a] = cv_logistic(A, y, k, fold);
+        [acc_r, auc_r, ex_r] = cv_logistic(D, y, k, fold);
+        [acc_ab, ~, ~] = cv_logistic([A, B], y, k, fold);
         acc_impr = 100 * (acc_r - acc_a) / max(acc_a, 0.01);
         auc_impr = 100 * (auc_r - auc_a) / max(auc_a, 0.01);
+        dml_f = 100 * (ex_r.fold_acc - ex_a.fold_acc) ./ max(ex_a.fold_acc, 0.01);
+        dml_f = dml_f(isfinite(dml_f));
+        dml_mean = mean(dml_f);
+        if numel(dml_f) >= 2
+            dml_se = std(dml_f, 0) / sqrt(numel(dml_f));
+            tcrit = tinv(0.975, numel(dml_f) - 1);
+        else
+            dml_se = NaN;
+            tcrit = NaN;
+        end
+        maj = max(mean(y == 1), mean(y == 0));
         rows(end+1,:) = {string(kpi), numel(y), ...
-            acc_a, acc_r, acc_impr, auc_a, auc_r, auc_impr}; %#ok<AGROW>
+            acc_a, acc_r, acc_impr, auc_a, auc_r, auc_impr, ...
+            ex_a.brier, ex_r.brier, ex_a.logloss, ex_r.logloss, ...
+            acc_ab, maj, mean(y == 1), ...
+            dml_mean, dml_se, dml_mean - tcrit * dml_se, dml_mean + tcrit * dml_se}; %#ok<AGROW>
     end
     if isempty(rows)
         ml_tbl = empty_ml();
@@ -599,12 +635,17 @@ function fold = assign_team_cv_folds(home_team, k, seed)
     end
 end
 
-function [acc, auc] = cv_logistic(X, y, k, fold)
-    n     = numel(X);
+function [acc, auc, extra] = cv_logistic(X, y, k, fold)
+    if isvector(X)
+        X = X(:);
+    end
+    n = size(X, 1);
+    y = y(:);
     if nargin < 4 || isempty(fold)
         fold = mod(randperm(n, n) - 1, k) + 1;
     end
     preds = nan(n, 1);
+    fold_acc = nan(k, 1);
     for f = 1:k
         tr = fold ~= f; te = fold == f;
         if ~any(te), continue; end
@@ -614,21 +655,34 @@ function [acc, auc] = cv_logistic(X, y, k, fold)
             w1 = warning('off', 'stats:glmfit:PerfectSeparation');
             w2 = warning('off', 'stats:glmfit:IterationLimit');
             try
-                b = glmfit(X(tr), y(tr), 'binomial', 'link', 'logit');
-                preds(te) = glmval(b, X(te), 'logit');
+                b = glmfit(X(tr, :), y(tr), 'binomial', 'link', 'logit');
+                preds(te) = glmval(b, X(te, :), 'logit');
             catch
                 preds(te) = mean(y(tr));
             end
             warning(w1); warning(w2);
+        end
+        pok = te & ~isnan(preds);
+        if any(pok)
+            fold_acc(f) = mean((preds(pok) >= 0.5) == y(pok));
         end
     end
     ok = ~isnan(preds);
     acc = mean((preds(ok) >= 0.5) == y(ok));
     [~, ord] = sort(preds(ok), 'descend');
     yv = y(ok);
-    tp = cumsum( yv(ord)) / sum(yv);
-    fp = cumsum(~yv(ord)) / sum(~yv);
-    auc = trapz(fp, tp);
+    if sum(yv) == 0 || sum(yv) == numel(yv)
+        auc = 0.5;
+    else
+        tp = cumsum( yv(ord)) / sum(yv);
+        fp = cumsum(~yv(ord)) / max(sum(~yv), 1);
+        auc = trapz(fp, tp);
+    end
+    p = min(max(preds(ok), 1e-6), 1 - 1e-6);
+    extra = struct( ...
+        'brier', mean((p - y(ok)).^2), ...
+        'logloss', -mean(y(ok) .* log(p) + (1 - y(ok)) .* log(1 - p)), ...
+        'fold_acc', fold_acc);
 end
 
 % ---- Merge PEF params into ML table ----------------------------------
@@ -726,7 +780,7 @@ function figure_si_normality(norm_prim, norm_si, fpath)
 end
 
 % ---- Collate all table numbers for LaTeX ----------------------------
-function stats = collate_table_numbers(pef_2s, ~, nc, domain_summary, ml_all, ~, n_rugby_games, n_foot_games, audit, pool, psi_ml)
+function stats = collate_table_numbers(pef_2s, ~, nc, domain_summary, ml_all, norm_primary, n_rugby_games, n_foot_games, audit, pool, psi_ml, confirmatory)
     % Note: pef_per_season and norm_primary are accepted but unused here
     % (they are kept for API consistency).
     if nargin < 7,  n_rugby_games = NaN; end
@@ -769,8 +823,17 @@ function stats = collate_table_numbers(pef_2s, ~, nc, domain_summary, ml_all, ~,
             rows(end+1,:) = {'Table1', dom, 'sd_eta',      sd};
             rows(end+1,:) = {'Table1', dom, 'success_pct', domain_summary.success_pct(r)};
             rows(end+1,:) = {'Table1', dom, 'n',           n};
-            rows(end+1,:) = {'Table1', dom, 'ci_lo',       mu - 1.96*se};
-            rows(end+1,:) = {'Table1', dom, 'ci_hi',       mu + 1.96*se};
+            if ismember('ci_lo', domain_summary.Properties.VariableNames) ...
+                    && isfinite(domain_summary.ci_lo(r))
+                lo = domain_summary.ci_lo(r);
+                hi = domain_summary.ci_hi(r);
+                rows(end+1,:) = {'Table1', dom, 'ci_lo', lo};
+                rows(end+1,:) = {'Table1', dom, 'ci_hi', hi};
+                rows(end+1,:) = {'Table1', dom, 'se', (hi - lo) / (2 * 1.96)};
+            else
+                rows(end+1,:) = {'Table1', dom, 'ci_lo', mu - 1.96*se};
+                rows(end+1,:) = {'Table1', dom, 'ci_hi', mu + 1.96*se};
+            end
         end
     end
 
@@ -872,40 +935,77 @@ function stats = collate_table_numbers(pef_2s, ~, nc, domain_summary, ml_all, ~,
         end
     end
 
-    % --- Table exemplars: four confirmatory KPIs (tab:exemplars) ---
-    H = pef_theory_helpers();
-    ex_spec = { ...
-        'Qone',   "rugby",    "kick_metres"; ...
-        'Qtwo',   "football", "long_balls"; ...
-        'Qthree', "football", "passes"; ...
-        'Qfour',  "football", "goalkeeper_long_balls"};
+    % --- Table exemplars: one KPI per quadrant by the pre-specified rule ---
+    q_labels = struct('Q1','Qone','Q2','Qtwo','Q3','Qthree','Q4','Qfour');
     dr_vals = [];
-    for ei = 1:size(ex_spec, 1)
-        row_lbl = ex_spec{ei, 1};
-        sp      = ex_spec{ei, 2};
-        kp      = ex_spec{ei, 3};
-        m = pef_2s.sport == sp & pef_2s.kpi == kp;
-        if ~any(m), continue; end
-        idx = find(m, 1);
-        rows(end+1,:) = {'TableExemplars', row_lbl, 'kappa', pef_2s.kappa(idx)}; %#ok<AGROW>
-        rows(end+1,:) = {'TableExemplars', row_lbl, 'rho',   pef_2s.rho(idx)};
-        rows(end+1,:) = {'TableExemplars', row_lbl, 'eta',   pef_2s.eta(idx)};
-        [~, ~, dr] = H.delta_sigma_from_means( ...
-            pef_2s.mean_home(idx), pef_2s.mean_away(idx), pef_2s.var_home(idx));
-        dr_abs = abs(dr);
-        dr_vals(end+1) = dr_abs; %#ok<AGROW>
-        rows(end+1,:) = {'TableExemplars', row_lbl, 'delta_ratio', dr_abs};
-        if ~isempty(ml_all) && ismember('sport', ml_all.Properties.VariableNames)
-            mm = ml_all.sport == sp & ml_all.kpi == kp;
-            if any(mm)
-                rows(end+1,:) = {'TableExemplars', row_lbl, 'dml', ...
-                    ml_all.acc_improvement(find(mm, 1))};
+    if ~isempty(confirmatory)
+        for ei = 1:height(confirmatory)
+            qkey = char(string(confirmatory.quadrant_target(ei)));
+            row_lbl = q_labels.(qkey);
+            sp = string(confirmatory.sport(ei));
+            kp = string(confirmatory.kpi(ei));
+            rows(end+1,:) = {'TableExemplars', row_lbl, 'kappa', confirmatory.kappa(ei)}; %#ok<AGROW>
+            rows(end+1,:) = {'TableExemplars', row_lbl, 'rho',   confirmatory.rho(ei)};
+            rows(end+1,:) = {'TableExemplars', row_lbl, 'eta',   confirmatory.eta(ei)};
+            rows(end+1,:) = {'TableExemplars', row_lbl, 'delta_ratio', confirmatory.d_Y(ei)};
+            rows(end+1,:) = {'TableExemplars', row_lbl, 'r_ax', confirmatory.r_ax(ei)};
+            dr_vals(end+1) = confirmatory.d_Y(ei); %#ok<AGROW>
+            if ~isempty(ml_all) && ismember('sport', ml_all.Properties.VariableNames)
+                mm = ml_all.sport == sp & ml_all.kpi == kp;
+                if any(mm)
+                    j = find(mm, 1);
+                    rows(end+1,:) = {'TableExemplars', row_lbl, 'dml', ml_all.dml_fold_mean(j)};
+                    rows(end+1,:) = {'TableExemplars', row_lbl, 'dml_lo', ml_all.dml_ci_lo(j)};
+                    rows(end+1,:) = {'TableExemplars', row_lbl, 'dml_hi', ml_all.dml_ci_hi(j)};
+                    rows(end+1,:) = {'TableExemplars', row_lbl, 'auc_abs', ml_all.auc_abs(j)};
+                    rows(end+1,:) = {'TableExemplars', row_lbl, 'auc_rel', ml_all.auc_rel(j)};
+                    rows(end+1,:) = {'TableExemplars', row_lbl, 'brier_abs', ml_all.brier_abs(j)};
+                    rows(end+1,:) = {'TableExemplars', row_lbl, 'brier_rel', ml_all.brier_rel(j)};
+                    rows(end+1,:) = {'TableExemplars', row_lbl, 'acc_pair', ml_all.acc_pair(j)};
+                    rows(end+1,:) = {'TableExemplars', row_lbl, 'acc_majority', ml_all.acc_majority(j)};
+                end
             end
         end
     end
     if ~isempty(dr_vals)
         rows(end+1,:) = {'TableExemplars', 'range', 'delta_ratio_lo', min(dr_vals)};
         rows(end+1,:) = {'TableExemplars', 'range', 'delta_ratio_hi', max(dr_vals)};
+    end
+
+    % Quadrant 3 sign of DeltaML, using the fold interval.
+    if ~isempty(ml_all) && ismember('quadrant', ml_all.Properties.VariableNames) ...
+            && ismember('dml_ci_hi', ml_all.Properties.VariableNames)
+        q3 = ml_all.quadrant == "Q3";
+        rows(end+1,:) = {'TableExemplars', 'QthreeAll', 'n', sum(q3)};
+        rows(end+1,:) = {'TableExemplars', 'QthreeAll', 'n_neg', ...
+            sum(q3 & ml_all.dml_fold_mean < 0)};
+        rows(end+1,:) = {'TableExemplars', 'QthreeAll', 'n_sig_neg', ...
+            sum(q3 & ml_all.dml_ci_hi < 0)};
+        rows(end+1,:) = {'TableExemplars', 'QthreeAll', 'n_sig_pos', ...
+            sum(q3 & ml_all.dml_ci_lo > 0)};
+    end
+
+    % Shapiro--Wilk rejection rate for the two-season paired difference.
+    if ~isempty(norm_primary) && ismember('sw_reject', norm_primary.Properties.VariableNames)
+        for sp = ["rugby","football"]
+            m = norm_primary.sport == sp & norm_primary.side == "diff" ...
+                & norm_primary.window_n_seasons == 2;
+            if any(m)
+                rows(end+1,:) = {'NormCommentary', char(sp + "_diff"), ...
+                    'pct_sw_reject', 100 * mean(norm_primary.sw_reject(m) == 1)};
+            end
+        end
+    end
+
+    % Home-win rate (draws coded as not a home win).
+    if ismember('home_win_rate', pef_2s.Properties.VariableNames)
+        for sp = ["rugby","football"]
+            m = pef_2s.sport == sp & isfinite(pef_2s.home_win_rate);
+            if any(m)
+                rows(end+1,:) = {'Table1', char(sp), 'home_win_rate', ...
+                    100 * pef_2s.home_win_rate(find(m, 1))};
+            end
+        end
     end
 
     % --- Boundary illustration: rucks won (low delta despite high eta) ---
@@ -915,14 +1015,19 @@ function stats = collate_table_numbers(pef_2s, ~, nc, domain_summary, ml_all, ~,
         rows(end+1,:) = {'TableExemplars', 'RucksWon', 'kappa', pef_2s.kappa(idx)};
         rows(end+1,:) = {'TableExemplars', 'RucksWon', 'rho',   pef_2s.rho(idx)};
         rows(end+1,:) = {'TableExemplars', 'RucksWon', 'eta',   pef_2s.eta(idx)};
-        [~, ~, dr] = H.delta_sigma_from_means( ...
-            pef_2s.mean_home(idx), pef_2s.mean_away(idx), pef_2s.var_home(idx));
-        rows(end+1,:) = {'TableExemplars', 'RucksWon', 'delta_ratio', abs(dr)};
+        if ismember('d_Y', pef_2s.Properties.VariableNames)
+            rows(end+1,:) = {'TableExemplars', 'RucksWon', 'delta_ratio', pef_2s.d_Y(idx)};
+        end
         if ~isempty(ml_all)
             mm = ml_all.sport == "rugby" & ml_all.kpi == "rucks_won";
             if any(mm)
-                rows(end+1,:) = {'TableExemplars', 'RucksWon', 'dml', ...
-                    ml_all.acc_improvement(find(mm, 1))};
+                j = find(mm, 1);
+                if ismember('dml_fold_mean', ml_all.Properties.VariableNames)
+                    dml_rw = ml_all.dml_fold_mean(j);
+                else
+                    dml_rw = ml_all.acc_improvement(j);
+                end
+                rows(end+1,:) = {'TableExemplars', 'RucksWon', 'dml', dml_rw};
             end
         end
     end
@@ -972,6 +1077,17 @@ function write_numbers_tex(stats, fpath)
         'Table1','Healthcare',   'sd_eta',       'PEFhealthSdEta',      'dp3'; ...
         'Table1','Healthcare',   'success_pct',  'PEFhealthSuccess',    'pct'; ...
         'Table1','Healthcare',   'n',            'PEFhealthN',          'int'; ...
+        'Table1','Healthcare',   'ci_lo',        'PEFhealthCIlo',       'dp3'; ...
+        'Table1','Healthcare',   'ci_hi',        'PEFhealthCIhi',       'dp3'; ...
+        'Table1','Healthcare',   'se',           'PEFhealthSE',         'dp2'; ...
+        'Table1','rugby',        'home_win_rate','PEFrugbyHomeWinPct',  'pct'; ...
+        'Table1','football',     'home_win_rate','PEFfootHomeWinPct',   'pct'; ...
+        'NormCommentary','rugby_diff', 'pct_sw_reject', 'PEFrugbySwReject', 'pct'; ...
+        'NormCommentary','football_diff', 'pct_sw_reject', 'PEFfootSwReject', 'pct'; ...
+        'TableExemplars','QthreeAll','n',         'PEFqThreeAllN',     'int'; ...
+        'TableExemplars','QthreeAll','n_neg',     'PEFqThreeNneg',     'int'; ...
+        'TableExemplars','QthreeAll','n_sig_neg', 'PEFqThreeNsigNeg',  'int'; ...
+        'TableExemplars','QthreeAll','n_sig_pos', 'PEFqThreeNsigPos',  'int'; ...
         'Table1','Finance',      'mean_eta',    'PEFfinanceMeanEta',   'dp3'; ...
         'Table1','Finance',      'sd_eta',       'PEFfinanceSdEta',     'dp3'; ...
         'Table1','Finance',      'success_pct',  'PEFfinanceSuccess',   'pct'; ...
@@ -1066,21 +1182,53 @@ function write_numbers_tex(stats, fpath)
         'TableExemplars','Qone',   'eta',         'PEFexQoneEta',         'dp2'; ...
         'TableExemplars','Qone',   'delta_ratio', 'PEFexQoneDeltaRatio',  'dp2'; ...
         'TableExemplars','Qone',   'dml',         'PEFexQoneDml',         'dml'; ...
+        'TableExemplars','Qone',   'dml_lo',      'PEFexQoneDmlLo',       'dml'; ...
+        'TableExemplars','Qone',   'dml_hi',      'PEFexQoneDmlHi',       'dml'; ...
+        'TableExemplars','Qone',   'auc_abs',     'PEFexQoneAucAbs',      'dp3'; ...
+        'TableExemplars','Qone',   'auc_rel',     'PEFexQoneAucRel',      'dp3'; ...
+        'TableExemplars','Qone',   'brier_abs',   'PEFexQoneBrierAbs',    'dp3'; ...
+        'TableExemplars','Qone',   'brier_rel',   'PEFexQoneBrierRel',    'dp3'; ...
+        'TableExemplars','Qone',   'acc_pair',    'PEFexQoneAccPair',     'dp3'; ...
+        'TableExemplars','Qone',   'acc_majority','PEFexQoneAccMaj',      'dp3'; ...
         'TableExemplars','Qtwo',   'kappa',       'PEFexQtwoKappa',       'dp2'; ...
         'TableExemplars','Qtwo',   'rho',         'PEFexQtwoRho',         'rho'; ...
         'TableExemplars','Qtwo',   'eta',         'PEFexQtwoEta',         'dp2'; ...
         'TableExemplars','Qtwo',   'delta_ratio', 'PEFexQtwoDeltaRatio',  'dp2'; ...
         'TableExemplars','Qtwo',   'dml',         'PEFexQtwoDml',         'dml'; ...
+        'TableExemplars','Qtwo',   'dml_lo',      'PEFexQtwoDmlLo',       'dml'; ...
+        'TableExemplars','Qtwo',   'dml_hi',      'PEFexQtwoDmlHi',       'dml'; ...
+        'TableExemplars','Qtwo',   'auc_abs',     'PEFexQtwoAucAbs',      'dp3'; ...
+        'TableExemplars','Qtwo',   'auc_rel',     'PEFexQtwoAucRel',      'dp3'; ...
+        'TableExemplars','Qtwo',   'brier_abs',   'PEFexQtwoBrierAbs',    'dp3'; ...
+        'TableExemplars','Qtwo',   'brier_rel',   'PEFexQtwoBrierRel',    'dp3'; ...
+        'TableExemplars','Qtwo',   'acc_pair',    'PEFexQtwoAccPair',     'dp3'; ...
+        'TableExemplars','Qtwo',   'acc_majority','PEFexQtwoAccMaj',      'dp3'; ...
         'TableExemplars','Qthree', 'kappa',       'PEFexQthreeKappa',     'dp2'; ...
         'TableExemplars','Qthree', 'rho',         'PEFexQthreeRho',       'rho'; ...
         'TableExemplars','Qthree', 'eta',         'PEFexQthreeEta',       'dp2'; ...
         'TableExemplars','Qthree', 'delta_ratio', 'PEFexQthreeDeltaRatio','dp2'; ...
         'TableExemplars','Qthree', 'dml',         'PEFexQthreeDml',       'dml'; ...
+        'TableExemplars','Qthree', 'dml_lo',      'PEFexQthreeDmlLo',     'dml'; ...
+        'TableExemplars','Qthree', 'dml_hi',      'PEFexQthreeDmlHi',     'dml'; ...
+        'TableExemplars','Qthree', 'auc_abs',     'PEFexQthreeAucAbs',    'dp3'; ...
+        'TableExemplars','Qthree', 'auc_rel',     'PEFexQthreeAucRel',    'dp3'; ...
+        'TableExemplars','Qthree', 'brier_abs',   'PEFexQthreeBrierAbs',  'dp3'; ...
+        'TableExemplars','Qthree', 'brier_rel',   'PEFexQthreeBrierRel',  'dp3'; ...
+        'TableExemplars','Qthree', 'acc_pair',    'PEFexQthreeAccPair',   'dp3'; ...
+        'TableExemplars','Qthree', 'acc_majority','PEFexQthreeAccMaj',    'dp3'; ...
         'TableExemplars','Qfour',  'kappa',       'PEFexQfourKappa',      'dp2'; ...
         'TableExemplars','Qfour',  'rho',         'PEFexQfourRho',        'rho'; ...
         'TableExemplars','Qfour',  'eta',         'PEFexQfourEta',        'dp2'; ...
         'TableExemplars','Qfour',  'delta_ratio', 'PEFexQfourDeltaRatio', 'dp2'; ...
         'TableExemplars','Qfour',  'dml',         'PEFexQfourDml',        'dml'; ...
+        'TableExemplars','Qfour',  'dml_lo',      'PEFexQfourDmlLo',      'dml'; ...
+        'TableExemplars','Qfour',  'dml_hi',      'PEFexQfourDmlHi',      'dml'; ...
+        'TableExemplars','Qfour',  'auc_abs',     'PEFexQfourAucAbs',     'dp3'; ...
+        'TableExemplars','Qfour',  'auc_rel',     'PEFexQfourAucRel',     'dp3'; ...
+        'TableExemplars','Qfour',  'brier_abs',   'PEFexQfourBrierAbs',   'dp3'; ...
+        'TableExemplars','Qfour',  'brier_rel',   'PEFexQfourBrierRel',   'dp3'; ...
+        'TableExemplars','Qfour',  'acc_pair',    'PEFexQfourAccPair',    'dp3'; ...
+        'TableExemplars','Qfour',  'acc_majority','PEFexQfourAccMaj',     'dp3'; ...
         'TableExemplars','range',  'delta_ratio_lo','PEFexDeltaRatioLo',  'dp2'; ...
         'TableExemplars','range',  'delta_ratio_hi','PEFexDeltaRatioHi',  'dp2'; ...
         'TableExemplars','RucksWon','kappa',      'PEFexRucksKappa',      'dp2'; ...
@@ -1143,4 +1291,20 @@ function write_numbers_tex(stats, fpath)
     fprintf(fid, '\n%% %d macros written.\n', n_written);
     fclose(fid);
     fprintf('   numbers.tex: %d macros written to %s\n', n_written, fpath);
+end
+
+function write_referee_csv(pef_2s, ml_all, fpath)
+%WRITE_REFEREE_CSV  De-identified per-KPI summary. No match rows.
+    keep = {'sport','kpi','n','kappa','rho','eta','quadrant','d_Y','r_ax','delta_ratio_home'};
+    keep = keep(ismember(keep, pef_2s.Properties.VariableNames));
+    ref = pef_2s(:, keep);
+    extra = {'acc_improvement','dml_fold_mean','dml_ci_lo','dml_ci_hi', ...
+             'auc_abs','auc_rel','brier_abs','brier_rel','acc_pair','acc_majority'};
+    extra = extra(ismember(extra, ml_all.Properties.VariableNames));
+    if ~isempty(ml_all) && ismember('kpi', ml_all.Properties.VariableNames)
+        ml_keep = ml_all(:, [{'sport','kpi'}, extra]);
+        ref = outerjoin(ref, ml_keep, 'Keys', {'sport','kpi'}, 'MergeKeys', true, 'Type', 'left');
+    end
+    writetable(ref, fpath);
+    fprintf('   referee_kpi_summary.csv written (%d rows).\n', height(ref));
 end

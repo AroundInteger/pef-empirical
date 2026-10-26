@@ -24,6 +24,10 @@
 \usepackage[style=authoryear,backend=biber,giveninits=true,maxcitenames=3,maxbibnames=99,uniquename=init,doi=true,isbn=false,url=false]{biblatex}
 \usepackage{nameref}
 \usepackage[nameinlink,noabbrev]{cleveref}
+\newcounter{sisection}
+\renewcommand{\thesisection}{S\arabic{sisection}}
+\crefname{sisection}{SI section}{SI sections}
+\Crefname{sisection}{SI section}{SI sections}
 
 \addbibresource{references.bib}
 \addbibresource{jqas_extra.bib}
@@ -48,7 +52,7 @@
 \aop
 \DOI{10.1515/jqas-YYYY-XXXX}
 
-\title{When Should Team KPIs Be Absolute or Relative for Match-Outcome Prediction?}
+\title{Pairing Efficiency Does Not Decide Whether a Team KPI Should Be Relativised}
 \runningtitle{Paired efficiency of team KPIs}
 
 \author*[1]{M.~R. Brown}

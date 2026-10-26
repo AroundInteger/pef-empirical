@@ -101,13 +101,8 @@ classdef pef_figure_style
         end
 
         function I_xy = compute_mi_grid(K, R, delta, sigmaA)
-            eta_s = pef_figure_style.compute_eta(R, K);
-            bad = isnan(eta_s);
-            sep = normcdf(delta ./ (2 * sigmaA * sqrt((1 + K) ./ eta_s)));
-            sep = min(max(sep, 1e-12), 1 - 1e-12);
-            H = -sep .* log2(sep) - (1 - sep) .* log2(1 - sep);
-            I_xy = 1 - H;
-            I_xy(bad) = NaN;
+            H = pef_theory_helpers();
+            I_xy = H.mi_exact_grid(K, R, delta, sigmaA);
         end
 
         function draw_admissibility_boundary(ax, cfg)

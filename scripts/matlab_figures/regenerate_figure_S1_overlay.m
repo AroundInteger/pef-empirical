@@ -1,9 +1,8 @@
 %% regenerate_figure_S1_overlay.m
 % Idealised grid in PEF coordinates:
-%   (A) locator of the 16 (rho, tau) design points, tau = (1/2) log kappa
-%   (B) I vs DeltaML (log x): colour = delta/sigma_A; marker = sign of rho;
+%   (A) I vs DeltaML (log x): colour = delta/sigma_A; marker = sign of rho;
 %       grey trajectories join the same (kappa, rho) across the four signals.
-%   (C) master surface: DeltaML vs relative-feature signal d_rel, colour = r,
+%   (B) master surface: DeltaML vs relative-feature signal d_rel, colour = r_AX,
 %       with the two bounding curves (floor r->1, ceiling r->0).
 % Boundary cells (kappa=1 or rho=0) are included.
 %
@@ -39,38 +38,10 @@ cmap = [ ...
     0.77, 0.15, 0.16];     % 2.0
 
 Y_LIM = [0, 30];
-fig = pef_figure_style.new_figure(1720, 540);
-tl = tiledlayout(fig, 1, 3, 'Padding', 'compact', 'TileSpacing', 'compact');
+fig = pef_figure_style.new_figure(1200, 540);
+tl = tiledlayout(fig, 1, 2, 'Padding', 'compact', 'TileSpacing', 'compact');
 
-% ---- (A) Locator on (rho, tau) ------------------------------------------
-axA = nexttile(tl);
-hold(axA, 'on');
-xline(axA, 0, 'k--', 'LineWidth', 1.2, 'HandleVisibility', 'off');
-yline(axA, 0, 'k--', 'LineWidth', 1.2, 'HandleVisibility', 'off');
-
-pts = unique(ideal(:, {'kappa','rho'}), 'rows');
-pts.tau = 0.5 * log(pts.kappa);
-for i = 1:height(pts)
-    [mk, msz] = rho_marker(pts.rho(i));
-    scatter(axA, pts.rho(i), pts.tau(i), msz, [0.25, 0.25, 0.25], ...
-        'filled', 'Marker', mk, 'MarkerEdgeColor', 'k', 'LineWidth', 0.4);
-end
-text(axA, 0.42, 0.30, 'Q1', 'FontSize', ST.fs_quad, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
-text(axA, 0.42, -0.21, 'Q2', 'FontSize', ST.fs_quad, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
-text(axA, -0.78, -0.21, 'Q3', 'FontSize', ST.fs_quad, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
-text(axA, -0.50, 0.32, 'Q4', 'FontSize', ST.fs_quad, 'FontWeight', 'bold', 'Color', [0.35, 0.35, 0.35]);
-xlim(axA, [-0.85, 0.65]);
-ylim(axA, [-0.25, 0.42]);
-xlabel(axA, '\rho', 'FontSize', ST.fs_label, 'Interpreter', 'tex');
-ylabel(axA, '\tau = (1/2) log \kappa', 'FontSize', ST.fs_label, 'Interpreter', 'tex');
-pef_figure_style.style_scatter_axes(axA, ST);
-pef_figure_style.apply_decimal_ticks(axA, 1);
-pef_figure_style.add_panel_letter(axA, '(A)', ST);
-text(axA, 0.04, 0.58, {'○  \rho>0 (shared)', '□  \rho=0 (Fisher)', '▽  \rho<0 (competitive)'}, ...
-    'Units', 'normalized', 'FontSize', ST.fs_annot, 'Color', [0.25, 0.25, 0.25], ...
-    'Interpreter', 'tex', 'VerticalAlignment', 'top');
-
-% ---- (B) Outcome space: trajectories in I vs DeltaML --------------------
+% ---- (A) Outcome space: trajectories in I vs DeltaML --------------------
 axB = nexttile(tl);
 hold(axB, 'on');
 
@@ -107,7 +78,7 @@ ylabel(axB, 'Mean \DeltaML  (%)', 'FontSize', ST.fs_label);
 legend(axB, leg_h, cellstr(leg_s), 'Location', 'northeast', 'Box', 'off', ...
     'FontSize', ST.fs_panel, 'Interpreter', 'tex');
 pef_figure_style.style_scatter_axes(axB, ST);
-pef_figure_style.add_panel_letter(axB, '(B)', ST);
+pef_figure_style.add_panel_letter(axB, '(A)', ST);
 set(axB, 'XScale', 'log');
 ylim(axB, Y_LIM);
 pef_figure_style.apply_decimal_ticks(axB, [1, 0]);
@@ -154,7 +125,7 @@ end
 colormap(axC, parula(256));
 clim(axC, [min(ideal.r_ax), max(ideal.r_ax)]);
 cb = colorbar(axC);
-cb.Label.String = 'r = corr(A, X)';
+cb.Label.String = 'r_{AX} = Corr(X_A, X)';
 cb.Label.Interpreter = 'tex';
 cb.Label.FontSize = ST.fs_label;
 cb.FontSize = ST.fs_tick;
@@ -165,13 +136,14 @@ xlabel(axC, 'Relative-feature signal  d_{rel} = \delta / \surd Var(X)', ...
 ylabel(axC, 'Mean \DeltaML  (%)', 'FontSize', ST.fs_label, 'Interpreter', 'tex');
 ylim(axC, Y_LIM);
 pef_figure_style.style_scatter_axes(axC, ST);
-pef_figure_style.add_panel_letter(axC, '(C)', ST);
+pef_figure_style.add_panel_letter(axC, '(B)', ST);
 pef_figure_style.apply_decimal_ticks(axC, [1, 0]);
 grid(axC, 'on');
-legend(axC, [h_ceil, h_edge], ...
-    {'ceiling: r\rightarrow0 (majority baseline)', sprintf('grid edge: r = %.2f', r_min)}, ...
-    'Location', 'east', 'Box', 'off', 'FontSize', ST.fs_panel, 'Interpreter', 'tex');
-text(axC, 0.97, 0.78, {'floor: \DeltaML = 0', '(r\rightarrow1, Bayes-sufficient)'}, ...
+lgd = legend(axC, [h_ceil, h_edge], ...
+    {'ceiling: r_{AX}\rightarrow0 (majority baseline)', sprintf('grid edge: r_{AX} = %.2f', r_min)}, ...
+    'Box', 'off', 'FontSize', ST.fs_panel, 'Interpreter', 'tex');
+lgd.Layout.Tile = 'south';
+text(axC, 0.97, 0.78, {'floor: \DeltaML = 0', '(r_{AX}\rightarrow1, Bayes-sufficient)'}, ...
     'Units', 'normalized', 'HorizontalAlignment', 'right', ...
     'FontSize', ST.fs_annot, 'Interpreter', 'tex', 'Color', [0.25, 0.25, 0.25]);
 

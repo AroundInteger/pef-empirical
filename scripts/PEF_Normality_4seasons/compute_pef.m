@@ -1,4 +1,4 @@
-function out = compute_pef(paired, kpi_names, sport_label)
+function out = compute_pef(paired, kpi_names, sport_label, outcome_col)
 %COMPUTE_PEF  Compute kappa, rho, eta (PEF) and quadrant per KPI.
 %
 %   out = COMPUTE_PEF(paired, kpi_names, sport_label)
@@ -96,10 +96,53 @@ function out = compute_pef(paired, kpi_names, sport_label)
 
     sig_rho = p_rho < 0.05;
 
+    % Descriptive home--away gap. Not the predictive signal.
+    delta_home = mu_home - mu_away;
+    sigma_home = sqrt(var_home);
+    delta_ratio_home = delta_home ./ sigma_home;
+    delta_ratio_home(~isfinite(sigma_home) | sigma_home <= 0) = NaN;
+
+    % r_AX = Corr(X_A, X_A - X_B), algebraic in (kappa, rho).
+    den = 1 + kappa - 2 .* sqrt(kappa) .* rho;
+    r_ax = (1 - rho .* sqrt(kappa)) ./ sqrt(den);
+    r_ax(~isfinite(den) | den <= 0) = NaN;
+
+    % Class-conditional separation of the relative feature, if Y is present.
+    d_Y = nan(n_kpi, 1);
+    home_win_rate = nan(n_kpi, 1);
+    use_y = nargin >= 4 && ~isempty(outcome_col) && ...
+        ismember(outcome_col, paired.Properties.VariableNames);
+    if use_y
+        y_all = double(paired.(outcome_col));
+        for k = 1:n_kpi
+            ch = [kpi_names{k} '_home'];
+            ca = [kpi_names{k} '_away'];
+            if ~ismember(ch, paired.Properties.VariableNames)
+                continue
+            end
+            A = paired.(ch);
+            B = paired.(ca);
+            ok = ~isnan(A) & ~isnan(B) & ~isnan(y_all);
+            x = A(ok) - B(ok);
+            y = y_all(ok);
+            if numel(x) < 8 || std(x, 0) <= 0
+                continue
+            end
+            y1 = y == 1;
+            y0 = y == 0;
+            if sum(y1) < 2 || sum(y0) < 2
+                continue
+            end
+            d_Y(k) = (mean(x(y1)) - mean(x(y0))) / std(x, 0);
+            home_win_rate(k) = mean(y == 1);
+        end
+    end
+
     out = table(sport, kpi, n, var_home, var_away, mu_home, mu_away, ...
                 cohens_d, kappa, rho, eta, kappa_abs, quadrant, p_rho, sig_rho, ...
+                delta_ratio_home, r_ax, d_Y, home_win_rate, ...
                 'VariableNames', { ...
                     'sport','kpi','n','var_home','var_away','mean_home','mean_away', ...
                     'cohens_d_paired','kappa','rho','eta','kappa_abs','quadrant', ...
-                    'p_rho','sig_rho'});
+                    'p_rho','sig_rho','delta_ratio_home','r_ax','d_Y','home_win_rate'});
 end

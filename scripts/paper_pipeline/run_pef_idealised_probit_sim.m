@@ -176,9 +176,26 @@ log_lines{end+1} = sprintf('corr(eta, mean ML improvement)     = %.4f', r_eta);
 log_lines{end+1} = sprintf('Q4 cells eta<1 and mean impr>0: %d / %d', n_q4_pos, n_q4_all);
 log_lines{end+1} = '';
 
+log_lines{end+1} = '--- corr(eta, I(X;Y)) by delta/sigma_A (exact I) ---';
+dr_u = sort(unique(grid_tbl.delta_ratio));
+for ii = 1:numel(dr_u)
+    dr = dr_u(ii);
+    sl = abs(grid_tbl.delta_ratio - dr) < 1e-9 & isfinite(grid_tbl.eta) & isfinite(grid_tbl.Ixy);
+    if sum(sl) >= 3
+        r_etaI = corr(grid_tbl.eta(sl), grid_tbl.Ixy(sl));
+    else
+        r_etaI = NaN;
+    end
+    log_lines{end+1} = sprintf('  delta/sigma_A=%.1f  n=%d  corr(eta,I)=%.4f', dr, sum(sl), r_etaI);
+    fprintf('  delta/sigma_A=%.1f: corr(eta, I)=%.3f (n=%d)\n', dr, r_etaI, sum(sl));
+end
+sl_all = isfinite(grid_tbl.eta) & isfinite(grid_tbl.Ixy);
+r_pool = corr(grid_tbl.eta(sl_all), grid_tbl.Ixy(sl_all));
+log_lines{end+1} = sprintf('  pooled n=%d  corr(eta,I)=%.4f', sum(sl_all), r_pool);
+fprintf('  Pooled corr(eta, I)=%.3f (n=%d)\n', r_pool, sum(sl_all));
+log_lines{end+1} = '';
+
 log_lines{end+1} = '--- Stratified corr(I, ML) by delta/sigma_A ---';
-dr_u = unique(grid_tbl.delta_ratio);
-dr_u = sort(dr_u);
 for ii = 1:numel(dr_u)
     dr = dr_u(ii);
     sl = abs(grid_tbl.delta_ratio - dr) < 1e-9 & valid;
@@ -250,7 +267,7 @@ function row = simulate_one_cell(H, params, sigmaA, nPerCell, nTrials, kFold, ..
 
     eta_v  = H.eta_pef(kappa, rho);
     varX   = H.var_diff(kappa, rho, sigmaA);
-    Ixy    = H.mi_closed(kappa, rho, delta, sigmaA);
+    Ixy    = H.mi_exact(kappa, rho, delta, sigmaA);
     bayes  = H.bayes_acc_x(delta, varX);
     quad   = H.classify_quadrant(kappa, rho);
 

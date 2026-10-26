@@ -6,23 +6,23 @@
   \caption{Validation results across domains.}
   \label{tab:validation}
   \small
+  \scalebox{0.9}{
   \begin{tabular}{@{}llccccl@{}}
     \toprule
-    \textbf{Domain} & \textbf{Tier} & \textbf{$n$ studies} & \textbf{Mean $\eta$} & \textbf{SD} & \textbf{\% with $\eta>1$} & \textbf{Data source} \\
+    \textbf{Domain} & \textbf{Tier} & \textbf{$n$ units} & \textbf{Mean $\eta$} & \textbf{SD} & \textbf{\% with $\eta>1$} & \textbf{Data source} \\
     \midrule
     Sports (Rugby)      & Primary    & \PEFrugbyNkpis  & \PEFrugbyMeanEta  & \PEFrugbySdEta  & \PEFrugbySuccess\%  & {URC} \\
     Sports (Football)   & Primary    & \PEFfootNkpis   & \PEFfootMeanEta   & \PEFfootSdEta   & \PEFfootSuccess\%   & English Championship \\
-    Healthcare          & Supporting & $\PEFhealthN^{\dagger}$ & \PEFhealthMeanEta & 0.04$^{\dagger}$ & \PEFhealthSuccess\% & \cite{nhanes2017pbxo} \\
+    Healthcare          & Supporting & $\PEFhealthN^{\dagger}$ & \PEFhealthMeanEta & $\PEFhealthSE^{\dagger}$ & \PEFhealthSuccess\% & \cite{nhanes2017pbxo} \\
     Clinical Genomics   & Supporting & $\PEFgenomicsN^{\ddagger}$ & \PEFgenomicsMeanEta & \PEFgenomicsSdEta & \PEFgenomicsSuccess\% & \cite{brunner2014earlybreast,geoGSE47462} \\
     Finance             & Supporting & \PEFfinanceN    & \PEFfinanceMeanEta & \PEFfinanceSdEta & \PEFfinanceSuccess\% & Yahoo Finance \\
-    Manufacturing       & Supporting & $\PEFmfgN^{\S}$ & \PEFmfgMeanEta    & \PEFmfgSdEta    & \PEFmfgSuccess\%    & \cite{openml752bosch} \\
     \bottomrule
-  \end{tabular}
+  \end{tabular}}
   \normalsize
 
   \medskip
   \begin{minipage}{0.95\linewidth}\small
-    \textit{Note:} Proportion with $\hat\eta>1$: share of units for which pairing reduces variance (\cref{sec:outcome_defs}). The $n$ studies column is the number of PEF units, not a participant count: healthcare is one paired study of $N=10{,}352$ participants. $^{\dagger}$Paired {NHANES} oscillometric records (systolic vs diastolic, first reading); SD column gives a bootstrap standard error for the pooled $\eta$ (not a cross-unit sample SD). $^{\ddagger}$Genes in the ranked subset of the {GSE47462} paired design (see Methods). $^{\S}$Axis-wise paired process features per {Bosch} production cycle ({OpenML} 752); SD is the sample {SD} of $\eta$ across pairings. Primary empirical tier: descriptive mapping in Figures~\ref{fig:pef_landscape}--\ref{fig:info_surface} and Supplementary~\cref{fig:si_kpi_labelled,fig:si_ipred_vs_dml}; confirmatory checks via \cref{fig:pef_ml,tab:exemplars}. Supporting tier: parameter estimation and PEF calculation summarised here and in \cref{sec:results}; mean $(\kappa,\rho)$ overlay in \cref{fig:pef_landscape}.
+    \textit{Note:} Proportion with $\hat\eta>1$: share of units for which pairing reduces variance (\cref{sec:outcome_defs}). The $n$ units column counts PEF units, not participants: healthcare is one paired study of $N=10{,}352$ participants. $^{\dagger}$Paired {NHANES} oscillometric records (systolic vs diastolic, first reading); the SD column is the bootstrap standard error $\PEFhealthSE$ for the pooled $\eta$. $^{\ddagger}$Genes in the ranked subset of the {GSE47462} paired design (see Methods). That ranking prefers high $\rho$, so the percentage with $\eta>1$ is not a random-gene rate. Primary empirical tier: the sports cloud in \cref{fig:pef_landscape} and class separation against $\Delta\mathrm{ML}$ in Supplementary~\cref{fig:si_ipred_vs_dml}; the four exemplars are \cref{tab:exemplars}. Supporting tier: parameter estimation and PEF calculation summarised here and in \cref{sec:results}.
   \end{minipage}
 \end{table}
 
@@ -32,18 +32,19 @@
   \label{tab:quadrants}
   \begin{tabular}{@{}lllll@{}}
     \toprule
-    \textbf{Q} & \textbf{Parameters} & $\eta$ & $I(X;Y)$ & \textbf{Recommendation} \\
+    \textbf{Q} & \textbf{Parameters} & $\eta$ & \textbf{What the cell records} & \textbf{Feature choice} \\
     \midrule
-    Q1 & $\kappa>1$, $\rho>0$  & $>1$  & High     & Use relative features \\
-    Q2 & $\kappa<1$, $\rho>0$  & $>1$  & Moderate & Use relative features \\
-    Q3 & $\kappa<1$, $\rho<0$  & $<1$  & Low      & Prefer absolute features \\
-    Q4 & $\kappa>1$, $\rho<0$  & $<1$  & Variable & Estimate $\delta/\sigma_{\mathrm{A}}$; confirm with CV \\
+    Q1 & $\kappa>1$, $\rho>0$  & $>1$  & Efficient; B more variable & Not settled by the cell \\
+    Q2 & $\kappa<1$, $\rho>0$  & $>1$  & Efficient; A more variable & Not settled by the cell \\
+    Q3 & $\kappa<1$, $\rho<0$  & $<1$  & Inefficient; A more variable & Not settled by the cell \\
+    Q4 & $\kappa>1$, $\rho<0$  & $<1$  & Inefficient; B more variable & Not settled by the cell \\
     \bottomrule
   \end{tabular}
 
   \medskip
   \begin{minipage}{0.95\linewidth}\small
-    \textbf{Examples:} Q1, market-adjusted returns, paired clinical trials; Q2, control charts, quality metrics; Q3, high-volume anti-correlated sports KPIs; Q4, asymmetric head-to-head comparisons (some sports KPIs; competitive business).
+    $\eta>1$ if and only if $\rho>0$. The $\kappa=1$ split swaps if A and B are swapped. $I(X;Y)$ is not ranked by quadrant (\cref{eq:mi_closed}). Under (A1)--(A2), $\Delta\mathrm{ML}\ge 0$. On the sports KPIs the cell does not decide the feature: the fold intervals do not separate the sign (\cref{sec:exemplars}).
+    \textbf{Examples:} Q1, market-adjusted returns with A the index; Q2, the {NHANES} systolic--diastolic pair; Q3, high-volume anti-correlated sports KPIs; Q4, sports KPIs with the away side more variable and $\rho<0$.
   \end{minipage}
 \end{table}
 
@@ -55,67 +56,31 @@
     \toprule
     \textbf{Condition} & $\eta$ & $I(X;Y)$ & \textbf{Interpretation} \\
     \midrule
-    $\kappa=1$, $\rho=0$ (Fisher) & 1.000 & 0.056 & Baseline: independent, equal variances \\
-    $\kappa\to 0$                 & 1.000 & 0.108 & Entity B negligible \\
-    $\kappa\to\infty$             & 1.000 & $\to 0$ & Signal drowned in noise \\
-    $\rho\to -1$ ($\kappa=1$)     & 0.500 & 0.028 & Maximum variance amplification \\
-    $\rho\to +1$ ($\kappa=1$)     & $\to\infty$ & $\to 1$ & Perfect cancellation of noise \\
+    $\kappa=1$, $\rho=0$ (Fisher) & 1.000 & 0.252 & Balanced variances, no correlation \\
+    $\kappa\to 0$                 & 1.000 & 0.227 & Entity B negligible; $d_{\mathrm{rel}}\to 1$ \\
+    $\kappa\to\infty$             & 1.000 & 0.279 & $d_{\mathrm{rel}}\to 0$; outcome nearest balance \\
+    $\rho\to -1$ ($\kappa=1$)     & 0.500 & 0.265 & Maximum variance amplification \\
+    $\rho\to +1$ ($\kappa=1$)     & $\to\infty$ & $\to 0$ & $d_{\mathrm{rel}}\to\infty$; outcome nearly certain \\
     \bottomrule
   \end{tabular}
 
   \medskip
   \begin{minipage}{0.95\linewidth}\small
-    \textit{Note:} $I(X;Y)$ computed with $\delta/\sigma_{\mathrm{A}}=1$.
+    \textit{Note:} $I(X;Y)$ is \cref{eq:mi_closed} at $\delta/\sigma_{\mathrm{A}}=1$. As $d_{\mathrm{rel}}$ grows, $H(Y)$ falls, so the $\rho\to +1$ limit is $0$ bits rather than $1$ bit.
   \end{minipage}
 \end{table}
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=0.95\linewidth]{figures/Figure_1.png}
-  \caption{PEF landscape: $\eta$ as a function of $\rho$ and $\kappa$, with four quadrants labelled.
-    Background shading uses a $\log_{10}$ colour mapping of $\eta$ (tick labels show $\eta$) so that
-    the admissibility blow-up as $\rho\to +1$ (Supplementary~\cref{sec:si_maths}) remains visible; contour
-    lines are in raw $\eta$.
-    The dotted curve marks the admissibility boundary $1+\kappa-2\sqrt{\kappa}\,\rho=0$, beyond which
-    $\eta$ is undefined.
-    \textbf{Sports exemplars} (rugby union {URC}, circle; football Championship, squares): the four
-    confirmatory KPIs of \cref{tab:exemplars}, one per quadrant, with open markers at season
-    23/24, filled markers at season 24/25, and segments showing year-on-year drift (Q1--Q4 labels
-    on filled markers; pooled two-season $\hat\eta$ in the legend).
-    \textbf{Supporting domains} (triangles): mean $(\kappa,\rho)$ for healthcare, clinical genomics,
-    finance, and manufacturing.
-    The full action-KPI cloud is in Supplementary~\cref{fig:si_kpi_labelled}.}
+  \includegraphics[width=\linewidth]{figures/Figure_S4_labelled_kpis.png}
+  \caption{Sports KPI cloud on the $(\rho,\kappa)$ plane (rugby {URC}; football Championship;
+    seasons 23/24--24/25). (A, B)~rugby; (C, D)~football. Markers are coloured by quadrant
+    (Q1 green, Q2 blue, Q3 orange, Q4 red). (E)~share of KPIs in each quadrant, by season.
+    Year-on-year identity is not traced.
+    A minority of rugby KPIs cross a quadrant boundary between seasons.
+    Football remains concentrated in Quadrant~3.
+    The four exemplars are the rows of \cref{tab:exemplars}, not a separate panel.
+    Class separation against $\Delta\mathrm{ML}$ is Supplementary~\cref{fig:si_ipred_vs_dml}.}
   \label{fig:pef_landscape}
-\end{figure}
-
-\begin{figure}[p]
-  \centering
-  \includegraphics[width=0.95\linewidth]{figures/Figure_2.png}
-  \caption{Information-theoretic surface $I(X;Y)$ as a function of $\rho$ and $\kappa$
-    (\cref{eq:mi_closed}), computed with nominal signal strength $\delta/\sigma_{\mathrm{A}}=1$.
-    Layout matches \cref{fig:pef_landscape}: the same four confirmatory exemplars
-    (\cref{tab:exemplars}) are plotted at their estimated $(\kappa,\rho)$ positions on this
-    $\delta/\sigma_{\mathrm{A}}=1$ surface, with season 23/24--24/25 drift segments, supporting-domain triangles,
-    quadrant boundaries, and the admissibility boundary (dotted curve).
-    Background shading uses a \emph{sequential} colour scale over $I(X;Y)\in[0,0.3]$~bits
-    (low to high information); \cref{fig:pef_landscape} uses a \emph{diverging}
-    $\log_{10}$ scale of $\eta$ centred on the efficiency boundary $\eta=1$.
-    Sensitivity to $\delta/\sigma_{\mathrm{A}}\in\{0.5,1.0,2.0\}$ appears in
-    Supplementary~\cref{fig:si_info_sensitivity}.}
-  \label{fig:info_surface}
-\end{figure}
-
-\begin{figure}[p]
-  \centering
-  \includegraphics[width=0.72\linewidth]{figures/Figure_3.png}
-  \caption{Confirmatory machine-learning check: $\Delta\mathrm{ML}$ versus $\hat\eta$ for four quadrant exemplars at comparable $\delta/\sigma_{\mathrm{A}}$ (\cref{tab:exemplars}).
-    $\Delta\mathrm{ML}=100(\mathrm{acc}_{\mathrm{rel}}-\mathrm{acc}_{\mathrm{abs}})/\mathrm{acc}_{\mathrm{abs}}$ from team-blocked five-fold CV logistic regression (\cref{sec:ml_cv}).
-    The zero line is the decision: above it, use the relative feature; below it, keep the absolute feature.
-    Direction at matched signal: Q1 and Q2, $\eta>1$ with $\Delta\mathrm{ML}>0$; Q3, $\eta<1$ with $\Delta\mathrm{ML}<0$; Q4, $\eta<1$ with near-zero $\Delta\mathrm{ML}$.
-    Rucks won (diamond) is a high-$\eta$ foil with negligible $\delta/\sigma_{\mathrm{A}}$: pairing efficiency without signal still yields $\Delta\mathrm{ML}<0$.
-    The $x$-axis is broken between $3.4$ and $5.05$ to keep the foil on scale.
-    Colours match \cref{fig:pef_landscape,fig:info_surface}.
-    All rugby and football KPIs, including cases with $\eta<1$ and $\Delta\mathrm{ML}>0$, are in Supplementary~\cref{fig:si_kpi_labelled,fig:si_ipred_vs_dml}.}
-  \label{fig:pef_ml}
 \end{figure}
 

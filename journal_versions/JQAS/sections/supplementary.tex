@@ -9,56 +9,48 @@
 
 \section*{Supplementary Information}
 
-\noindent This supplement follows the main paper: theoretical derivations, then the idealised probit check, then the sports KPI analysis. Figures are numbered in order of appearance (S1--S5). File names on disk retain their generator tags and need not match the printed S-number.
+\noindent This supplement follows the main paper: theoretical derivations, then the idealised probit check, then the sports KPI analysis. Figures are numbered in order of appearance (S1--S3). File names on disk retain their generator tags and need not match the printed S-number.
 
 \medskip
 \noindent\begin{tabular}{@{}p{0.22\linewidth}p{0.34\linewidth}p{0.38\linewidth}@{}}
   \toprule
   \textbf{SI block} & \textbf{Main paper} & \textbf{Contents} \\
   \midrule
-  \S1 Theory & Theory; Fig.~2; Intro.\ (Pitman) & Algebra; $\tau=\tfrac12\log\kappa$; Pitman ARE; Fig.~S1 \\
-  \S2 Probit validation & Methods Tier~1; Results & Spec.; Figs~S2--S3 \\
-  \S3 Empirical analysis & Methods; Results; Discussion & Figs~S4--S5; Table~S1; QC \\
+  \S1 Theory & Theory; Intro.\ (Pitman) & Algebra; $\tau=\tfrac12\log\kappa$; Pitman ARE \\
+  \S2 Probit validation & Methods Tier~1; Results & Spec.; Figs~S1--S2 \\
+  \S3 Empirical analysis & Methods; Results; Discussion & Fig.~S3; Table~S1; QC \\
   \bottomrule
 \end{tabular}
 
 \clearpage
 
 % ---------------------------------------------------------------------------
-\section*{SI Section 1: Theoretical Derivations}
+\refstepcounter{sisection}
+\section*{SI Section \thesisection: Theoretical Derivations}
 \label{sec:si_maths}
 
-\noindent This section supports the theoretical framework (\cref{sec:theory}). The main text states the closed form (\cref{eq:mi_closed}) and the four-quadrant partition. This section records the omitted algebra and extends main-text Figure~2 (\cref{fig:info_surface}).
+\noindent This section supports the theoretical framework (\cref{sec:theory}). The main text states the integral for $I(X;Y)$ (\cref{eq:mi_closed}) and the four-cell partition. This section records the omitted algebra. The sports cloud is \cref{fig:pef_landscape}.
 
 \input{sections/appendix}
 
-\subsection*{Information surface}
+\subsection*{Information content}
 \label{sec:si_theory}
 
-\noindent \Cref{fig:si_info_sensitivity} examines sensitivity of the $I(X;Y)$ surface to $\delta/\sigma_{\mathrm{A}}$ on a controlled grid; empirical KPI positions appear in \cref{sec:si_landscape}.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\linewidth]{figures/Figure_S3_info_sensitivity.png}
-  \caption{Sensitivity of the information-content surface $I(X;Y)$ to
-    $\delta/\sigma_{\mathrm{A}}$ (panels at $0.5$, $1.0$, $2.0$; centre panel
-    matches \cref{fig:info_surface}).
-    Markers are idealised factorial $(\kappa,\rho)$ design points; empirical KPI maps are in \cref{fig:si_kpi_labelled}.}
-  \label{fig:si_info_sensitivity}
-\end{figure}
+\noindent The integral and the Jensen bound are derived below. Cuts of $\eta$ and $I(X;Y)$ at the median empirical $|\hat d_Y|$ and at $\delta/\sigma_{\mathrm{A}}=1$ are \cref{fig:si_iso_eta_I}, in the probit section.
 
 \clearpage
 
 % ---------------------------------------------------------------------------
-\section*{SI Section 2: Idealised Probit Validation}
+\refstepcounter{sisection}
+\section*{SI Section \thesisection: Idealised Probit Validation}
 \label{sec:si_probit}
 
-\noindent This section supports the first validation tier (\cref{sec:methods}): an idealised probit simulation under (A1)--(A2) that confirms the closed-form PEF--information mapping (\cref{eq:mi_closed}) and the efficiency--power tension (\cref{sec:eff_power_theory}) before turning to empirical KPIs. Main-text scenario results appear in \cref{sec:results,tab:scenarios}; the specification below is the full model; \cref{fig:si_idealised_stratified,fig:si_iso_eta_I} visualise grid-level and contour-level behaviour cited in \cref{sec:results,sec:signal_strength}.
+\noindent This section supports the first validation tier (\cref{sec:methods}): an idealised probit simulation under (A1)--(A2) that evaluates the integral for $I(X;Y)$ (\cref{eq:mi_closed}) and the efficiency--power tension (\cref{sec:eff_power_theory}) before turning to empirical KPIs. Main-text scenario results appear in \cref{sec:results,tab:scenarios}; the specification below is the full model; \cref{fig:si_idealised_stratified,fig:si_iso_eta_I} visualise grid-level and contour-level behaviour cited in \cref{sec:results,sec:signal_strength}.
 
 \subsection*{Idealised Probit Simulation: Model Specification and Validation}
 \label{sec:si_note_s2}
 
-\textbf{Purpose.} The first validation tier (\cref{sec:methods}) isolates the PEF--information content relationship (\cref{eq:mi_closed}) from the finite-sample noise, mild non-normality, and team-level clustering present in the empirical KPIs. Data are generated to satisfy (A1)--(A2) exactly. The simulation then checks two claims. First, the closed-form mapping is recovered by five-fold logistic regression, the same classifier family as the empirical protocol. Pairs are independent by construction, so the simulation does not use team-blocked folds. Second, the efficiency--power tension (\cref{sec:eff_power_theory}) arises as predicted. This is a check of internal consistency under the model's own assumptions, not an independent empirical test. The empirical tiers (\cref{sec:results}) provide the latter.
+\textbf{Purpose.} The first validation tier (\cref{sec:methods}) isolates the PEF--information content relationship (\cref{eq:mi_closed}) from the finite-sample noise, mild non-normality, and team-level clustering present in the empirical KPIs. Data are generated to satisfy (A1)--(A2) exactly. The simulation then checks two claims. First, the integral is tracked by five-fold logistic regression, the same classifier family as the empirical protocol. Pairs are independent by construction, so the simulation does not use team-blocked folds. Second, the efficiency--power tension (\cref{sec:eff_power_theory}) arises as predicted. This is a check of internal consistency under the model's own assumptions, not an independent empirical test. The empirical tiers (\cref{sec:results}) provide the latter.
 
 \textbf{Data-generating process (A1).} For each grid cell $(\kappa,\rho,\delta/\sigma_{\mathrm{A}})$ we draw $n$ independent pairs from the bivariate normal
 \begin{equation}
@@ -72,20 +64,22 @@
 \end{equation}
 with $\sigma_{\mathrm{A}}=1$. This parameterisation fixes $\Var(X_{\mathrm{A}})=\sigma_{\mathrm{A}}^{2}$, $\Var(X_{\mathrm{B}})=\kappa\sigma_{\mathrm{A}}^{2}$, and $\Corr(X_{\mathrm{A}},X_{\mathrm{B}})=\rho$, so the variance ratio and correlation match their targets by construction. The relative feature $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ then has mean $\delta$ and variance $\Var(X)=\sigma_{\mathrm{A}}^{2}(1+\kappa-2\sqrt{\kappa}\,\rho)$, exactly the denominator of \cref{eq:pef}.
 
-\textbf{Outcome model (A2).} Binary outcomes are drawn from the probit link consistent with \cref{eq:hygx}:
+\textbf{Outcome model (A2).} Binary outcomes are drawn from the probit link in \cref{eq:hygx}:
 \begin{equation}
   Y_{i} \sim \mathrm{Bernoulli}\!\left(\Phi\!\left(\frac{X_{i}}{\sqrt{\Var(X)}}\right)\right),
   \label{eq:si_outcome}
 \end{equation}
-which makes $X$ the Bayes-sufficient statistic for $Y$ and yields analytic information content $I(X;Y)$ as in \cref{eq:mi_closed} and Bayes error $\Phi\!\bigl(-\delta/(2\sqrt{\Var(X)})\bigr)$.
+which makes $X$ the Bayes-sufficient statistic for $Y$. Analytic $I(X;Y)$ is the quadrature \cref{eq:mi_closed}. The Bayes accuracy of the sign rule is $\mathbb{E}[\Phi(|d_{\mathrm{rel}}+U|)]$, not $\Phi(-d_{\mathrm{rel}}/2)$.
 
 \textbf{Grid and Monte Carlo design.} The factorial grid is $\kappa\in\{0.8,1.0,1.2,2.0\}$, $\rho\in\{-0.3,-0.15,0,0.4\}$, and $\delta/\sigma_{\mathrm{A}}\in\{0.3,0.5,1.0,2.0\}$ (64 admissible cells; the admissibility constraint $1+\kappa-2\sqrt{\kappa}\,\rho>0$ holds throughout). Each cell uses $n=5{,}000$ pairs and is repeated over $50$ Monte Carlo trials with deterministic per-cell seeds (base seed $20{,}260{,}520$). The four named scenarios of \cref{tab:scenarios} are simulated identically.
 
 \textbf{Estimands.} For each cell we record (a)~the analytic quantities $\eta$, $\Var(X)$, $I(X;Y)$, and the Bayes accuracy bound, computed directly from $(\kappa,\rho,\delta,\sigma_{\mathrm{A}})$; and (b)~Monte Carlo estimates from the machine-learning protocol used throughout the paper, namely five-fold cross-validated logistic-regression accuracy for absolute features ($X_{\mathrm{A}}$ only), relative features ($X=X_{\mathrm{A}}-X_{\mathrm{B}}$), and the full pair $(X_{\mathrm{A}},X_{\mathrm{B}})$. The headline machine-learning improvement is the relative-minus-absolute accuracy difference, matching \cref{sec:methods}.
 
-\textbf{Validation 2 (PEF--information mapping).} At fixed signal strength, analytic $\eta$ and $I(X;Y)$ are strongly positively correlated ($r\approx0.87$ within the $\delta/\sigma_{\mathrm{A}}$ slice nearest the empirical median; \cref{sec:results}). Pooled across $\delta/\sigma_{\mathrm{A}}$ the correlation reverses sign ($r\approx-0.70$), because signal strength shifts $I(X;Y)$ independently of the $(\kappa,\rho)$ position: the iso-$\eta$ versus iso-$I$ divergence shown in \cref{fig:si_idealised_stratified,fig:si_iso_eta_I}. This confirms the manuscript's central caveat that $\eta$ alone does not determine predictive gain.
+\textbf{Validation 1 (parameter recovery).} Each cell records the Monte Carlo mean of $\hat\kappa$, $\hat\rho$, and $\hat\eta$. Across the 64 cells the mean absolute errors are $0.0036$ in $\kappa$, $0.0017$ in $\rho$, and $0.0021$ in $\eta$ (\texttt{idealised\_probit\_summary.txt}). The design points are recovered. This is the parameter-recovery check cited in \cref{sec:results}.
 
-\textbf{Validation 3 (efficiency--power tension).} All 16 Quadrant~4 grid cells with $\eta<1$ produced positive mean machine-learning improvement (\cref{fig:si_idealised_stratified}), reproducing the predicted tension (\cref{sec:eff_power_theory}) in a setting free of empirical confounds.
+\textbf{Validation 2 (PEF--information mapping).} $I(X;Y)$ is the exact integral \cref{eq:mi_closed}. Within each $\delta/\sigma_{\mathrm{A}}$ slice, $\mathrm{corr}(\eta,I(X;Y))=-0.87$ ($16$ cells; the four slices are $-0.868$, $-0.868$, $-0.867$, and $-0.862$). The sign is negative because a larger $\eta$ raises $d_{\mathrm{rel}}$ and lowers $I(X;Y)$ once $H(Y)$ is not fixed at $1$ bit. Pooled across the four slices the correlation is $-0.22$. Pooling attenuates the within-slice correlation. It does not reverse it. A correlation of about $-0.70$ quoted in earlier drafts was $\mathrm{corr}(I,\Delta\mathrm{ML})$ computed from the discarded discriminant expression. Under \cref{eq:mi_closed}, $\mathrm{corr}(I,\Delta\mathrm{ML})=0.71$ and $\mathrm{corr}(\eta,\Delta\mathrm{ML})=0.33$ on the full grid. Iso-$\eta$ and iso-$I$ contours still diverge across $\delta/\sigma_{\mathrm{A}}$ (\cref{fig:si_iso_eta_I}), which is the sense in which $\eta$ alone does not determine the gain.
+
+\textbf{Validation 3 (efficiency--power tension).} All 16 Quadrant~4 cells have $\eta<1$, and all 16 produced positive mean machine-learning improvement. That pattern is required by the floor $\Delta\mathrm{ML}\ge 0$ in Validation~4. It is a consistency check, not an empirical finding about Quadrant~4.
 
 \textbf{Validation 4 (a master surface and its envelope).} Under (A1)--(A2) the relativisation gain is a function of two coordinates, with closed-form bounds. The outcome depends on the pair only through $X$ (\cref{eq:si_outcome}). The relative feature is therefore Bayes-sufficient, and its optimal rule is the sign of $X$. Write the standardised relative signal
 \begin{equation}
@@ -101,46 +95,41 @@ The Bayes accuracy of the relative feature depends on $d_{\mathrm{rel}}$ alone,
 \end{equation}
 The absolute feature $A=X_{\mathrm{A}}$ is jointly Gaussian with $X$. Their correlation is
 \begin{equation}
-  r \;\equiv\; \Corr(A,X) \;=\; \frac{1-\rho\sqrt{\kappa}}{\sqrt{\,1+\kappa-2\sqrt{\kappa}\,\rho\,}} \;=\; (1-\rho\sqrt{\kappa})\sqrt{\frac{\eta}{1+\kappa}} .
+  r_{AX} \;\equiv\; \Corr(A,X) \;=\; \frac{1-\rho\sqrt{\kappa}}{\sqrt{\,1+\kappa-2\sqrt{\kappa}\,\rho\,}} \;=\; (1-\rho\sqrt{\kappa})\sqrt{\frac{\eta}{1+\kappa}} .
   \label{eq:si_r}
 \end{equation}
-Set $w=(A-\delta/2)/\sigma_{\mathrm{A}}\sim\mathcal{N}(0,1)$. The posterior is $\mathbb{E}[Y\mid A]=\Phi\!\bigl((d_{\mathrm{rel}}+rw)/\sqrt{2-r^{2}}\bigr)$, which is monotone in $A$. The Bayes rule therefore thresholds $A$, and
+This is the same coordinate as \cref{eq:rax}. Set $w=(A-\delta/2)/\sigma_{\mathrm{A}}\sim\mathcal{N}(0,1)$. The posterior is $\mathbb{E}[Y\mid A]=\Phi\!\bigl((d_{\mathrm{rel}}+r_{AX}w)/\sqrt{2-r_{AX}^{2}}\bigr)$, which is monotone in $A$. The Bayes rule therefore thresholds $A$, and
 \begin{equation}
-  \mathrm{acc}_{A}(d_{\mathrm{rel}},r) \;=\; \mathbb{E}_{w}\!\left[\Phi\!\left(\frac{|d_{\mathrm{rel}}+rw|}{\sqrt{2-r^{2}}}\right)\right].
+  \mathrm{acc}_{A}(d_{\mathrm{rel}},r_{AX}) \;=\; \mathbb{E}_{w}\!\left[\Phi\!\left(\frac{|d_{\mathrm{rel}}+r_{AX}w|}{\sqrt{2-r_{AX}^{2}}}\right)\right].
   \label{eq:si_accA}
 \end{equation}
 The relativisation gain is the two-parameter surface
 \begin{equation}
-  \Delta\mathrm{ML}(d_{\mathrm{rel}},r) \;=\; 100\,\frac{\mathrm{acc}_{R}(d_{\mathrm{rel}})-\mathrm{acc}_{A}(d_{\mathrm{rel}},r)}{\mathrm{acc}_{A}(d_{\mathrm{rel}},r)} .
+  \Delta\mathrm{ML}(d_{\mathrm{rel}},r_{AX}) \;=\; 100\,\frac{\mathrm{acc}_{R}(d_{\mathrm{rel}})-\mathrm{acc}_{A}(d_{\mathrm{rel}},r_{AX})}{\mathrm{acc}_{A}(d_{\mathrm{rel}},r_{AX})} .
   \label{eq:si_surface}
 \end{equation}
-Across the 64 grid cells this analytic surface reproduces the simulated $\Delta\mathrm{ML}$ almost exactly ($r=0.9998$; \cref{eq:si_surface} versus five-fold logistic CV). The machine-learning pipeline therefore attains the Bayes-optimal gain. No third coordinate is needed. The accuracy $\mathrm{acc}_{A}$ increases with $r$ from the majority-class baseline to $\mathrm{acc}_{R}$. At each $d_{\mathrm{rel}}$ the surface is bracketed by two closed-form envelopes:
+Across the 64 grid cells this analytic surface reproduces the simulated $\Delta\mathrm{ML}$ almost exactly (Pearson correlation $0.9998$; \cref{eq:si_surface} versus five-fold logistic CV). The machine-learning pipeline therefore attains the Bayes-optimal gain. No third coordinate is needed. The accuracy $\mathrm{acc}_{A}$ increases with $r_{AX}$ from the majority-class baseline to $\mathrm{acc}_{R}$. At each $d_{\mathrm{rel}}$ the surface is bracketed by two closed-form envelopes:
 \begin{equation}
-  \underbrace{0}_{\text{floor }(r\to1)} \;\le\; \Delta\mathrm{ML} \;\le\; \underbrace{100\left(\frac{g(d_{\mathrm{rel}})}{\Phi(d_{\mathrm{rel}}/\sqrt{2})}-1\right)}_{\text{ceiling }(r\to0)} .
+  \underbrace{0}_{\text{floor }(r_{AX}\to1)} \;\le\; \Delta\mathrm{ML} \;\le\; \underbrace{100\left(\frac{g(d_{\mathrm{rel}})}{\Phi(d_{\mathrm{rel}}/\sqrt{2})}-1\right)}_{\text{ceiling }(r_{AX}\to0)} .
   \label{eq:si_envelope}
 \end{equation}
-The floor is exact. With $X$ Bayes-sufficient, relativisation cannot reduce accuracy in this idealised setting, so $\Delta\mathrm{ML}\ge0$. The gain vanishes as $r\to1$, where $A$ coincides with $X$, and under signal saturation, where both accuracies approach one. The ceiling is attained as $r\to0$, where $A$ carries no outcome information and collapses to the marginal rate $\Phi(d_{\mathrm{rel}}/\sqrt{2})=\Pr(Y=1)$. From \cref{eq:si_drel}, large $\eta$ raises $d_{\mathrm{rel}}$ rather than lowering it. The percentage gain is largest when $d_{\mathrm{rel}}$ is modest, so accuracies have not saturated, and $r$ is small, so $A$ is poorly aligned with $X$. \Cref{fig:si_idealised_stratified}C shows the design points between these curves, coloured by $r$. The grid samples $r\in[0.32,0.83]$, so the visible upper edge is the $r=0.32$ contour, not the $r\to0$ ceiling.
+The floor is exact. With $X$ Bayes-sufficient, relativisation cannot reduce accuracy in this idealised setting, so $\Delta\mathrm{ML}\ge0$. The gain vanishes as $r_{AX}\to1$, where $A$ coincides with $X$, and under signal saturation, where both accuracies approach one. The ceiling is attained as $r_{AX}\to0$, where $A$ carries no outcome information and collapses to the marginal rate $\Phi(d_{\mathrm{rel}}/\sqrt{2})=\Pr(Y=1)$. From \cref{eq:si_drel}, large $\eta$ raises $d_{\mathrm{rel}}$ rather than lowering it. The percentage gain is largest when $d_{\mathrm{rel}}$ is modest, so accuracies have not saturated, and $r_{AX}$ is small, so $A$ is poorly aligned with $X$. \Cref{fig:si_idealised_stratified}B shows the design points between these curves, coloured by $r_{AX}$. The grid samples $r_{AX}\in[0.32,0.83]$, so the visible upper edge is the $r_{AX}=0.32$ contour, not the $r_{AX}\to0$ ceiling.
 
 \clearpage
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{figures/Figure_S1_idealised_I_vs_dML_overlay.png}
-  \caption{Idealised probit simulation (SI~\S2) under (A1)--(A2).
+  \caption{Idealised probit simulation (\cref{sec:si_probit}) under (A1)--(A2).
     Grid: $\kappa\in\{0.8,1.0,1.2,2.0\}$, $\rho\in\{-0.3,-0.15,0,0.4\}$,
     $\delta/\sigma_{\mathrm{A}}\in\{0.3,0.5,1.0,2.0\}$
     (64 cells; $n=5{,}000$, 50 trials, five-fold logistic CV).
-    (A)~The 16 $(\kappa,\rho)$ design points plotted against
-    $\tau=\tfrac12\log\kappa$ (\cref{eq:tau_remap}), so that $\kappa=1$ is the
-    horizontal axis. This paper's arguments use $(\kappa,\rho)$.
-    Dashed lines mark $\rho=0$ and $\tau=0$ (equivalently $\kappa=1$).
-    Marker shape encodes $\mathrm{sign}(\rho)$ (circle $\rho>0$, square $\rho=0$, triangle $\rho<0$).
-    (B)~$I(X;Y)$ versus mean $\Delta\mathrm{ML}$ (logarithmic $x$-axis).
+    (A)~$I(X;Y)$ versus mean $\Delta\mathrm{ML}$ (logarithmic $x$-axis).
     Colour is signal strength. Grey trajectories join the same $(\kappa,\rho)$ across the
     four $\delta/\sigma_{\mathrm{A}}$ values. The colour bands are signal strata, not PEF regimes.
-    (C)~Analytic gain surface $\Delta\mathrm{ML}=F(d_{\mathrm{rel}},r)$ from SI~\S2
-    ($r=0.9998$ versus simulated CV). Points are coloured by $r=\Corr(X_{\mathrm{A}},X)$.
-    The dashed curve is the $r\to0$ ceiling; the grey curve is the grid edge at $r=0.32$.}
+    (B)~Analytic gain surface $\Delta\mathrm{ML}=F(d_{\mathrm{rel}},r_{AX})$ from \cref{sec:si_probit}
+    (Pearson correlation $0.9998$ versus simulated CV). Points are coloured by $r_{AX}=\Corr(X_{\mathrm{A}},X)$.
+    The dashed curve is the $r_{AX}\to0$ ceiling; the grey curve is the grid edge at $r_{AX}=0.32$.}
   \label{fig:si_idealised_stratified}
 \end{figure}
 
@@ -149,46 +138,36 @@ The floor is exact. With $X$ Bayes-sufficient, relativisation cannot reduce accu
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\linewidth]{figures/Figure_S2_iso_eta_I_tension.png}
-  \caption{Idealised probit simulation (SI~\S2): iso-$\eta$ vs.\ iso-$I(X;Y)$.
-    (A)~Surface at median empirical $\delta/\sigma_{\mathrm{A}}=0.28$ (solid: $\eta$; dashed: $I$);
-    markers are factorial design points; yellow lines mark the cuts in (B)--(C).
-    (B)~Cut at $\kappa=1$: $\eta(\rho)$ is signal-invariant while $I(\rho)$ rises from the
-    empirical-median signal (solid) to the main-text Figure~2 nominal $\delta/\sigma_{\mathrm{A}}=1$ (dashed).
-    (C)~Cut at $\rho=0$: $\eta=1$ for all $\kappa$; again only $I$ moves with signal strength.}
+  \caption{Cuts of $\eta$ and $I(X;Y)$ under the probit model (\cref{sec:si_probit}).
+    Solid curves use the median empirical class separation $|\hat d_Y|$.
+    Dashed curves use $\delta/\sigma_{\mathrm{A}}=1$.
+    The solid curve is not a home--away gap.
+    (A)~Cut at $\kappa=1$: $\eta(\rho)$ does not depend on the signal, while $I(\rho)$ is lower at
+    $\delta/\sigma_{\mathrm{A}}=1$ than at the median $|\hat d_Y|$, because a larger relative signal makes $Y$ more nearly certain.
+    (B)~Cut at $\rho=0$: $\eta=1$ for all $\kappa$; again only $I$ moves with the signal, and it falls as the signal rises.}
   \label{fig:si_iso_eta_I}
 \end{figure}
 
 \clearpage
 
 % ---------------------------------------------------------------------------
-\section*{SI Section 3: Empirical Analysis}
+\refstepcounter{sisection}
+\section*{SI Section \thesisection: Empirical Analysis}
 \label{sec:si_landscape}
 
-\noindent This section supports the descriptive mapping (\cref{sec:outcome_defs,sec:results}) of the $\PEFtotalStudies{}$ rugby and football KPIs on the $(\kappa,\rho)$ plane, with quadrant aggregates. Main-text Figures~1--2 map exemplars on the PEF and information surfaces; Figure~3 is the confirmatory $\eta$--$\Delta\mathrm{ML}$ check. This section gives per-KPI detail (\cref{fig:si_kpi_labelled,fig:si_ipred_vs_dml}), quadrant-level aggregates (Table~S1), and quality-control checks. Throughout, $I_{\mathrm{pred}}(X;Y)$ denotes the plug-in of \cref{eq:mi_closed} at the estimated $(\hat\kappa,\hat\rho,\hat\delta,\hat\sigma_{\mathrm{A}})$. It is not a fitted mutual-information estimator, and it is not a global predictor of $\Delta\mathrm{ML}$.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\linewidth]{figures/Figure_S4_labelled_kpis.png}
-  \caption{Season-specific KPI positions and quadrant occupancy (rugby URC; football Championship;
-    seasons 23/24--24/25). (A, B)~rugby; (C, D)~football. Markers are coloured by quadrant
-    (Q1 green, Q2 blue, Q3 orange, Q4 red). (E)~share of KPIs in each quadrant, by season.
-    Year-on-year identity is not traced: arrows overstate small moves across $\kappa=1$ or $\rho=0$.
-    A minority of rugby KPIs cross a quadrant boundary between seasons. Football remains concentrated in Quadrant~3.
-    Main-text \cref{fig:pef_landscape,fig:info_surface} show four confirmatory exemplars only (\cref{tab:exemplars}).}
-  \label{fig:si_kpi_labelled}
-\end{figure}
-
-\clearpage
+\noindent This section supports the descriptive mapping (\cref{sec:outcome_defs,sec:results}) of the $\PEFtotalStudies{}$ rugby and football KPIs. The cloud is \cref{fig:pef_landscape}. This section gives class separation against $\Delta\mathrm{ML}$ (\cref{fig:si_ipred_vs_dml}), quadrant-level aggregates (Table~S1), and quality-control checks. The home--away gap is not plugged into $I(X;Y)$.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.85\linewidth]{figures/Figure_S5_Ipred_vs_dML.png}
-  \caption{Plug-in $I_{\mathrm{pred}}(X;Y)$ versus team-blocked five-fold $\Delta\mathrm{ML}$
+  \caption{Class separation does not line up with the accuracy change.
+    $\hat d_Y$ versus team-blocked five-fold $\Delta\mathrm{ML}$
     across $N=\PEFtotalStudies$ sports KPIs (pooled seasons 23/24--24/25).
-    Descriptive mapping only (\cref{sec:outcome_defs}). Most of these KPIs lie in Quadrant~3.
-    Linear correlation is weak ($r=\PEFcorrIpredML$). Labelled points are the five largest
-    $|\Delta\mathrm{ML}|$ values among action KPIs.
-    This panel does not support a global $I$ or $\eta$ mapping onto machine-learning gain.}
+    Most of these KPIs lie in Quadrant~3.
+    The correlation is $r=\PEFcorrIpredML$ (\cref{sec:outcome_defs}).
+    The correlation of $\hat\eta$ with $\Delta\mathrm{ML}$ on the same KPIs is $r=\PEFcorrEtaML$.
+    Labelled points are the five largest $|\Delta\mathrm{ML}|$ values among action KPIs.
+    The home--away gap is not the horizontal axis.}
   \label{fig:si_ipred_vs_dml}
 \end{figure}
 
@@ -223,15 +202,15 @@ The floor is exact. With $X$ Bayes-sufficient, relativisation cannot reduce accu
 \subsubsection*{Paired-difference normality}
 \label{sec:si_normality}
 
-The information-content mapping (\cref{eq:mi_closed}) uses assumption (A1) on the pair $(X_{\mathrm{A}},X_{\mathrm{B}})$. The relevant check for that approximation is the per-match paired difference $X=X_{\mathrm{A}}-X_{\mathrm{B}}$, not the separate home or away series. On the two-season primary window, mean Shapiro--Wilk $W$ for the difference series is $0.977$ in rugby and $0.986$ in football, with mean skewness $0.028$ and $0.069$ respectively (\texttt{normality\_commentary.csv}). Those figures are the source of the Shapiro--Wilk summaries reported in Methods (\cref{sec:qc}). Home and away series are more right-skewed, as expected for count KPIs. The PEF formula itself does not require normality.
+The information-content mapping (\cref{eq:mi_closed}) uses assumption (A1) on the pair $(X_{\mathrm{A}},X_{\mathrm{B}})$. The relevant check for that approximation is the per-match paired difference $X=X_{\mathrm{A}}-X_{\mathrm{B}}$, not the separate home or away series. On the two-season primary window the difference series rejects normality for $\PEFrugbySwReject\%$ of rugby KPIs and $\PEFfootSwReject\%$ of football KPIs. Mean Shapiro--Wilk $W$ is $0.977$ in rugby and $0.986$ in football, with mean skewness $0.028$ and $0.069$ (\texttt{normality\_commentary.csv}). Home and away series are more right-skewed, as expected for count KPIs. Low-count discrete KPIs can reject for that reason. The PEF formula itself does not require normality.
 
 \subsubsection*{Log-transform and Quadrant~4 bootstrap}
 \label{sec:si_landscape_qc}
 \label{sec:si_note_s1}
 
-A log-transform $Z=\log(X+1)$ on the \PEFrugbyNkpis{} rugby action KPIs preserves rank order by $\rho$ (Spearman $r_{s}=0.967$; mean $|\rho_{\log}-\rho|=0.032$). The mean PEF ratio is $\eta_{\log}/\eta=1.085$ (median $1.002$; paired $t$, $p=0.357$). That mean is pulled by rucks won. The transform is a sensitivity check for right-skewed counts, not a default step.
+A log-transform $Z=\log(X+1)$ on the \PEFrugbyNkpis{} rugby action KPIs preserves rank order by $\rho$ (Spearman $r_{s}=0.967$; mean $|\rho_{\log}-\rho|=0.032$). The mean of the KPI-wise ratios $\eta_{\log}/\eta$ is $1.085$ (median $1.002$; paired $t$, $p=0.357$). That mean is pulled by rucks won. The transform is a sensitivity check for right-skewed counts, not a default step.
 
-Team-stratified bootstrap 95\% intervals ($B=300$; home-team resampling) for tackles (rugby, Q4) are $[0.773,0.960]$ on $\hat\eta$, entirely below one. The confirmatory Q4 point estimate remains $\hat\eta=0.81$ for goalkeeper long balls (\cref{tab:exemplars}).
+Team-cluster bootstrap percentile intervals use $B=1{,}000$ home-team resamples (\cref{sec:qc}). For fouls, the confirmatory Quadrant~4 KPI, the interval for $\hat\eta$ is $[0.897, 1.027]$, which includes one (point estimate $\PEFexQfourEta$; \cref{tab:exemplars}). For tackles (rugby, Quadrant~4) the interval is $[0.773, 0.946]$, entirely below one. Away matches of a resampled club can remain in the bootstrap, because the cluster is the home team.
 
 \label{sec:si_practitioner}
 \label{sec:si_note_s4}

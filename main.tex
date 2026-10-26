@@ -14,6 +14,10 @@
 \usepackage{csquotes}
 \usepackage{hyperref}
 \usepackage[nameinlink,noabbrev]{cleveref}
+\newcounter{sisection}
+\renewcommand{\thesisection}{S\arabic{sisection}}
+\crefname{sisection}{SI section}{SI sections}
+\Crefname{sisection}{SI section}{SI sections}
 \usepackage[utf8]{inputenc}
 
 
@@ -67,7 +71,7 @@
 \DeclareMathOperator{\Corr}{Corr}
 \newcommand{\ind}{\mathbbm{1}}
 
-\title{When Should Team KPIs Be Absolute or Relative for Match-Outcome Prediction?}
+\title{Pairing Efficiency Does Not Decide Whether a Team KPI Should Be Relativised}
 
 \author{%
   M.~R. Brown\textsuperscript{1,*},

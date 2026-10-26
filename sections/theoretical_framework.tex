@@ -40,7 +40,7 @@ and convex in $\rho$,
   \frac{\partial^{2} \eta}{\partial \rho^{2}} = \frac{8\kappa(1+\kappa)}{\bigl(1+\kappa-2\sqrt{\kappa}\,\rho\bigr)^{3}} > 0.
   \label{eq:d2etadrho2}
 \end{equation}
-The sign of $\eta$ relative to unity partitions pairing into three interpretable regimes:
+The position of $\eta$ relative to $1$ partitions pairing into three interpretable regimes:
 \begin{itemize}
   \item $\eta>1$: pairing reduces variance (positive correlation dominates);
   \item $\eta=1$: pairing provides no efficiency change (Fisher baseline);
@@ -67,23 +67,20 @@ Statistical efficiency ($\eta$) alone cannot explain why relative features somet
 \subsubsection{Setup and Assumptions}
 \label{sec:mi_setup}
 
-We now connect PEF with predictive power. Let $Y\in\{0,1\}$ denote the \textbf{binary match outcome} (whether entity~A outperforms entity~B on the measure of interest), and let $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ be the corresponding relative feature. The predictive setting introduces a quantity beyond the second-moment pair $(\kappa,\rho)$ that governs PEF: the \textbf{signal}, or mean separation $\delta=\mu_{\mathrm{A}}-\mu_{\mathrm{B}}$ between the two entities. Whereas $(\kappa,\rho)$ fix the variance geometry of the relative feature, the magnitude of $\delta$ relative to $\sigma_{\mathrm{A}}$ determines how much of that geometry translates into predictive power. That distinction is developed in \cref{sec:signal_strength}. To express that link in closed form, two distributional assumptions are needed: one on the paired measurements themselves, and one on how the relative feature relates to the match outcome.
+We now connect PEF with predictive power. Let $Y\in\{0,1\}$ denote the binary match outcome and let $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ be the relative feature. The second-moment pair $(\kappa,\rho)$ fixes $\eta$. A further parameter, the mean of the relative feature, fixes how that geometry enters a probabilistic outcome. Two assumptions state the link. They are the data-generating process of the idealised simulation (Supplementary~\cref{sec:si_probit}).
 
 \begin{description}
-  \item[(A1)] $(X_{\mathrm{A}},X_{\mathrm{B}})$ follows a bivariate normal distribution with means $\mu_{\mathrm{A}}$, $\mu_{\mathrm{B}}$, variances $\sigma^{2}_{\mathrm{A}}$, $\sigma^{2}_{\mathrm{B}}$, and correlation $\rho$. Under (A1), $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ is normally distributed with mean $\delta=\mu_{\mathrm{A}}-\mu_{\mathrm{B}}$ and variance given by \cref{eq:var_factored}.
-  \item[(A2)] The class-conditional distributions of $X$ given $Y$ follow a symmetric Gaussian discriminant model:
+  \item[(A1)] $(X_{\mathrm{A}},X_{\mathrm{B}})$ is bivariate normal with means $\mu_{\mathrm{A}}$, $\mu_{\mathrm{B}}$, variances $\sigma^{2}_{\mathrm{A}}$, $\sigma^{2}_{\mathrm{B}}$, and correlation $\rho$. Then $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ is normal with mean $\delta=\mu_{\mathrm{A}}-\mu_{\mathrm{B}}$ and variance \cref{eq:var_factored}. In the simulation the means are $\delta/2$ and $-\delta/2$, so this marginal mean is exactly $\delta$.
+  \item[(A2)] Given $X=x$, the outcome is drawn from the probit link
   \[
-    X \mid Y=1 \;\sim\; \mathcal{N}\!\left(+\tfrac{\delta}{2},\,\Var(X)\right),
-    \quad
-    X \mid Y=0 \;\sim\; \mathcal{N}\!\left(-\tfrac{\delta}{2},\,\Var(X)\right),
+    Y \mid X=x \;\sim\; \mathrm{Bernoulli}\!\left(\Phi\!\left(\frac{x}{\sqrt{\Var(X)}}\right)\right),
   \]
-  with equal class priors $\mathbb{P}(Y=1)=\mathbb{P}(Y=0)=\tfrac{1}{2}$.
+  where $\Phi$ is the standard normal distribution function. $Y$ is not a deterministic function of $X$.
 \end{description}
 
-Under (A2), $Y$ is \emph{not} a deterministic function of $X$: the outcome depends on many factors beyond the single observed KPI difference, so $H(Y\mid X)>0$. The Gaussian discriminant model is the natural linear classifier for normally distributed features and is consistent with (A1) when the within-class variance equals the marginal $\Var(X)$.
+\noindent\textbf{Remark.} (A1) is used only for the information calculation. The PEF formula (\cref{eq:pef}) is distribution-free. Paired differences in the sports data are approximately normal (Supplementary~\cref{sec:si_normality}). (A2) is the simulation's outcome mechanism. It is not a claim that a single KPI generates match results.
 
-\medskip
-\noindent\textbf{Remark.} Assumption (A1) is empirically reasonable for the present data: the per-match paired difference series $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ in professional rugby and football are approximately normal, consistent with the central-limit behaviour of paired differences even where the individual team series are mildly skewed (\cref{sec:qc}; Supplementary~\cref{sec:si_normality}). Note that (A1) is required only for the information content derivation; the PEF formula itself (\cref{eq:pef}) is distribution-free. Assumption (A2) is an additional approximation for the predictive setting and is likewise not required for the PEF formula.
+The labelling convention is fixed throughout. Entity~A is the reference series and entity~B is the comparator, so $\kappa=\sigma^{2}_{\mathrm{B}}/\sigma^{2}_{\mathrm{A}}$. Swapping the labels sends $\kappa\mapsto 1/\kappa$ and leaves $\eta$ unchanged, because $\eta$ depends on the pair only through the variance of the difference. Quadrant labels that split on $\kappa=1$ do swap. In the sports data, A is the home side and B is the away side. In the finance series, A is the {S\&P}~500 and B is the constituent, so $\kappa=\sigma^{2}_{\mathrm{stock}}/\sigma^{2}_{\mathrm{index}}$ and is typically greater than $1$.
 
 \subsubsection{Derivation}
 
@@ -93,40 +90,51 @@ Under (A1) and (A2), predictive information is quantified as the mutual informat
   \label{eq:mi_def}
 \end{equation}
 
-\noindent Here $I(X;Y)$ is the mutual information (in bits) between the relative feature $X$ and the binary outcome $Y$; $H(Y)$ is the Shannon entropy of $Y$; and $H(Y\mid X)=\mathbb{E}_{X}[H(Y\mid X=x)]$ is the conditional entropy. For equiprobable outcomes, $H(Y)=1$ bit. Under (A2), the posterior probability of winning given the observed KPI difference is
-\[
-  \mathbb{P}(Y=1\mid X=x) = \Phi\!\left(\frac{x}{\sqrt{\Var(X)}}\right),
-\]
-where $\Phi$ is the standard normal CDF. The Bayes error rate is accordingly $\Phi\!\bigl(-\delta/(2\sqrt{\Var(X)})\bigr)$, and the expected conditional entropy evaluates to
+\noindent $H(Y)$ is the Shannon entropy of $Y$ in bits and $H(Y\mid X)=\mathbb{E}_{X}[h(Y\mid X=x)]$ is the conditional entropy. Write $h(p)=-p\log_{2}p-(1-p)\log_{2}(1-p)$ for the binary entropy, and standardise the mean of $X$ as
 \begin{equation}
-  H(Y\mid X) = H\!\left(\Phi\!\left(\frac{\delta}{2\sqrt{\Var(X)}}\right)\right),
+  d_{\mathrm{rel}} \;=\; \frac{|\delta|}{\sqrt{\Var(X)}} \;=\; \frac{|\delta|}{\sigma_{\mathrm{A}}}\sqrt{\frac{\eta}{1+\kappa}}.
+  \label{eq:drel}
+\end{equation}
+Under (A1)--(A2) the marginal success probability is $\mathbb{P}(Y=1)=\Phi(d_{\mathrm{rel}}/\sqrt{2})$, so $H(Y)=h(\Phi(d_{\mathrm{rel}}/\sqrt{2}))$. This is $1$ bit only when $d_{\mathrm{rel}}=0$. The conditional entropy is the one-dimensional integral
+\begin{equation}
+  H(Y\mid X) \;=\; \mathbb{E}\bigl[h\bigl(\Phi(d_{\mathrm{rel}}+U)\bigr)\bigr], \qquad U\sim\mathcal{N}(0,1),
   \label{eq:hygx}
 \end{equation}
-where $H(p)=-p\log_{2}p-(1-p)\log_{2}(1-p)$ is the binary entropy function. (Full derivation in Supplementary~\cref{sec:si_maths}.) The PEF formula rearranges to $\Var(X)=\sigma^{2}_{\mathrm{A}}(1+\kappa)/\eta$, linking variance geometry directly to $\eta$. Substituting into \cref{eq:hygx} yields
+and the mutual information is
 \begin{equation}
-  I(X;Y) = 1 - H\!\left(\Phi\!\left(\frac{\delta}{2\sigma_{\mathrm{A}}\sqrt{(1+\kappa)/\eta}}\right)\right).
+  I(X;Y) \;=\; h\!\left(\Phi\!\left(\frac{d_{\mathrm{rel}}}{\sqrt{2}}\right)\right) - H(Y\mid X).
   \label{eq:mi_closed}
 \end{equation}
+\noindent The integral is evaluated by quadrature (Supplementary~\cref{sec:si_maths}). $I(X;Y)$ depends on $(\kappa,\rho,\delta,\sigma_{\mathrm{A}})$ only through $d_{\mathrm{rel}}$. It is largest near $d_{\mathrm{rel}}=0$, where the outcome is balanced, and it falls toward $0$ as $d_{\mathrm{rel}}$ grows, because $\mathbb{P}(Y=1)$ tends to $0$ or $1$ and there is little outcome uncertainty left to explain. At a fixed ratio $\delta/\sigma_{\mathrm{A}}$, a larger $\eta$ raises $d_{\mathrm{rel}}$ and therefore lowers $I(X;Y)$. Cuts of $\eta$ and $I(X;Y)$ at $\kappa=1$ and at $\rho=0$, comparing the median empirical $|\hat d_Y|$ with $\delta/\sigma_{\mathrm{A}}=1$, are in Supplementary~\cref{fig:si_iso_eta_I}.
 
-\noindent Here $\delta$, $\sigma_{\mathrm{A}}$, $\Phi$, $H(p)$, $\kappa$, and $\eta$ retain their earlier definitions (\cref{sec:mi_setup}; \cref{eq:pef,eq:hygx}). This is the \textbf{PEF--information content relationship}. $\eta$ and $I(X;Y)$ are functionally linked through the signal-to-noise ratio $\delta/\bigl(2\sigma_{\mathrm{A}}\sqrt{(1+\kappa)/\eta}\bigr)$. $I(X;Y)$ measures how much knowing the relative KPI value~$X$ reduces uncertainty about the outcome. \Cref{fig:info_surface} visualises the information content surface $I(X;Y)$ across the $(\kappa,\rho)$ parameter space for the nominal case $\delta/\sigma_{\mathrm{A}}=1$; sensitivity of the surface to this parameter is examined in Supplementary~\cref{fig:si_info_sensitivity}.
+Binary entropy is concave on $[0,1/2]$. Writing $p(x)=\mathbb{P}(Y=1\mid X=x)$ and $P_{e}=\mathbb{E}[\min(p(X),1-p(X))]$ for the Bayes error,
+\begin{equation}
+  I(X;Y) \;\ge\; h\!\left(\Phi\!\left(\frac{d_{\mathrm{rel}}}{\sqrt{2}}\right)\right) - h(P_{e}).
+  \label{eq:mi_bound}
+\end{equation}
+This is a lower bound, not the value of $I(X;Y)$. The bound is derived in Supplementary~\cref{sec:si_maths}. An earlier equal-prior discriminant expression, $1-h(\Phi(d_{\mathrm{rel}}/2))$, is not this bound and is not $I(X;Y)$ under (A1)--(A2). Reported information uses \cref{eq:mi_closed}.
 
 \subsubsection{The Efficiency--Power Tension}
 \label{sec:eff_power_theory}
 
-From \cref{eq:mi_closed}, $\eta$ enters the information content formula through the denominator $\sqrt{(1+\kappa)/\eta}$. Consider two effects of negative correlation ($\rho<0$):
-\begin{enumerate}
-  \item \textbf{Variance increases:} $\eta<1$, meaning $\Var(X)>\Var_{\text{unpaired}}(X)$. This harms statistical efficiency.
-  \item \textbf{Signal may increase relative to noise:} if the mean difference $\delta$ is large relative to the amplified standard deviation, $I(X;Y)$ can still be substantial.
-\end{enumerate}
-Predictive power depends on $I(X;Y)$, not $\eta$ alone. When $\delta$ is sufficiently large relative to the amplified standard deviation, the information content remains high despite increased variance. This accounts for cases where machine learning models benefit from relative features even when $\eta<1$.
+Negative correlation ($\rho<0$) makes $\eta<1$: the paired difference has larger variance than the unpaired baseline. That is a statement about efficiency. It is not a statement about classification accuracy.
 
-Statistical harm ($\eta<1$) and predictive harm ($\Delta\mathrm{ML}<0$; \cref{sec:ml_cv}) are not the same test. The first means the difference has larger variance than unpaired measurement. The second means the difference is a worse classifier than the absolute KPI. The two can disagree (\cref{sec:exemplars}).
+Under (A1)--(A2) the outcome depends on the pair only through $X$, so $X$ is Bayes-sufficient for $Y$. The accuracy of the relative feature is then a function of $d_{\mathrm{rel}}$ alone. The accuracy of the absolute feature $X_{\mathrm{A}}$ depends on $d_{\mathrm{rel}}$ and on
+\begin{equation}
+  r_{AX} \;=\; \Corr(X_{\mathrm{A}},X) \;=\; \frac{1-\rho\sqrt{\kappa}}{\sqrt{1+\kappa-2\sqrt{\kappa}\,\rho}}.
+  \label{eq:rax}
+\end{equation}
+The relativisation gain $\Delta\mathrm{ML}$ is the percentage gap between those two accuracies (Supplementary~\cref{sec:si_probit}, Validation~4). Because $X$ is Bayes-sufficient, the gain cannot be negative inside this model: $\Delta\mathrm{ML}\ge 0$. The gain is large when $d_{\mathrm{rel}}$ is modest, so accuracies have not saturated, and when $r_{AX}$ is small, so $X_{\mathrm{A}}$ is poorly aligned with $X$. The gain is not a function of $\eta$ alone. Even the Fisher baseline $\eta=1$ produces a positive gain in the simulation (\cref{tab:scenarios}).
+
+Cells of the simulation in which $\eta<1$ and $\Delta\mathrm{ML}>0$ are therefore a consistency check of Validation~4, not evidence that a quadrant predicts the sign of the gain. Empirical harm, $\Delta\mathrm{ML}<0$, occurs outside (A1)--(A2), when the match outcome is not generated from that single KPI (\cref{sec:exemplars}).
+
+Statistical harm ($\eta<1$) and predictive harm ($\Delta\mathrm{ML}<0$; \cref{sec:ml_cv}) are different comparisons. The first compares the paired variance with an unpaired variance. The second compares the paired feature with $X_{\mathrm{A}}$ alone. Those baselines are not the same.
 
 \subsection{Sources of Correlation in Paired Comparisons}
 
 Having linked $\eta$ to predictive information, we turn to the origins of $\rho$ itself. Paired measurements acquire correlation through three generic mechanisms, each of which appears across competitive and non-competitive domains:
 \begin{itemize}
-  \item \textbf{Shared exogenous factors.} Conditions common to both entities move their measurements together, inducing positive correlation. Examples include market-wide movements in finance, batch, instrument, or site effects in manufacturing and clinical measurement, and weather, venue, or officiating in sport.
+  \item \textbf{Shared exogenous factors.} Conditions common to both entities move their measurements together, inducing positive correlation. Examples include market-wide movements in finance, batch, instrument, or site effects in clinical measurement, and weather, venue, or officiating in sport.
   \item \textbf{Zero-sum interaction.} When one entity's gain is the other's loss, their measurements move oppositely, inducing negative correlation. Examples include rivals competing for a fixed market share, and head-to-head contests in which possession or territory ceded by one competitor accrues directly to the other.
   \item \textbf{Non-zero-sum (common-mode) constraints.} When both entities can succeed or fail together, positive correlation can arise even under competition. Examples include firms lifted or depressed by a common sector trend, and matches in which both teams perform well in open, high-tempo play.
 \end{itemize}
@@ -134,25 +142,32 @@ The sign and magnitude of $\rho$ therefore reflect which mechanism dominates in 
 
 \subsection{Quadrant Taxonomy}
 
-Each KPI occupies a position in the $(\kappa,\rho)$ plane shaped by these mechanisms. Dividing that plane at $\kappa=1$ and $\rho=0$ yields four quadrants with distinct statistical and predictive properties (\cref{tab:quadrants}). The same partition appears in \cref{fig:pef_landscape,fig:info_surface}, which map $\eta$ and $I(X;Y)$ respectively at nominal signal strength; the four confirmatory exemplars of \cref{tab:exemplars} (one per quadrant, with season-to-season drift segments) are annotated on both figures. The regimes are:
+Each KPI occupies a position in the $(\kappa,\rho)$ plane shaped by these mechanisms. Dividing that plane at $\kappa=1$ and $\rho=0$ yields four quadrants (\cref{tab:quadrants}). The split on $\rho=0$ is the efficiency split: $\eta>1$ when $\rho>0$ and $\eta<1$ when $\rho<0$, for every admissible $\kappa$. The split on $\kappa=1$ records which series is more variable. It does not rank $I(X;Y)$. At fixed $\delta/\sigma_{\mathrm{A}}$, \cref{eq:mi_closed} moves with $d_{\mathrm{rel}}$, and a larger variance lowers $d_{\mathrm{rel}}$ and raises $I(X;Y)$. Quadrant membership is therefore a description of efficiency and of the labelling of A and B. It is not, by itself, a rule for the feature. The sports cloud is \cref{fig:pef_landscape}. The four exemplars are the rows of \cref{tab:exemplars}.
 
-\textbf{Quadrant 1 ($\kappa>1$, $\rho>0$): High efficiency, high information.} Positive correlation combined with variance asymmetry produces $\eta>1$ with high information content. Relative features outperform absolute features in this regime. Exemplified by market-adjusted returns and paired clinical trials.
+\textbf{Quadrant 1 ($\kappa>1$, $\rho>0$): efficient, B more variable.} Positive correlation gives $\eta>1$, and the comparator is more variable than the reference. Market-adjusted returns usually fall here because the stock is more variable than the index.
 
-\textbf{Quadrant 2 ($\kappa<1$, $\rho>0$): High efficiency, moderate information.} Positive correlation provides variance reduction even with low variance ratio, though information content is lower than Quadrant~1. Exemplified by manufacturing control charts.
+\textbf{Quadrant 2 ($\kappa<1$, $\rho>0$): efficient, A more variable.} Positive correlation again gives $\eta>1$, but the reference series is the more variable one. Swapping the sports labels home and away exchanges Quadrant~1 with Quadrant~2.
 
-\textbf{Quadrant 3 ($\kappa<1$, $\rho<0$): Low efficiency, low information.} Negative correlation with low variance asymmetry amplifies variance without commensurate information gain. Relativisation is then predictively harmful ($\Delta\mathrm{ML}<0$), so absolute features are preferred. Exemplified by high-volume invasion-game KPIs (passes, pressures, duels) and by weakly competitive or near-independent measurements.
+\textbf{Quadrant 3 ($\kappa<1$, $\rho<0$): inefficient, A more variable.} Negative correlation gives $\eta<1$. High-volume invasion-game counts often fall here. Whether the absolute feature then classifies better is an empirical question. The probit model cannot produce $\Delta\mathrm{ML}<0$.
 
-\textbf{Quadrant 4 ($\kappa>1$, $\rho<0$): Low efficiency, variable information.} Here $\eta<1$ indicates statistical harm, yet information content may remain substantial when $\delta$ is large. The decision to relativise requires explicit analysis of both $\eta$ and $I(X;Y)$. Exemplified by asymmetric head-to-head pairings ($\kappa>1$ with $\rho<0$), including some sports KPIs and competitive business comparisons.
+\textbf{Quadrant 4 ($\kappa>1$, $\rho<0$): inefficient, B more variable.} Again $\eta<1$. The $\kappa$ split distinguishes this cell from Quadrant~3 only through which side is more variable. Every Quadrant~4 cell has $\eta<1$, so that clause does not add a further restriction.
 
 \subsection{Signal Strength and the Limits of \texorpdfstring{$\eta$}{eta} as a Predictor}
 \label{sec:signal_strength}
 
-Quadrant position fixes the directional regime; signal strength fixes the magnitude of predictive gain within that regime. From \cref{eq:mi_closed}, $I(X;Y)$ depends on $\eta$ through $\sqrt{(1+\kappa)/\eta}$, but also on the signal-to-noise ratio
+In the simulation, $\delta=\mathbb{E}[X]$ is the mean of the relative feature and
 \begin{equation}
-  \frac{\delta}{\sigma_{\mathrm{A}}} = \frac{\mu_{\mathrm{A}} - \mu_{\mathrm{B}}}{\sigma_{\mathrm{A}}},
+  \frac{\delta}{\sigma_{\mathrm{A}}} = \frac{\mu_{\mathrm{A}} - \mu_{\mathrm{B}}}{\sigma_{\mathrm{A}}}
   \label{eq:delta_ratio}
 \end{equation}
-the standardised mean difference between the two entities. Two KPIs with identical $(\kappa,\rho)$, and therefore identical $\eta$, can still differ in $I(X;Y)$ and in $\Delta\mathrm{ML}$ if $\delta/\sigma_{\mathrm{A}}$ differs. The diagnostic is therefore the $(\kappa,\rho,\delta/\sigma_{\mathrm{A}})$ triple: quadrant for direction, $\delta/\sigma_{\mathrm{A}}$ estimated from data for magnitude. Supplementary~\cref{fig:si_iso_eta_I} shows how iso-$\eta$ and iso-$I(X;Y)$ contours diverge once $\delta/\sigma_{\mathrm{A}}$ varies. \Cref{sec:exemplars} illustrates this with four quadrant exemplars.
+sets $d_{\mathrm{rel}}$ once $(\kappa,\rho)$ are fixed. Two design points with the same $\eta$ can still have different $I(X;Y)$ and different $\Delta\mathrm{ML}$ when this ratio differs. Supplementary~\cref{fig:si_iso_eta_I} shows the resulting divergence of iso-$\eta$ and iso-$I$ contours.
+
+That ratio is not the empirical predictive signal. Estimated from home and away means, $(\bar X_{\mathrm{A}}-\bar X_{\mathrm{B}})/s_{\mathrm{A}}$ is the home--away gap on the KPI. A league with no home advantage has that gap near zero for every KPI, while winners and losers can still differ. The predictive separation used to match exemplars is the class-conditional gap in the relative feature,
+\begin{equation}
+  \hat d_{Y} \;=\; \frac{\bar X_{Y=1} - \bar X_{Y=0}}{s_{X}},
+  \label{eq:class_sep}
+\end{equation}
+with $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ and $Y$ the home-win indicator (\cref{sec:methods}). The coordinate $r_{AX}$ in \cref{eq:rax} is algebraic in $(\hat\kappa,\hat\rho)$ and does not require a further estimate. \Cref{sec:exemplars} matches one KPI per quadrant on $\hat d_{Y}$.
 
 \subsection{Cross-Domain Connections}
 
@@ -168,11 +183,10 @@ The same quadrant logic applies across fields. \Cref{tab:cross_domain} situates 
     \textbf{Field} & \textbf{Method} & \textbf{Correlation source} & \textbf{Typical PEF regime} \\
     \midrule
     Statistics & Paired $t$-test & Repeated measures & $\eta=1/(1-\rho)$ when $\kappa=1$ \\
-    Finance & Market-adjusted returns & Market factors & Q1: $\eta>1$, high $\rho$ \\
-    Healthcare & Paired clinical trials & Temporal/biological & Q1--Q2: $\eta\gg 1$ \\
-    Manufacturing & Control charts & Process dynamics & Q2: $\eta>1$, moderate $\rho$ \\
+    Finance & Market-adjusted returns & Market factors & Typically Q1: $\kappa>1$, $\rho>0$ \\
+    Healthcare & Paired clinical readings & Same-visit biology & Q2 in this study: $\eta\gg 1$ \\
     Sports & Relative metrics & Environmental/competitive & Q3-dominant; Q4 when $\kappa>1$ \\
     \bottomrule
   \end{tabular}}
 \end{table}
-When two domains share similar $(\kappa,\rho)$ values, techniques from one may transfer to the other, for example, methods from healthcare (high-$\rho$ settings) to manufacturing contexts with similar correlation structures.
+Finance uses A as the index and B as the stock, so the typical cell is Quadrant~1. Two of the eighteen constituents have $\kappa<1$ and sit in Quadrant~2. Healthcare in this study is a single systolic--diastolic pair with $\kappa<1$ and $\rho>0$, hence Quadrant~2. Shared $(\kappa,\rho)$ values are a geometric resemblance. They are not a transfer of the sports classification result.

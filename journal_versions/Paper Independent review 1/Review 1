@@ -1,0 +1,315 @@
+I can't save files in this conversation, but here's the full review as Markdown. Copy everything inside the block into a file named `PEF_presubmission_review.md`.
+
+````markdown
+# Pre-submission Review: "When Should Team KPIs Be Absolute or Relative for Match-Outcome Prediction?"
+
+**Manuscript:** PEF-empirical (Brown, Kilduff, Scott, Dingle, Evans, O'Hara, Morris)
+**Review date:** 25 October 2026
+**Files reviewed:** `main.tex`, `abstract.tex`, `introduction.tex`, `theoretical_framework.tex`, `methodology.tex`, `results.tex`, `discussion.tex`, `conclusion.tex`, `data_availability.tex`, `tables_and_figures.tex`, `supplementary.tex`, `appendix.tex`, `references.bib`
+**Not available to reviewer:** `scripts/paper_pipeline/outputs/numbers.tex`, `finalize_correlations.tex`, figure files, compiled PDF
+
+---
+
+## Overall assessment
+
+The question is useful, the writing is mostly clear, and the paper is honest about limitations. The SI's analytic gain surface (Validation 4) is the strongest piece of theory in the submission.
+
+However, several problems are likely to be caught by a competent statistical referee:
+
+- some internal mathematical inconsistencies;
+- one reported result that cannot be correct as described;
+- one probable dataset misidentification;
+- a LaTeX cross-referencing problem that will print wrong numbers.
+
+**Recommendation:** Not ready for submission this week unless the Part A items are resolved. Most are a few days' work. Item A3 (signal measure) may require re-analysis.
+
+---
+
+## Part A: Must fix before submission
+
+### A1. Assumptions (A1) and (A2) contradict each other; the closed form is a bound, not an equality
+
+**The means don't match.** (A1) states that X = X_A − X_B has marginal mean δ = μ_A − μ_B. (A2) states X | Y=1 ~ N(+δ/2, Var X) and X | Y=0 ~ N(−δ/2, Var X) with equal priors. Under (A2):
+
+- the marginal mean of X is **0**, not δ;
+- the marginal variance is **Var(X) + δ²/4**, not Var(X).
+
+Both cannot hold unless δ = 0. The appendix compounds this by stating the equal-prior mixture "has mean δ/2", which is incorrect.
+
+**The posterior is wrong for (A2).** Under the symmetric Gaussian discriminant model, the posterior P(Y=1 | X=x) is **logistic**, σ(δx/Var X), not Φ(x/√Var X).
+
+**Two different models carry the same label.** The probit posterior belongs to the SI data-generating process, where X ~ N(δ, Var X) and Y ~ Bernoulli(Φ(X/√Var X)). In that model:
+
+- P(Y=1) = Φ(d_rel/√2) ≠ ½, so H(Y) ≠ 1 bit;
+- the stated Bayes error Φ(−δ/(2√Var X)) is not correct.
+
+The main text and SI therefore use two different models, both labelled "(A1)–(A2)".
+
+**Eq. (hygx) is stated as an equality but isn't one.** The appendix writes "≈". In fact a direction can be stated. For binary Y:
+
+- H(Y|X) = E[h(min(p, 1−p))];
+- binary entropy is concave on [0, ½];
+- so by Jensen, **H(Y|X) ≤ h(P_e)**.
+
+Therefore eq. (mi_closed) is a **lower bound** on I(X;Y), not its value.
+
+**Suggested fix:**
+
+- Adopt one generative model throughout. The SI probit model is the one used by the simulation and Validation 4. Its algebra checks out:
+  - d_rel;
+  - Corr(A, X);
+  - the conditional posterior Φ((d_rel + rw)/√(2 − r²));
+  - acc_A and acc_R.
+- Then either present eq. (mi_closed) explicitly as a lower bound under the GDA model, or compute I(X;Y) exactly by 1-D numerical integration.
+- Tables 3 (boundary) and 4 (scenarios) are arithmetically consistent with the formula as written. Spot checks reproduce 0.056, 0.108, 0.028, 0.029, 0.044 and 0.087. They need relabelling as bound values or recomputing.
+
+### A2. The pooled correlation r ≈ −0.70 cannot be correct as described
+
+Results (Efficiency–Power Alignment) and SI Validation 2 claim that pooling across δ/σ_A reverses the η–I(X;Y) correlation to r ≈ −0.70. On a full factorial grid this is impossible:
+
+- η does not depend on δ, so every δ-slice contains the same 16 η values.
+- The between-slice covariance component is therefore zero.
+- Pooled covariance is thus the average of the within-slice covariances.
+- Within each slice the covariance is positive. On the grid, η is almost a function of ρ alone (≈0.77, 0.87, 1.00, 1.66 at every κ), and I(X;Y) increases with ρ at every κ.
+
+Pooling can attenuate the correlation but cannot flip its sign. The −0.70 is probably a correlation between a different pair of quantities (e.g. η vs ΔML, or a transformed variable), or a pipeline bug. **Trace before submission.** The narrative in the Results and in Fig. S2 relies on this sign reversal.
+
+**Minor inconsistency.** The Results quote r ≈ 0.87 "at fixed δ/σ_A = 1". The SI quotes it "within the slice nearest the empirical median" (0.3). These are different slices.
+
+### A3. δ means two different things; empirical "signal strength" measures home advantage, not predictive signal
+
+- In (A1), δ = μ_A − μ_B is the mean home-minus-away difference.
+- In (A2), δ is the separation between the win and loss classes.
+- Empirically, δ̂/σ̂_A = (X̄_A − X̄_B)/s_A, i.e. the **home advantage on that KPI**.
+
+That is not the predictive signal. In a perfectly balanced league with no home advantage, δ = 0 for every KPI, yet KPIs would still predict outcomes, because winners out-ruck losers regardless of venue.
+
+**Consequences:**
+
+- The "matched signal" design of the confirmatory exemplars is compromised.
+- The rucks-won explanation ("teams are almost equally matched on average") describes a small home–away gap, not a lack of association with winning.
+
+**Suggested fix:** Use the class-conditional standardised separation, (E[X | Y=1] − E[X | Y=0])/SD, or the SI's own coordinates (d_rel, r). Re-estimate and re-match the exemplars on that basis. **This is the item most likely to require new analysis.**
+
+### A4. Quadrant information labels contradict the paper's own formula
+
+Table 2 and the Theory section assign Q1 (κ>1, ρ>0) "high" information, Q2 (κ<1) "moderate", Q3 "low" and Q4 "variable".
+
+At fixed δ/σ_A, however, I(X;Y) increases with 1/Var(X) = 1/(σ²_A(1 + κ − 2√κρ)). Larger κ generally inflates Var(X) and **lowers** information. Table 3 itself shows this:
+
+- κ→0 gives I = 0.108;
+- κ→∞ gives I→0.
+
+A grid example at ρ = 0.4: 1/Var X is 0.92 at κ = 0.8 but 0.54 at κ = 2. So **Q2 carries more information than Q1, and Q3 more than Q4**, at matched δ/σ_A. The labels need rewriting.
+
+### A5. Quadrant membership depends on which team is labelled "A"
+
+Swapping labels sends κ → 1/κ. η is invariant under the swap, but the κ = 1 boundary is not, so Q1↔Q2 and Q3↔Q4 assignments flip with labelling.
+
+**Consequences:**
+
+- With A = home, "Q3 vs Q4" means "is the home side's KPI more or less variable than the away side's". That is an odd basis for opposite recommendations.
+- **The κ split adds nothing to η's regime.** η < 1 if and only if ρ < 0, for any κ. The κ split matters for ΔML only because the absolute comparator is X_A specifically.
+- **Finance placement is suspect.** With A = stock and B = index, κ = σ²_index/σ²_stock is typically < 1 (Q2), but Table 1 (cross-domain) places finance in Q1. Check that the labelling convention is consistent.
+
+**Suggested fix:** State and justify the labelling convention, or reframe around r = Corr(X_A, X) (see A6), which handles the asymmetry naturally.
+
+### A6. η answers a different question from the ML comparison
+
+- **What η compares:** the paired difference X_A − X_B against an *unpaired* difference of the same quantities.
+- **What ΔML compares:** the paired difference against X_A *alone*.
+
+These are different baselines. Under the SI model, relativisation can never reduce accuracy (the ΔML ≥ 0 floor). The gain is governed by d_rel and r = Corr(X_A, X), not η directly. Even the Fisher baseline (η = 1) shows +7.9% gain in Table 4.
+
+**Consequences:**
+
+- "All 16 Q4 cells with η<1 produced positive gain" (SI Validation 3; Results) is **guaranteed by construction**, as is the claim that the first two scenarios "illustrate the tension". Q3 cells would also show positive gain. Referees will call these tautological. Present them as consistency checks, not as evidence.
+- "All 16 Quadrant 4 grid cells with η<1" is redundant, because every Q4 cell has η<1.
+- Empirical Q3 harm (passes) and the rucks-won harm occur *outside* the model. The Q3 "prefer absolute features" recommendation is therefore empirical, not theory-derived, and currently rests on one exemplar.
+- The abstract's claim that the PEF "places every metric in one of four regimes that indicate whether relativisation should help or should be avoided" overstates what the theory delivers.
+
+**Suggested fix:**
+
+- Promote the (d_rel, r) gain surface (SI Validation 4) into the main Theory section as the operative account of relative-vs-absolute gain.
+- Keep η as the efficiency characterisation (Fisher/Pitman).
+- Support the Q3 harm claim with all Q3 KPIs (Table S1), not one exemplar.
+
+### A7. The "manufacturing" dataset is very likely misidentified
+
+The Methods description does not fit the Bosch Production Line Performance data, which is a large dataset with over a million rows of anonymised station measurements. The description includes:
+
+- 8,192 cycles;
+- θ₁–θ₆ (angular positions) and their velocities;
+- τ₁–τ₅ (torques) and dm₁–dm₅.
+
+This matches the variable naming and row count of the **DELVE puma family** (e.g. puma32H). These are *simulated* Puma 560 robot-arm dynamics, not real CNC telemetry.
+
+**Action:** Verify what OpenML 752 actually is. If confirmed, the following are factually wrong:
+
+- "real CNC process telemetry" and "Bosch production cycle" in Methods;
+- the Table 1 notes;
+- the bib entry.
+
+**Additional methodological problems, even if the identity is resolved:**
+
+- Each "PEF estimate per cycle" is computed across only 6 (or 5) axes within one row. That is a correlation from n = 5–6 non-exchangeable points.
+- The pairs combine quantities in different units (angle vs angular velocity; torque vs dm). This makes κ unit-dependent and the "relative feature" physically meaningless.
+
+**Recommendation:** Replace this domain or drop it.
+
+### A8. Cross-references to starred SI sections will print wrong numbers
+
+A `\label` after `\section*`, `\subsection*` or `\subsubsection*` attaches to the last stepped counter, typically the last numbered section or Figure 3. The following will therefore render misleadingly (e.g. "section 6" or "figure 3"):
+
+- `sec:si_maths`, `sec:si_probit`, `sec:si_normality`, `sec:si_qc`, `sec:si_landscape`
+- `sec:si_practitioner`, `sec:pitman`, `sec:si_tau`
+- `sec:data_availability`
+
+**Fix options:**
+
+- Numbered SI sections: reset the section counter and use `\renewcommand{\thesection}{S\arabic{section}}`.
+- Or `\phantomsection` + `\label` with manually worded references.
+
+**Related issues:**
+
+- Methods: `Figures~\cref{fig:si_kpi_labelled,fig:si_ipred_vs_dml}` renders as "Figures figures S4 and S5" because cleveref already prints the name.
+- `\cref{sec:theory} (\S2.1)` hard-codes a section number.
+
+### A9. Undefined macros will break compilation
+
+Without `numbers.tex` (not seen), these macros have **no fallback** in `main.tex`:
+
+- `\PEFlandscapeQthreeN`, `\PEFlandscapeQthreePct`
+- All `\PEFexQ…` exemplar macros (`Kappa`, `Rho`, `Eta`, `DeltaRatio`, `Dml` for Q1–Q4)
+- `\PEFexDeltaRatioLo`, `\PEFexDeltaRatioHi`
+- All `\PEFexRucks…` macros
+- `\PEFqOneNkpis` … `\PEFqFourNkpis`
+- `\PEFqTwoCIlo`/`hi`, `\PEFqThreeCIlo`/`hi`
+- `\PEFcorrIpredML`
+
+**Failure modes:**
+
+- If `numbers.tex` is missing, these are undefined control sequences.
+- If `numbers.tex` uses `\renewcommand` on a macro never `\newcommand`-ed, LaTeX throws an error.
+
+**Fix:** Use `\providecommand` for all fallbacks and `\renewcommand` (or `\def`) in the pipeline output.
+
+**Housekeeping:**
+
+- Unused macros: `\PEFmlCorr`, `\PEFmlRsq`, `\PEFmlMAE`, `\PEFmlRMSE`, `\PEFmedianDeltaRatio`.
+- Hard-coded numbers that should be macros to stay in sync with the pipeline:
+  - 0.28 in the Fig. S2 caption;
+  - the healthcare CI [2.448, 2.622];
+  - the healthcare SE 0.04.
+- **Compile the final PDF and search for "???" before uploading.**
+
+---
+
+## Part B: Points referees will very likely raise
+
+### B1. Outcome definition for football
+Championship matches produce many draws. Define "binary match outcome": home win vs not, or draws excluded? This affects class balance and therefore accuracy-based ΔML.
+
+### B2. Uncertainty on ΔML
+- There are roughly 288 URC games (16 teams × 18 rounds ÷ 2 × 2 seasons) and about 1,100 Championship games.
+- The binomial SE of accuracy is therefore several percentage points in rugby.
+- Exemplars need confidence intervals or a paired test (McNemar, or a fold-level paired comparison). Otherwise "near-zero" (Q4) and the Q1–Q3 signs cannot be distinguished from noise.
+- Report a proper scoring rule (log-loss/Brier) and AUC alongside accuracy, plus the majority-class baseline.
+
+### B3. Exemplar selection
+- Hand-picked exemplars will be read as cherry-picked unless the selection rule was pre-specified and stated.
+- The Q4 exemplar sits on the κ = 1 boundary, so there is no clear empirical Q4 demonstration.
+- The SI bootstrap uses **tackles** as the Q4 case. Why not make tackles the exemplar?
+- The Q2 and Q4 exemplars (long balls, goalkeeper long balls) are overlapping constructs.
+
+### B4. The absolute comparator
+Comparing X_A − X_B against X_A alone is unusual. The natural absolute model uses (X_A, X_B), which nests the difference model under the constraint β_A = −β_B. This is flagged as out of scope, but expect a referee to request it. It is the comparison practitioners make (cf. Brito's "isolated team statistics").
+
+### B5. Team-blocked CV is only half-blocked
+- Each team's away matches remain in training when its home matches are held out, so team identity still leaks.
+- For a one-feature, two-parameter logistic model, leakage likely matters little anyway. Describe it more modestly than "removes the dominant source of dependence".
+- The cluster bootstrap has the same home-only structure.
+- B = 300 is small; 1,000–2,000 is conventional.
+
+### B6. Normality evidence
+- Mean Shapiro–Wilk W is a weak summary at n ≈ 1,100.
+- Report the proportion of KPIs rejecting normality, or QQ-plot summaries.
+- Low-count KPIs (e.g. goalkeeper long balls) are the most likely to be visibly discrete.
+
+### B7. Genomics selection bias
+Ranking genes by paired-differential signal preferentially selects small Var(difference), i.e. high ρ, which inflates η. State this, or select genes by a ρ-independent criterion.
+
+### B8. Novelty framing
+The provenance is acknowledged (variance of a difference, Fisher, Pitman–Morgan, Pitman ARE of paired vs two-sample tests), but a referee may still call the formula textbook. The genuinely new contributions are the feature-construction reframing and the (d_rel, r) surface. Leaning into the latter (A6) addresses this directly.
+
+---
+
+## Part C: Smaller presentation fixes
+
+- **Tautological wording (Results).** "KPIs with positive correlation concentrate in Quadrants 1–2 and typically yield η̂>1": they always do, by definition. The same applies to the ρ ≤ 0 sentence.
+- **η wording.** "The sign of η relative to unity" should read "the position of η relative to 1"; η > 0 always.
+- **Symbol overloading.**
+  - r is used both for a Pearson correlation of results (r = 0.9998) and for Corr(X_A, X). Suggest renaming the latter (e.g. ψ).
+  - τ is both torque (Methods) and the log-SD ratio (SI).
+- **Log-transform notation.** The SI gives a mean of ratios (η_log/η = 1.085); the Discussion gives a ratio of means (η̄_log/η̄). Pick one.
+- **Pitman proof, Qualification 2.** The Neyman-allocation noncentrality expression is garbled. Derive it cleanly or simply state that unequal allocation changes the ARE.
+- **SI validation numbering.** Validations run 2–4 with no Validation 1. The Results also refer to "parameter-recovery checks" that the SI does not report.
+- **Introduction.**
+  - "Observational win-probability estimators are themselves high-variance objects" reads as a non sequitur in context.
+  - "The same pattern holds in Australian sub-elite rugby" is ambiguous about which pattern.
+- **Discussion.** "The first two answers yield a prior…" reads oddly without restating the questions.
+- **Table 1.** "n studies" would be clearer as "n units".
+- **References.**
+  - Verify DOIs, volumes and issues for the 2026 entries (Matteo et al., Sever et al., Brito); the reviewer could not check these.
+  - The Finance source (Yahoo Finance pinned snapshot) needs a citable archived snapshot.
+- **Template.** `arxiv.sty` is a preprint style. Most journals require their own template or a generic double-spaced, line-numbered manuscript.
+
+
+## Part D: Administrative items most journals require
+
+Currently missing:
+
+- [ ] Author contributions statement (CRediT)
+- [ ] Funding statement
+- [ ] Competing-interests declaration (relevant given the Scarlets and Swansea City AFC affiliations and data access)
+- [ ] Ethics statement for secondary use of commercial performance data
+- [ ] Code availability covering `run_paper_pipeline.m` itself, not only the tools repository
+
+**Strongly suggested:** Since the sports data cannot be redistributed, release a de-identified per-KPI summary CSV (κ̂, ρ̂, η̂, signal measure, ΔML with CIs). This lets referees verify every figure and table.
+
+---
+
+## Part E: Journal suggestions
+
+| Journal | Fit | Notes |
+|---|---|---|
+| **Journal of Quantitative Analysis in Sports (JQAS)** | Best fit | Methodological sports statistics; several cited papers appeared there. Will scrutinise the statistics, so Part A matters most. |
+| **International Journal of Performance Analysis in Sport** | Good | Suits a version leading with the practitioner diagnostic and rugby/football findings. |
+| **Journal of Sports Sciences** | Good | As above; sits alongside the cited Matteo et al. work. |
+| **Journal of Science and Medicine in Sport** | Moderate | Published the motivating URC/descriptive-conversion studies, but favours short applied papers. Heavy compression needed. |
+| **JRSS Series C (Applied Statistics)** | Conditional | Only if reframed as general methodology with stronger supporting domains. Not recommended to lead with currently. |
+
+Check each journal's current word limits, formatting requirements and open-access charges on their author pages before choosing.
+
+---
+
+## Prioritised action plan
+
+**Minimum before a submission this week:**
+
+1. A1: Reconcile (A1)/(A2); restate eq. (mi_closed) as a lower bound or compute exactly.
+2. A2: Trace the r ≈ −0.70 figure; fix the r ≈ 0.87 slice inconsistency.
+3. A4: Correct the quadrant information labels.
+4. A5: State/justify the A/B labelling convention; check the finance placement.
+5. A6: Soften the abstract and Q3 claims; reframe the simulation results as consistency checks.
+6. A7: Verify the OpenML 752 identity; drop or replace the manufacturing domain.
+7. A8: Fix starred-section cross-references.
+8. A9: Fix macro fallbacks; compile and search for "???".
+9. Part D: administrative statements.
+
+**Changes most likely to alter results (recommended before submission):**
+
+- A3: Replace the home–away δ̂/σ̂_A with a predictive signal measure; re-match the exemplars.
+- B2: Add CIs/paired tests on exemplar ΔML; add log-loss/Brier/AUC.
+
+A referee at JQAS would likely return the paper over A3 alone. An extra one to two weeks to address A3 and B2 would materially improve the odds of a clean first review.

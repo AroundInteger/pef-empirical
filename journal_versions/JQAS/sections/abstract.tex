@@ -1,5 +1,9 @@
-\newcommand{\jqasabstractbody}{%
-In rugby union and association football, team key performance indicators (KPIs) can be represented in absolute terms or relative to the opponent. Relativisation sometimes improves match-outcome prediction and sometimes harms it. There has been no general account of when each occurs.\par
-The answer depends on how much the two teams differ in variability and how strongly their KPI values rise and fall together. We combine these properties into the Paired Efficiency Factor (PEF), which generalises Fisher's paired-efficiency result to the unequal-variance conditions typical of competitive sport. Combined KPIs can interact in complex ways, so we analyse each indicator on its own.\par
-Across $\PEFtotalStudies$ team KPIs from professional rugby union and association football, the PEF places every metric in one of four regimes. Anti-correlation is common, especially for high-volume competitive counts, and absolute measures are then usually preferable. Relativisation can still improve prediction when a noisier difference carries more outcome information. An idealised simulation and one representative KPI from each regime confirm both signs under team-blocked cross-validation.\par
-The PEF turns an ad hoc feature-engineering choice into a data-informed diagnostic for when to relativise performance metrics and when not to.}
+\begin{abstract}
+In rugby union and association football, a team key performance indicator can enter a match-outcome model as that team's own count or as the difference from the opponent. The Paired Efficiency Factor $\eta=(1+\kappa)/(1+\kappa-2\sqrt{\kappa}\,\rho)$ compares the variance of the difference with unpaired measurement of the same two counts. It generalises Fisher's paired efficiency to unequal variances. The four cells of $(\kappa,\rho)$ record whether pairing reduces variance and which side is more variable. They do not decide which feature to use.
+
+Under the probit model, $I(X;Y)$ is a one-dimensional integral in the relative signal $d_{\mathrm{rel}}$. At a fixed ratio $\delta/\sigma_{\mathrm{A}}$, a larger $\eta$ raises $d_{\mathrm{rel}}$ and lowers $I(X;Y)$. Inside that model the relative feature is Bayes-sufficient, so the accuracy gain $\Delta\mathrm{ML}$ is at least zero, and the gain depends on $(d_{\mathrm{rel}},r_{AX})$, including a gain at the Fisher point $\eta=1$.
+
+Across $\PEFtotalStudies$ rugby and football KPIs, $\eta$ does not line up with the accuracy change ($r=\PEFcorrEtaML$). Class separation $\hat d_Y$ does not either ($r=\PEFcorrIpredML$). Four pre-specified exemplars, one per cell at comparable class separation, have fold intervals that all cover zero. Healthcare, genomics, and finance show the same second-moment geometry and have no match outcome.
+
+Pairing efficiency is a diagnostic of the difference. The predictive choice is a direct comparison, reported with an interval.
+\end{abstract}

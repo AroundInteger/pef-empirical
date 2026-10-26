@@ -2,8 +2,14 @@ function H = pef_theory_helpers()
 %PEF_THEORY_HELPERS  Function handles for idealised probit simulation.
 %
 %   H = pef_theory_helpers() returns handles to theory-aligned helpers:
-%     eta_pef, var_diff, mi_closed, bayes_acc_x, bayes_acc_A, classify_quadrant,
+%     eta_pef, var_diff, mi_exact, mi_bound, mi_closed, corr_ax,
+%     bayes_acc_x, bayes_acc_A, classify_quadrant,
 %     sample_bvn_ab, sample_y_a2, cv_logistic_sim, is_admissible
+%
+%   mi_exact is I(X;Y) under the probit model (A1)--(A2).
+%   mi_bound is the Jensen lower bound H(Y) - h(P_e) under that model.
+%   mi_closed is the former equal-prior discriminant expression. It is not
+%   I(X;Y) under (A1)--(A2) and is retained only for comparison.
 %
 %   Used by run_pef_idealised_probit_sim.m and run_pef_finalize_diagnostics.m.
 
@@ -11,7 +17,12 @@ function H = pef_theory_helpers()
         'eta_pef',                @eta_pef, ...
         'eta_pef_vec',            @eta_pef_vec, ...
         'var_diff',               @var_diff, ...
+        'mi_exact',               @mi_exact, ...
+        'mi_exact_grid',          @mi_exact_grid, ...
+        'mi_bound',               @mi_bound, ...
         'mi_closed',              @mi_closed, ...
+        'corr_ax',                @corr_ax, ...
+        'd_rel',                  @d_rel, ...
         'bayes_acc_x',            @bayes_acc_x, ...
         'bayes_acc_A',            @bayes_acc_A, ...
         'classify_quadrant',      @classify_quadrant, ...
@@ -56,25 +67,137 @@ function v = var_diff(kappa, rho, sigmaA)
 end
 
 % -------------------------------------------------------------------------
-function Ixy = mi_closed(kappa, rho, delta, sigmaA)
+function d = d_rel(kappa, rho, delta, sigmaA)
+    % Standardised mean of X under (A1): |E[X]| / sqrt(Var(X)).
     if nargin < 4 || isempty(sigmaA)
         sigmaA = 1;
     end
-    eta  = eta_pef(kappa, rho);
-    if isnan(eta) || eta <= 0
+    v = var_diff(kappa, rho, sigmaA);
+    if ~is_admissible(kappa, rho) || ~(v > 0) || ~isfinite(delta)
+        d = NaN;
+    else
+        d = abs(delta) / sqrt(v);
+    end
+end
+
+% -------------------------------------------------------------------------
+function r = corr_ax(kappa, rho)
+    % r_AX = Corr(X_A, X_A - X_B) under (A1). Algebraic in (kappa, rho).
+    den = 1 + kappa - 2 * sqrt(kappa) * rho;
+    if ~(den > 0) || ~isfinite(kappa) || ~isfinite(rho) || kappa <= 0
+        r = NaN;
+        return
+    end
+    r = (1 - rho * sqrt(kappa)) / sqrt(den);
+    r = max(min(r, 1), -1);
+end
+
+% -------------------------------------------------------------------------
+function Ixy = mi_exact(kappa, rho, delta, sigmaA)
+    % Mutual information I(X;Y) in bits under the probit model (A1)--(A2).
+    % X ~ N(delta, Var(X)), Y|X=x ~ Bernoulli(Phi(x/sqrt(Var(X)))).
+    % Depends on the parameters only through d_rel.
+    if nargin < 4 || isempty(sigmaA)
+        sigmaA = 1;
+    end
+    d = d_rel(kappa, rho, delta, sigmaA);
+    if ~isfinite(d)
         Ixy = NaN;
         return
     end
-    sep = normcdf(delta ./ (2 * sigmaA * sqrt((1 + kappa) ./ eta)));
+    Ixy = mi_from_drel_scalar(d);
+end
+
+% -------------------------------------------------------------------------
+function I_xy = mi_exact_grid(K, R, delta, sigmaA)
+    % Vectorised I(X;Y) on a (kappa, rho) mesh at fixed delta, sigmaA.
+    % Uses a cached quadrature table in d_rel (the information depends on
+    % nothing else). Inadmissible cells are NaN.
+    if nargin < 4 || isempty(sigmaA)
+        sigmaA = 1;
+    end
+    den = 1 + K - 2 .* sqrt(K) .* R;
+    bad = ~isfinite(den) | den <= 0 | ~isfinite(K) | K <= 0 | ~isfinite(R);
+    d = abs(delta) ./ (sigmaA .* sqrt(den));
+    d(bad) = NaN;
+    I_xy = mi_lookup(d);
+    I_xy(bad) = NaN;
+end
+
+% -------------------------------------------------------------------------
+function Ilo = mi_bound(kappa, rho, delta, sigmaA)
+    % Jensen lower bound under (A1)--(A2): I(X;Y) >= H(Y) - h(P_e).
+    % Binary entropy is concave on [0, 1/2], and H(Y|X) = E[h(min(p,1-p))].
+    if nargin < 4 || isempty(sigmaA)
+        sigmaA = 1;
+    end
+    d = d_rel(kappa, rho, delta, sigmaA);
+    if ~isfinite(d)
+        Ilo = NaN;
+        return
+    end
+    pY = min(max(normcdf(d / sqrt(2)), 1e-12), 1 - 1e-12);
+    HY = binary_entropy_bits(pY);
+    accR = integral(@(u) normcdf(abs(d + u)) .* normpdf(u), -10, 10, ...
+        'AbsTol', 1e-8, 'RelTol', 1e-6);
+    Pe = min(max(1 - accR, 1e-12), 0.5);
+    Ilo = max(HY - binary_entropy_bits(Pe), 0);
+end
+
+% -------------------------------------------------------------------------
+function Ixy = mi_closed(kappa, rho, delta, sigmaA)
+    % Former discriminant expression 1 - h(Phi(|d_rel|/2)).
+    % Not I(X;Y) under the probit model (A1)--(A2). Retained for comparison
+    % with earlier drafts. Reported information uses mi_exact.
+    if nargin < 4 || isempty(sigmaA)
+        sigmaA = 1;
+    end
+    d = d_rel(kappa, rho, delta, sigmaA);
+    if ~isfinite(d)
+        Ixy = NaN;
+        return
+    end
+    sep = normcdf(d / 2);
     sep = min(max(sep, 1e-12), 1 - 1e-12);
     Ixy = 1 - binary_entropy_bits(sep);
 end
 
 % -------------------------------------------------------------------------
+function Ixy = mi_from_drel_scalar(d)
+    d = abs(d);
+    pY = min(max(normcdf(d / sqrt(2)), 1e-12), 1 - 1e-12);
+    HY = binary_entropy_bits(pY);
+    HYX = integral(@(u) binary_entropy_bits(normcdf(d + u)) .* normpdf(u), ...
+        -10, 10, 'AbsTol', 1e-8, 'RelTol', 1e-6);
+    Ixy = max(HY - HYX, 0);
+end
+
+% -------------------------------------------------------------------------
+function I = mi_lookup(d)
+    persistent dGrid IGrid
+    if isempty(dGrid)
+        dGrid = linspace(0, 8, 401).';
+        IGrid = zeros(size(dGrid));
+        for i = 1:numel(dGrid)
+            IGrid(i) = mi_from_drel_scalar(dGrid(i));
+        end
+    end
+    I = nan(size(d));
+    ok = isfinite(d);
+    I(ok) = interp1(dGrid, IGrid, min(max(abs(d(ok)), 0), dGrid(end)), 'pchip');
+end
+
+% -------------------------------------------------------------------------
 function acc = bayes_acc_x(delta, varX)
-    % Equal-prior Bayes accuracy of the relative feature X under (A2).
-    % Uses |delta| so the label orientation does not push the bound below 1/2.
-    acc = 1 - normcdf(-abs(delta) ./ (2 * sqrt(varX)));
+    % Bayes accuracy of the sign rule for X under the probit model (A2).
+    % acc_R = E[Phi(|d_rel + U|)], U ~ N(0,1). Matches SI Validation 4.
+    if ~(varX > 0) || ~isfinite(delta)
+        acc = NaN;
+        return
+    end
+    d = abs(delta) / sqrt(varX);
+    acc = integral(@(u) normcdf(abs(d + u)) .* normpdf(u), -10, 10, ...
+        'AbsTol', 1e-8, 'RelTol', 1e-6);
 end
 
 % -------------------------------------------------------------------------
@@ -143,9 +266,9 @@ function g = grad_I(kappa, rho, delta, sigmaA, epsStep)
     if nargin < 4 || isempty(sigmaA)
         sigmaA = 1;
     end
-    I0 = mi_closed(kappa, rho, delta, sigmaA);
-    Ir = mi_closed(kappa, rho + epsStep, delta, sigmaA);
-    Ik = mi_closed(kappa + epsStep, rho, delta, sigmaA);
+    I0 = mi_exact(kappa, rho, delta, sigmaA);
+    Ir = mi_exact(kappa, rho + epsStep, delta, sigmaA);
+    Ik = mi_exact(kappa + epsStep, rho, delta, sigmaA);
     g = [(Ir - I0) / epsStep; (Ik - I0) / epsStep];
 end
 
@@ -221,7 +344,10 @@ function boot = bootstrap_pef_table(paired, kpiName, nBoot)
         rho = rmat(1, 2);
         [delta, sigmaA, ~] = delta_sigma_from_means(mA, mB, vA);
         eta_s(b) = eta_pef(kappa, rho);
-        I_s(b)   = mi_closed(kappa, rho, delta, sigmaA);
+        % Do not plug the home--away gap into I(X;Y). That gap is not
+        % the predictive separation. Reported information is the probit
+        % integral at a stated d_rel, not a bootstrap of this mean.
+        I_s(b)   = NaN;
         k_s(b)   = kappa;
         r_s(b)   = rho;
     end
@@ -294,5 +420,9 @@ end
 
 % -------------------------------------------------------------------------
 function Hbits = binary_entropy_bits(p)
-    Hbits = -(p .* log2(p) + (1 - p) .* log2(1 - p));
+    p = min(max(p, 0), 1);
+    Hbits = zeros(size(p));
+    mid = p > 0 & p < 1;
+    pm = p(mid);
+    Hbits(mid) = -(pm .* log2(pm) + (1 - pm) .* log2(1 - pm));
 end
