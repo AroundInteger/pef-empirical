@@ -1,0 +1,22 @@
+id,claim,passed
+DEF,eta = (sA^2+sB^2)/Var(A-B) equals (1+k)/(1+k-2 sqrt(k) rho),True
+SECH1,sech(ln(k)/2) = 2 sqrt(k)/(1+k),True
+SECH2,eta = 1/(1 - rho_eff),True
+DEN,"1+k-2 sqrt(k) rho = (sqrt(k)-rho)^2 + (1-rho^2)  [>0 unless rho=1,k=1]",True
+P1,"eta - 1 = 2 sqrt(k) rho / den, hence eta>1 iff rho>0",True
+P2,"eta(k, rho) = eta(1/k, rho)",True
+P3a,"eta(k, 1) = (1+k)/(1-sqrt(k))^2",True
+P3b,"eta(k, -1) = (1+k)/(1+sqrt(k))^2",True
+P3c,"2(1+k) - den = (sqrt(k)+rho)^2 + (1-rho^2) >= 0, hence eta >= 1/2",True
+P3d,"eta(1, -1) = 1/2 (minimum attained)",True
+P4,d/dk [2 sqrt(k)/(1+k)] = (1-k)/(sqrt(k)(1+k)^2)  => |rho_eff| max at k=1,True
+P5,eta -> 1 as k->0 and k->oo,True
+B,"R2_D / R2_full = cos^2(theta_K) for general Sigma_S, Sigma_N, b",True
+C,"Var(S_D)/Var(D) = 1/(1 + Lambda * eta_S/eta_N), general 2x2",True
+D,"exchangeable, b=c: R2_D/R2_A = 2/(1-rho_total) = 2*eta_total",True
+D2,"exchangeable, b=c: beta_A + beta_B = 0 (beta proportional to c)",True
+DGEN,dimensionless R2_D/R2_A reduces to 2*eta when kappa_S=kappa_N=b_ratio=1,True
+NEG,NEG1: eta = 1/(1-rho) for all kappa  [control: must be rejected],True
+NEG,"NEG2: v13 claim eta(k,1) infinite, i.e. den(k,1)=0 for all k  [control: must be rejected]",True
+NEG,NEG3: R2_D/R2_A = 2*eta_total for general (non-exchangeable) 2x2  [control: must be rejected],True
+NEG,NEG4: b_A = b_B alone implies beta prop. to c (general noise)  [control: must be rejected],True

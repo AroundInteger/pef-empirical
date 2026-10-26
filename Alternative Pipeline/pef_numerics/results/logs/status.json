@@ -1,0 +1,52 @@
+{
+ "tests": {
+  "ok": true,
+  "minutes": 0.0,
+  "finished": "2026-10-26 08:28"
+ },
+ "E0": {
+  "ok": true,
+  "minutes": 0.0,
+  "finished": "2026-10-26 08:28"
+ },
+ "E1": {
+  "ok": true,
+  "minutes": 0.2,
+  "finished": "2026-10-26 08:28"
+ },
+ "E1rep": {
+  "ok": true,
+  "minutes": 0.8,
+  "finished": "2026-10-26 08:29"
+ },
+ "E2": {
+  "ok": true,
+  "minutes": 0.5,
+  "finished": "2026-10-26 08:30"
+ },
+ "E2e": {
+  "ok": true,
+  "minutes": 0.1,
+  "finished": "2026-10-26 08:30"
+ },
+ "E3": {
+  "ok": true,
+  "minutes": 1.1,
+  "finished": "2026-10-26 08:31"
+ },
+ "E4": {
+  "ok": true,
+  "minutes": 5.3,
+  "finished": "2026-10-26 08:36"
+ },
+ "E4b": {
+  "ok": true,
+  "minutes": 0.9,
+  "finished": "2026-10-26 08:37"
+ },
+ "summary": {
+  "ok": true,
+  "minutes": 0.0,
+  "finished": "2026-10-26 08:37"
+ }
+}
