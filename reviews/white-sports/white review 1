@@ -1,0 +1,453 @@
+As before, I can't save files in this conversation. Copy everything inside the block into `PEF_whitepaper_draft1_review.md`.
+
+````markdown
+# Review: "Alignment and Team-Blocked Log-Loss for Paired Team KPIs" (White-paper, first draft)
+
+**Manuscript:** Brown, Kilduff, Scott, Dingle, Evans, O'Hara, Morris
+**Review date:** 27 October 2026
+**Version reviewed:** PDF first draft (main text, Figures 1–2, Tables 1–2, SI S1–S2)
+**Read alongside:** `PEF_presubmission_review.md` (original empirical paper), `PEF_geometry_presubmission_review.md` (geometry companion)
+
+---
+
+## Overall assessment
+
+This is a much better paper than the version reviewed on 25 October. It is rebuilt around a question the data can answer, and it now:
+
+- uses a proper scoring rule (log-loss) instead of accuracy;
+- compares D with the pair (A, B), the comparator a referee would demand;
+- defines the outcome, including how draws are coded;
+- states the labelling convention and that η > 1 if and only if ρ > 0;
+- removes the theory that didn't hold up (the (A1)/(A2) inconsistency, the misused δ, the quadrant information labels, the manufacturing data);
+- treats the quadrant taxonomy honestly as descriptive.
+
+**Central concern:** The median KPI appears to carry essentially no out-of-sample information about the outcome. If so, the headline medians compare three models that all sit at the base rate, and milli-nat gaps between them are mostly noise. Fixing this, by restricting to informative KPIs, reinstating the (d_rel, r) theory as a sorter, and adding a multivariable comparison, would turn a largely negative result into a useful positive one.
+
+---
+
+## Part A: The central issue — are the median KPIs informative at all?
+
+### A1. Median log-loss sits at the base-rate entropy
+
+A model predicting only the home-win rate has log-loss equal to that rate's entropy:
+
+| Sport | Home-win rate | Base-rate entropy | Figure 1B median log-loss |
+|---|---|---|---|
+| Rugby | 0.657 | ≈ 0.643 nats | ≈ 0.645 |
+| Football | 0.451 | ≈ 0.688 nats | ≈ 0.69 |
+
+Within plotting precision, the median KPI predicts no better than the base rate. An intercept-only model under leave-one-team-out would itself score slightly above the entropy, because fold base rates vary.
+
+**Consequences:**
+- **Alignment is vacuous for uninformative KPIs.** With no signal, βA ≈ βB ≈ 0, so βA + βB = 0 holds trivially. The gaps then reflect only parameter-count overfitting, so a median D-vs-(A, B) gap near 1/(2n) is what noise features would produce. It does not show that informative KPIs are aligned.
+- **η cannot sort gaps that are noise.** The near-zero η correlations in §4.3 may reflect the absence of signal rather than η's inability to sort.
+
+**Fix:**
+1. Fit a team-blocked **intercept-only model** per sport.
+2. Define **skill** = LL(intercept) − LL(best of A, D, (A, B)) per KPI, and report its distribution.
+3. Pre-specify an informativeness criterion before looking at the gaps. Examples: skill > 0 with a bootstrap interval excluding zero, or a full-sample LR for D versus intercept above a threshold.
+4. Report every analysis for **all KPIs** and for the **informative subset**.
+
+### A2. Alignment needs effect sizes and power, not only a null-test statistic
+
+Failing to reject βA + βB = 0 is not evidence of alignment, especially at n = 283 when many KPIs are weak.
+
+**Compare against the χ²₁ reference distribution, not only its 5% point:**
+
+| | Lower quartile | Median | Upper quartile |
+|---|---|---|---|
+| χ²₁ under the null | 0.10 | 0.45 | 1.32 |
+| Rugby | 0.16 | 0.67 | 1.59 |
+| Football | 0.17 | 0.71 | 2.01 |
+
+- Both leagues sit modestly to the right of the null throughout.
+- Figure 1A suggests perhaps seven or more football KPIs above 3.84, against about 3.2 expected (5% of 64), so there is mild but systematic misalignment in some KPIs.
+- A QQ plot against χ²₁ would show this directly.
+
+**Report an alignment effect size with uncertainty.** Use the angle between (β̂A, β̂B) and (1, −1), or the ratio β̂A/(−β̂B), with team-cluster bootstrap intervals. Restrict to informative KPIs, since for uninformative ones the angle is practically undefined.
+
+**Acknowledge dependence between KPIs.** Many KPIs are strongly correlated, so the 64 statistics are not independent draws. Say so explicitly.
+
+### A3. Make the 1/(2n) comparison a stated prediction, with the right n
+
+Under alignment, with a correctly specified model, the expected test log-loss of (A, B) exceeds that of D by about 1/(2n_train). So:
+
+**E[LL(D) − LL(A, B)] ≈ −1/(2n_train)**
+
+**Use the training-set size, not the full sample:**
+
+| Sport | Matches per team | n_train (approx.) | 1/(2n_train) | Observed median gap |
+|---|---|---|---|---|
+| Rugby | ≈ 35 | ≈ 248 | ≈ 2.0 milli-nats | −2.37 |
+| Football | ≈ 93 | ≈ 1,021 | ≈ 0.49 milli-nats | −0.61 |
+
+- The observed medians are then very close to the prediction, which is a sharper result than "same order". Recompute from the actual fold sizes.
+- Report median gaps with bootstrap intervals and state whether they contain −1/(2n_train), separately for the informative subset.
+- Cite the classical sources for the 1/(2n) result (Akaike 1973; Stone 1977; Takeuchi's information criterion) rather than only the unpublished companion.
+
+---
+
+## Part B: Other substantive points
+
+### B1. The leave-one-team-out description is incorrect as written
+- §3.5 says "neither club in a scored match appears in training". Only team t is excluded. The opponent appears in training through its other matches. Excluding both clubs is impossible in a round robin.
+- **Correct all three occurrences:** §3.5, the Figure 1 caption, and SI §2.
+- **State how double-scored matches are handled.** Every match is scored twice (once per club's fold): averaged, counted twice, or other?
+- **Report the number of skipped folds** per sport under the 20/5/single-class rules.
+- Partial blocking is harmless for a one- or two-coefficient model; it just needs describing accurately.
+
+### B2. Bring back the (d_rel, r) theory as the candidate sorter
+- Theory (empirical SI Validation 4; geometry Level 3) says the A-versus-D gap is governed by:
+  **r_A = Corr(A, D) = (1 − ρ√κ)/√(1 + κ − 2√κρ)**
+  A loses to D most when r_A is small.
+- η and r_A are different functions of (κ, ρ). The η correlations with the A-versus-D gap (0.29 rugby, 0.22 football) may be shadows of an r_A relationship.
+- **Add r̂_A and a D-signal measure** (standardised class separation, or the full-sample LR for D versus intercept) as pre-specified sorters, computed within the informative subset.
+- If r_A sorts the gap where η doesn't, the paper can answer "what does choose the feature?", not only "the quadrant doesn't".
+
+### B3. Add a multivariable comparison
+- One redundant coefficient costs ≈ 1/(2n); using (A, B) instead of D for p KPIs costs ≈ p/(2n).
+- Example: 20 rugby KPIs at n_train ≈ 248 gives ≈ 40 milli-nats, which is no longer negligible.
+- **Suggestion:** one pre-specified penalised logistic model per sport (e.g. ridge, penalty tuned inside folds), fitting all KPIs as A-only, as D, and as (A, B), scored by the same leave-one-team-out log-loss.
+- This connects directly to the multi-KPI literature cited, and is likely the most practically useful single result available.
+
+### B4. Connect "A" to how the literature defines "absolute"
+- Many cited studies use a team perspective: two rows per match, each team's own KPIs predicting its own win. Some fit both teams' absolute values together.
+- Add a paragraph mapping the designs in Scott et al. (2023), Mosey & Mitchell (2020), Brito (2026) and others onto A, D and (A, B).
+- Report the B-only (away count) model as a check, or acknowledge the asymmetry of using A alone.
+
+### B5. Report the uncertainty described but not shown
+- **Median gaps:** add the bootstrap intervals described in §3.5 and SI §2.
+- **Exemplars:** §4.4 says the intervals "cover both signs", but Table 1 shows none. Add interval columns.
+- **Second moments:** the team-cluster bootstrap (B = 1,000) for (κ̂, ρ̂, η̂) is said to be in SI S2, which only describes the method. Add the results.
+- **η correlations:** add CIs and use Spearman. With 22 rugby KPIs, r = 0.29 spans roughly −0.15 to 0.63.
+- **Method:** explain "team multinomial bootstrap with out-of-bag matches" in one or two sentences.
+
+### B6. The companion manuscript shouldn't carry essential results
+- Reference [9] is an unpublished draft. Referees can't assess results that rest on it.
+- The two results relied on are short and largely classical:
+  - **Alignment:** D is sufficient for the pair's linear score if and only if βA = −βB, a one-line linear restriction.
+  - **The 1/(2n) cost:** classical (A3).
+- Put both derivations in the SI (about half a page) with classical citations. Keep [9] as "further detail in…", ideally as a citable preprint.
+- Explain briefly or remove "relative-to-single-entity ratio under exchangeability" and "stress boundary" (§2.3).
+
+### B7. Be transparent about exemplar pre-specification
+- "Fixed before reading the gaps … under the earlier landscape rule": these exemplars differ from the previous version, and rucks won already appeared there with a known accuracy result.
+- **Safer wording:** "selected before the log-loss analysis, after an earlier accuracy-based analysis of the same data". A timestamped commit or registration would strengthen it.
+- Two exemplars sit almost on cell boundaries: lineout throws lost (ρ̂ = 0.026) and fouls (ρ̂ = −0.047). Consider a rule-based choice (e.g. the KPI nearest each cell's median position), or drop the exemplars in favour of the per-KPI table.
+
+### B8. Smaller substantive points
+- **KPI inclusion criteria:** state them. The previous version excluded scores, scoring events, cards, expected goals and shots on target as circular with the outcome; confirm the same set.
+- **Draws:** football draws are merged with away wins. Add a sensitivity check excluding draws, or a one-line ordinal-logistic check.
+- **"D is not free relative to (A, B)" (§4.2):** confusing, since D has the lower median loss. Rephrase.
+- **Median of gaps vs gap of medians:** the text reports median gaps; Figure 1B shows median losses. Make clear which is which.
+
+---
+
+## Part C: Writing and framing
+
+### C1. Remove internal instructions and project labels
+**Rule-like sentences to delete:**
+- §3.3: "A quadrant count may appear only with the statement that the count does not choose the feature."
+- §5.2: "The quadrant count may be quoted only with that sentence."
+
+**Internal labels to replace** with neutral wording or a repository link in Data Availability:
+- "Phase 6 sports experiment"
+- "AlternativePipeline/pef_numerics/experiments/E6_sports.py"
+- "Letter-only macros"
+- "draft/white-theory" (reference [9])
+
+### C2. The refrain is repeated too often
+"The quadrant count describes the cloud. It does not choose the feature," or a variant, appears in the abstract, §1.3, §2.3, §4.3, §5.2, the conclusion, the Figure 2 caption and the Table 2 note. Keep one instance in the Results and one in the Discussion.
+
+### C3. Vary the sentence length
+Nearly every sentence is short and declarative. Across the whole paper this reads like a list. Join related sentences where the logic connects them.
+
+### C4. Title and abstract
+- **Title** describes the method, not the finding. Suggestion: *"Absolute, relative or paired? Feature choice for team KPIs in match-outcome prediction"*, with alignment and log-loss in the subtitle.
+- **Abstract** leans on unfamiliar terms ("milli-nats", "parameter-saving costs") and ends without a practical message. Example translation: "For a single KPI, the difference loses essentially nothing to the pair and saves a coefficient; whether it beats the home count alone depends on the KPI, not on its pairing efficiency." Add the multivariable result if B3 is done.
+
+### C5. Motivate η as a hypothesis
+A referee may ask why η is included, since it is the authors' own construct. One framing sentence fixes this: paired-design theory (Fisher) suggests differencing should help when pairing reduces variance, and the paper tests that hypothesis.
+
+### C6. Consider an accessible secondary metric
+Keep log-loss as primary. Add skill as a percentage of base-rate entropy, or AUC, in the SI as a familiar anchor.
+
+---
+
+## Part D: Figures and tables
+
+| Item | Issue | Suggestion |
+|---|---|---|
+| Figure 1A | Overlapping histograms (light blue under orange renders brown); rugby hard to read | Separate panels, or a QQ plot of Λ against χ²₁ per sport (shows A2's rightward shift) |
+| Figure 1B | y-axis from zero hides milli-nat differences; only shows everything at ≈ 0.64–0.69 | Plot per-KPI gaps in milli-nats; reference line at −1/(2n_train); colour by informativeness or r̂_A; add intercept-only line if a loss-scale panel is kept |
+| Figure 2 | Clear; colours match the caption | Lighten the η background so KPI points dominate |
+| Table 1 | No intervals | Add interval columns; consider adding skill and r̂_A |
+| Table 2 | Final column is "Not settled by the cell" in every row | Fold into one sentence in §2.3, or replace the column with median gap per cell and n |
+
+---
+
+## Part E: Housekeeping
+
+- **Author name:** "Rowan Brown" in CRediT vs "M. R. Brown" in the author list and [9]. Make it consistent everywhere.
+- **Placeholders:** CRediT, Funding, Competing interests and Ethics still need completing. The competing-interests statement should name Morris's and Evans's affiliations with the data-providing clubs.
+- **Per-KPI SI table:** include the contents of `referee_kpi_summary.csv` (κ̂, ρ̂, η̂, r̂_A, Λ, skill, both gaps with intervals).
+- **Code availability:** state whether the Python and MATLAB code will be public, and where. Confirm both pipelines use the same KPI set and match list.
+- **SI structure:** currently thin. With the per-KPI table, the derivations (B6) and the bootstrap results, it becomes a proper supplement.
+- **Reference [9]:** remove "draft/white-theory" and "cites the sports results in the present paper".
+
+---
+
+## Status of items from earlier reviews
+
+| Earlier item | Status |
+|---|---|
+| A1–A4 (theory inconsistencies, r = −0.70, δ, information labels) | Resolved by removal |
+| A5 (labelling convention) | Resolved (Table 2 note) |
+| A6 (η vs the actual comparator) | Resolved: now a central, explicit finding |
+| A7 (manufacturing data) | Resolved by removal |
+| A8 (starred-section cross-references) | Rendered PDF looks correct; recheck after SI expansion |
+| A9 (macros) | Numbers render; placeholders only in author statements |
+| B1 (draw coding) | Resolved; sensitivity check recommended (B8) |
+| B2 (scoring rule, uncertainty) | Scoring rule resolved; intervals still missing (B5) |
+| B3 (exemplar selection) | Improved; wording needs care (B7) |
+| B4 ((A, B) comparator) | Resolved |
+| B5 (team blocking) | Improved; description incorrect (B1) |
+| Geometry review D2 (Q3 harm vs +0.37% mean) | Resolved: no harm claim remains |
+| Lost along the way | The (d_rel, r) theory; worth reinstating (B2) |
+
+---
+
+## Suggested plan
+
+**Before going further with the draft:**
+1. Compute intercept-only log-loss and per-KPI skill (A1). This determines how the rest of the paper should read.
+2. Correct the leave-one-team-out description; state how double-scored matches are handled (B1).
+3. Recompute 1/(2n) with training-set sizes and frame it as a prediction (A3).
+
+**Core additions that make the paper strong:**
+4. Analyse the informative subset, with r̂_A and signal as pre-specified sorters (A1, B2).
+5. Add the multivariable comparison (B3).
+6. Report alignment effect sizes and the χ²₁ QQ comparison (A2).
+7. Add all bootstrap intervals (B5).
+
+**Writing and presentation:**
+8. Remove internal rules and labels; cut the repeated refrain (C1, C2).
+9. Redesign Figure 1; drop or rework Table 2 (D).
+10. Move the alignment and 1/(2n) derivations into the SI with classical citations (B6).
+11. Retitle; add a practical sentence to the abstract (C4).
+
+---
+
+## Publishability
+
+Far closer to publishable than the original. With items 1–7, a clean, credible candidate for *Journal of Quantitative Analysis in Sports*, *International Journal of Performance Analysis in Sport*, or *Journal of Sports Sciences*. The multivariable result (B3) could make it genuinely useful to practitioners. Without the skill check (A1), a statistically literate referee is likely to raise the same central concern.
+
+## Additional information proposed by reviewer to improve manuscript
+Below is a drop-in LaTeX section for the SI, followed by the bibliography entries, then a few notes on what it changes in the main text.
+
+While writing it I found something worth knowing. The derivation shows that the natural landmark for your likelihood-ratio statistic is **2** (Akaike's threshold), not 3.84. It also shows that the 1/(2n) result doesn't need the Gaussian designs the paper currently attributes to the companion: it holds for any correctly specified regular model, including logistic regression. Both points strengthen the paper, and both come from the derivation itself.
+
+## 1. LaTeX for SI Section S3
+
+```latex
+% ---------------------------------------------------------------------------
+\section*{SI Section S3: Alignment and the Cost of a Redundant Coefficient}
+\label{sec:si_alignment}
+
+\noindent This section derives the two results used in the main text: the
+alignment condition behind the null $\beta_{\mathrm{A}}+\beta_{\mathrm{B}}=0$
+(\S2.1--2.2), and the finite-sample cost $1/(2n)$ of fitting the pair when the
+difference suffices (\S2.4).  Both are classical; we state them in the notation
+of this paper.
+
+\subsection*{S3.1 Alignment as a linear restriction}
+
+Let $Y\in\{0,1\}$ indicate a home win, and let $A$ and $B$ be the home and away
+values of one KPI.  The pair model is
+\begin{equation}
+  \operatorname{logit}\Pr(Y=1\mid A,B)=\beta_{0}+\beta_{\mathrm{A}}A+\beta_{\mathrm{B}}B .
+  \label{eq:si_pair}
+\end{equation}
+Writing $D=A-B$ and $S=A+B$, so that $A=(S+D)/2$ and $B=(S-D)/2$, the linear
+score becomes
+\begin{equation}
+  \beta_{\mathrm{A}}A+\beta_{\mathrm{B}}B
+  =\tfrac12(\beta_{\mathrm{A}}-\beta_{\mathrm{B}})\,D
+  +\tfrac12(\beta_{\mathrm{A}}+\beta_{\mathrm{B}})\,S .
+  \label{eq:si_rotation}
+\end{equation}
+The difference model $\operatorname{logit}\Pr(Y=1\mid D)=\gamma_{0}+\gamma D$ is
+therefore the pair model with the single linear restriction
+$\beta_{\mathrm{A}}+\beta_{\mathrm{B}}=0$, with $\gamma=\beta_{\mathrm{A}}=-\beta_{\mathrm{B}}$.
+When the restriction holds, $\Pr(Y=1\mid A,B)$ depends on $(A,B)$ only through
+$D$; within the model, $D$ is sufficient for the pair and nothing is lost by
+differencing.  We call the KPI \emph{aligned} in this case.  If the logistic
+model is misspecified, the same statements apply to the pseudo-true parameters
+that minimise expected log-loss \parencite{white1982}.
+
+The restriction is invariant to centring and to rescaling $A$ and $B$ by a
+\emph{common} factor, which is why both series are scaled by their pooled
+standard deviation (\S3.4).  Rescaling them by \emph{separate} factors would
+change the null hypothesis.
+
+Because the two models are nested and differ by one restriction, the
+likelihood-ratio statistic $\Lambda=2(\ell_{(\mathrm{A},\mathrm{B})}-\ell_{D})$
+is asymptotically $\chi^{2}_{1}$ under the null for independent observations
+\parencite{wilks1938}.  Under local misalignment it is approximately noncentral
+$\chi^{2}_{1}$ with noncentrality $\lambda$, so that
+$\mathbb{E}[\Lambda]\approx 1+\lambda$.  Team recurrence makes matches
+dependent, so the $\chi^{2}_{1}$ reference is a landmark here rather than a
+calibrated null.
+
+\subsection*{S3.2 Expected excess test log-loss of a fitted model}
+
+Let $\ell(\theta;x,y)$ be the log-likelihood of one observation under a regular
+parametric model with $k$ free parameters, and let
+$R(\theta)=-\mathbb{E}\,\ell(\theta;X,Y)$ be its expected log-loss on a new
+observation.  Let $\theta^{*}$ minimise $R$, and let $\hat\theta$ be the
+maximum-likelihood estimate from $n$ independent training observations.  A
+second-order expansion of $R$ about $\theta^{*}$ gives
+\begin{equation}
+  R(\hat\theta)\approx R(\theta^{*})
+  +\tfrac12(\hat\theta-\theta^{*})^{\top}J\,(\hat\theta-\theta^{*}),
+  \qquad J=\mathbb{E}\bigl[-\nabla^{2}\ell(\theta^{*};X,Y)\bigr].
+\end{equation}
+Since $\sqrt{n}(\hat\theta-\theta^{*})\to\mathcal{N}(0,J^{-1}KJ^{-1})$ with
+$K=\mathbb{E}\bigl[\nabla\ell\,\nabla\ell^{\top}\bigr]$ \parencite{white1982},
+\begin{equation}
+  \mathbb{E}\bigl[R(\hat\theta)\bigr]-R(\theta^{*})
+  \approx\frac{\operatorname{tr}(J^{-1}K)}{2n}.
+  \label{eq:si_excess}
+\end{equation}
+When the model is correctly specified, $K=J$ and the excess is $k/(2n)$.  This
+is the per-parameter penalty underlying Akaike's information criterion
+\parencite{akaike1973}; \cref{eq:si_excess} is the general form behind
+Takeuchi's criterion \parencite{konishi2008}.  No distributional assumption on
+the features is required beyond regularity.
+
+\subsection*{S3.3 The cost of fitting the pair when the difference suffices}
+
+Suppose the KPI is aligned.  The pseudo-true pair parameter then satisfies the
+restriction, so the pair model (three parameters) and the difference model (two
+parameters) attain the same population risk $R(\theta^{*})$.  Applying
+\cref{eq:si_excess} to each model with correct specification,
+\begin{equation}
+  \mathbb{E}\bigl[\mathrm{LL}(D)-\mathrm{LL}(A,B)\bigr]
+  \approx\frac{2}{2n}-\frac{3}{2n}=-\frac{1}{2n}.
+  \label{eq:si_cost}
+\end{equation}
+Fitting the pair spends one redundant coefficient, and the difference is
+expected to have lower test log-loss by about $1/(2n)$ nats per match.  Under
+cross-validation, $n$ is the size of each training set, not the full sample.
+
+If the KPI is not aligned, let $\Delta^{*}>0$ be the population log-loss lost by
+imposing the restriction.  The expected gap becomes
+\begin{equation}
+  \mathbb{E}\bigl[\mathrm{LL}(D)-\mathrm{LL}(A,B)\bigr]
+  \approx\Delta^{*}-\frac{1}{2n},
+  \label{eq:si_crossover}
+\end{equation}
+so the difference is still expected to predict better whenever the
+misalignment costs less than the redundant coefficient.  Under local
+alternatives the noncentrality of $\Lambda$ is $\lambda\approx2n\Delta^{*}$, so
+the crossover $\Delta^{*}=1/(2n)$ corresponds to $\lambda=1$, that is to
+$\mathbb{E}[\Lambda]\approx2$.  This is Akaike's threshold for choosing between
+nested models that differ by one parameter, and it matches the asymptotic
+equivalence between Akaike's criterion and cross-validation
+\parencite{stone1977}.  For out-of-sample feature choice, $\Lambda=2$ is
+therefore the natural landmark; the $\chi^{2}_{1}$ 5\% point $3.84$ answers a
+different question (rejecting exact alignment).
+
+\subsection*{S3.4 Several KPIs}
+
+The same argument applies to a model with $p$ KPIs.  Entering every KPI as a
+pair rather than as a difference adds $p$ coefficients, so when all are aligned
+the expected cost is approximately $p/(2n)$.  Redundancy that is negligible for
+one KPI can therefore become material in multi-KPI models.
+
+\subsection*{S3.5 Scope}
+
+The expansions are first-order in $1/n$ and assume independent observations
+and a regular model.  Team recurrence and leave-one-team-out folds make matches
+dependent and folds unequal, so \cref{eq:si_cost,eq:si_crossover} are
+approximations for these leagues rather than exact predictions.  Under
+misspecification, $1/(2n)$ in \cref{eq:si_cost} is replaced by the
+difference in the two models' values of $\operatorname{tr}(J^{-1}K)/(2n)$.
+```
+
+## 2. Bibliography entries
+
+Please verify these against the publishers' records before submission. I'm confident of the works themselves, but some of the bibliographic details are from memory.
+
+```bibtex
+@article{wilks1938,
+  author  = {Wilks, S. S.},
+  title   = {The Large-Sample Distribution of the Likelihood Ratio for Testing Composite Hypotheses},
+  journal = {The Annals of Mathematical Statistics},
+  year    = {1938},
+  volume  = {9},
+  number  = {1},
+  pages   = {60--62},
+  doi     = {10.1214/aoms/1177732360}
+}
+
+@incollection{akaike1973,
+  author    = {Akaike, Hirotugu},
+  title     = {Information Theory and an Extension of the Maximum Likelihood Principle},
+  booktitle = {Second International Symposium on Information Theory},
+  editor    = {Petrov, B. N. and Cs{\'a}ki, F.},
+  publisher = {Akad{\'e}miai Kiad{\'o}},
+  address   = {Budapest},
+  year      = {1973},
+  pages     = {267--281}
+}
+
+@article{stone1977,
+  author  = {Stone, M.},
+  title   = {An Asymptotic Equivalence of Choice of Model by Cross-Validation and {Akaike}'s Criterion},
+  journal = {Journal of the Royal Statistical Society: Series B (Methodological)},
+  year    = {1977},
+  volume  = {39},
+  number  = {1},
+  pages   = {44--47},
+  doi     = {10.1111/j.2517-6161.1977.tb01603.x}
+}
+
+@article{white1982,
+  author  = {White, Halbert},
+  title   = {Maximum Likelihood Estimation of Misspecified Models},
+  journal = {Econometrica},
+  year    = {1982},
+  volume  = {50},
+  number  = {1},
+  pages   = {1--25},
+  doi     = {10.2307/1912526}
+}
+
+@book{konishi2008,
+  author    = {Konishi, Sadanori and Kitagawa, Genshiro},
+  title     = {Information Criteria and Statistical Modeling},
+  publisher = {Springer},
+  address   = {New York},
+  year      = {2008},
+  doi       = {10.1007/978-0-387-71887-3}
+}
+```
+
+I've cited Konishi and Kitagawa for Takeuchi's criterion rather than Takeuchi's 1976 original, which was published in Japanese and is hard for referees to check.
+
+## 3. What this changes in the main text
+
+**§2.2 and Figure 1A: add 2 as the primary landmark.** Section S3.3 shows that Λ ≈ 2 marks the crossover where the difference stops being expected to beat the pair out of sample. I'd draw lines at both 2 and 3.84 in Figure 1A, labelled "AIC crossover" and "χ²₁ 5% point". The text would then say that 2 is the relevant reference for feature choice, while 3.84 concerns rejecting exact alignment.
+
+This also makes your results more interesting. Your medians (0.67 and 0.71) sit well below 2, so for most KPIs the difference is expected to predict at least as well as the pair. The KPIs between 2 and 3.84 are the ones where the pair is expected to win out of sample even though a significance test wouldn't flag them. Counting those per sport would be informative.
+
+**§2.4: remove "under the companion's Gaussian designs".** The 1/(2n) cost needs only a correctly specified regular model (S3.2), not Gaussian features. Replace the sentence with a pointer to SI S3 and the classical citations. That removes the main dependence on the unpublished companion.
+
+**§4.2 and §5.1: frame the comparison as a prediction.** Section S3.3 gives E[LL(D) − LL(A, B)] ≈ −1/(2n_train) under alignment. Report it against the fold-size-based values (about 2.0 milli-nats for rugby and 0.49 for football, to be recomputed from the actual folds), with the bootstrap intervals for the medians.
+
+**§2.3 and §5.4: trim the references to the companion.** With S3 in place, "proofs of alignment … belong to the statistics companion" can become "derivations are given in SI Section S3". The undefined terms ("relative-to-single-entity ratio under exchangeability", "stress boundary") can then go.
+
+**The multivariable analysis gains theoretical backing.** Section S3.4 is the justification for the p/(2n) argument in item B3 of the review, so it supports that addition directly.
+
+One limitation the SI states, which a careful referee would also raise: under team recurrence and leave-one-team-out, the iid expansions are approximate. That is why S3.5 calls the results approximations for these leagues. A simple robustness check would be to estimate tr(J⁻¹K) with a team-clustered K for a few KPIs and confirm it stays close to the parameter count.

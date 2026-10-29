@@ -1,192 +1,60 @@
 \section{Theoretical Framework}
 \label{sec:theory}
 
-This section develops the theoretical core sketched in the Introduction. We first define how pairing efficiency depends on the variance ratio $\kappa$ and the correlation $\rho$, using only second-moment algebra that requires no distributional assumptions. We then connect efficiency to predictive information under bivariate normality, and translate the resulting $(\kappa,\rho)$ geometry into quadrant-level guidance for relativisation. The quadrant taxonomy is in \cref{tab:quadrants}; signal strength is discussed in \cref{sec:signal_strength}.
+\subsection{Three feature sets}
 
-\subsection{The Paired Efficiency Factor}
+Let $A$ be the home KPI and $B$ the away KPI on a match.
+Write $D=A-B$.
+A logistic model of home win may use one of three designs: the single feature $A$, the difference $D$, or the pair $(A,B)$.
+Under the pair model the score is $\beta_0+\beta_A A+\beta_B B$.
+Writing $S=A+B$, the linear score is $\tfrac12(\beta_A-\beta_B)D+\tfrac12(\beta_A+\beta_B)S$.
+The null $\beta_A+\beta_B=0$ is therefore the restriction that the score depends on $(A,B)$ only through $D$.
+When that restriction holds we call the KPI aligned.
+The derivation is classical and is recorded in Supplementary~\cref{sec:si_alignment} \parencite{white1982}.
 
-\subsubsection{Derivation}
+\subsection{Likelihood-ratio statistic}
 
-We begin from the variance of the difference between two measurements. When entity~A and entity~B are observed on the same occasion, their values may covary; the variance of $X_{\mathrm{A}}-X_{\mathrm{B}}$ captures how much noise remains after differencing. For random variables $X_{\mathrm{A}}$ and $X_{\mathrm{B}}$ with variances $\sigma^{2}_{\mathrm{A}}$, $\sigma^{2}_{\mathrm{B}}$ and correlation $\rho$,
+On the full sample the likelihood-ratio statistic for $\beta_A+\beta_B=0$ is
 \begin{equation}
-  \Var(X_{\mathrm{A}} - X_{\mathrm{B}}) = \sigma^{2}_{\mathrm{A}} + \sigma^{2}_{\mathrm{B}} - 2\rho\sigma_{\mathrm{A}}\sigma_{\mathrm{B}}.
-  \label{eq:var_sum}
+  \Lambda = 2\bigl(\ell_{(A,B)}-\ell_D\bigr),
+  \label{eq:lr}
 \end{equation}
-The cross term $-2\rho\sigma_{\mathrm{A}}\sigma_{\mathrm{B}}$ is where correlation enters: positive $\rho$ shrinks the variance of the difference because shared fluctuations partially cancel, whilst negative $\rho$ amplifies it. Introducing $\kappa=\sigma^{2}_{\mathrm{B}}/\sigma^{2}_{\mathrm{A}}$ and factoring,
+where $\ell$ is the maximised logistic log-likelihood.
+Under independent observations the null reference is $\chi^2_1$ \parencite{wilks1938}.
+Two landmarks are marked on the figure.
+$\PEFLRaic$ is Akaike's one-parameter crossover for out-of-sample feature choice \parencite{akaike1973,stone1977}.
+$\PEFLRlandmark$ is the upper $5\%$ point of $\chi^2_1$.
+Neither mark is used as a per-KPI $p$-value.
+Team recurrence makes matches dependent, so the $\chi^2_1$ reference is a landmark rather than a calibrated null.
+
+\subsection{The Paired Efficiency Factor and \texorpdfstring{$r_A$}{rA}}
+
+With $\kappa=\Var(B)/\Var(A)$ and $\rho=\Corr(A,B)$, the Paired Efficiency Factor is \cref{eq:pef}.
+The formula is distribution-free given finite second moments.
+It recovers Fisher's equal-variance gain $1/(1-\rho)$ when $\kappa=1$ \parencite{fisher1935}.
+Positive $\rho$ yields $\eta>1$.
+Negative $\rho$ yields $\eta<1$.
+Paired-design theory suggests that differencing should help when pairing reduces variance.
+This paper tests whether $\eta$ sorts the predictive gaps.
+The algebraic correlation
 \begin{equation}
-  \Var(X_{\mathrm{A}} - X_{\mathrm{B}}) = \sigma^{2}_{\mathrm{A}}\bigl(1 + \kappa - 2\sqrt{\kappa}\,\rho\bigr).
-  \label{eq:var_factored}
+  r_A=\Corr(A,D)=\frac{1-\rho\sqrt{\kappa}}{\sqrt{1+\kappa-2\sqrt{\kappa}\,\rho}}
+  \label{eq:rA}
 \end{equation}
-The variance ratio $\kappa$ separates \emph{how unequal} the two entity variances are from \emph{how correlated} their measurements are; holding $\kappa$ fixed, $\rho$ alone determines whether differencing helps or harms efficiency.
+is a different function of $(\kappa,\rho)$.
+It is reported beside $\eta$ as a second candidate sorter of the $A$ versus $D$ gap.
+The four cells of $(\kappa,\rho)$ record efficiency and which side is more variable.
+They do not decide whether to use $A$, $D$, or $(A,B)$.
 
-The efficiency question is how this paired variance compares with treating the two measurements as independent. For unpaired measurements ($\rho=0$), the baseline variance is $\sigma^{2}_{\mathrm{A}}(1+\kappa)$. The Paired Efficiency Factor is their ratio, i.e.\ the expression in~\cref{eq:pef}:
-\begin{equation*}
-  \eta = \frac{1+\kappa}{1+\kappa-2\sqrt{\kappa}\,\rho}.
-\end{equation*}
-\noindent with $\eta$, $\kappa$, and $\rho$ as defined for \cref{eq:pef} in \cref{sec:pef_def}.
+\subsection{Finite-sample cost}
 
-\medskip
-\noindent\textbf{Remark.} No distributional assumptions are required: \cref{eq:pef,eq:var_factored} hold for any random variables with finite second moments.
-
-\subsubsection{Properties}
-
-Intuitively, stronger positive correlation means that shared fluctuations cancel more completely in the difference, so efficiency gain rises as $\rho$ increases. Formally, PEF is strictly increasing in $\rho$ for fixed $\kappa>0$,
+When $D$ is aligned, fitting $(A,B)$ spends one redundant coefficient.
+For a correctly specified regular model the leading excess test log-loss is $k/(2n)$ nats for a $k$-parameter fit \parencite{akaike1973,konishi2008}, so
 \begin{equation}
-  \frac{\partial \eta}{\partial \rho} = \frac{2\sqrt{\kappa}(1+\kappa)}{\bigl(1+\kappa-2\sqrt{\kappa}\,\rho\bigr)^{2}} > 0,
-  \label{eq:detadrho}
+  \mathbb{E}\bigl[\mathrm{LL}(D)-\mathrm{LL}(A,B)\bigr]\approx -\frac{1}{2n_{\mathrm{train}}}.
+  \label{eq:halfn}
 \end{equation}
-and convex in $\rho$,
-\begin{equation}
-  \frac{\partial^{2} \eta}{\partial \rho^{2}} = \frac{8\kappa(1+\kappa)}{\bigl(1+\kappa-2\sqrt{\kappa}\,\rho\bigr)^{3}} > 0.
-  \label{eq:d2etadrho2}
-\end{equation}
-The position of $\eta$ relative to $1$ partitions pairing into three interpretable regimes:
-\begin{itemize}
-  \item $\eta>1$: pairing reduces variance (positive correlation dominates);
-  \item $\eta=1$: pairing provides no efficiency change (Fisher baseline);
-  \item $\eta<1$: pairing increases variance (negative correlation dominates).
-\end{itemize}
-\Cref{fig:pef_landscape} visualises the PEF landscape across the $(\rho,\kappa)$ parameter space.
-
-\subsubsection{Reduction to Classical Case}
-
-When the two competitors have equal variability ($\kappa=1$, so $\sigma_{\mathrm{A}}=\sigma_{\mathrm{B}}$), the general formula simplifies to Fisher's classical result:
-\begin{equation*}
-  \eta = \frac{2}{2-2\rho} = \frac{1}{1-\rho},
-\end{equation*}
-recovering the paired-efficiency formula from the Introduction \parencite{fisher1935}. That is, positive correlation shrinks the variance of the difference below the independent-measurement baseline ($\eta>1$), whilst negative correlation amplifies it ($\eta<1$). This is the efficiency logic of the paired $t$-test \cite{student1908}. The PEF formula therefore \emph{contains} Fisher's result as a special case; unequal variances ($\kappa\neq 1$) are the ingredient the classical framework cannot represent on its own.
-
-\subsubsection{Provenance and Scope of Contribution}
-
-The variance-of-difference identity for unequal variances (\cref{eq:var_sum,eq:var_factored}) is a standard second-moment result, and the efficiency-of-pairing argument under equal variances is due to Fisher \parencite{fisher1935}; the same paired-margin machinery underlies the Pitman--Morgan test for equality of correlated variances \parencite{pitman1939,morgan1939}. Our contribution is not this algebra but its reframing: we collect it into a single closed-form efficiency ratio (\cref{eq:pef}), parameterised by $(\kappa,\rho)$, and repurpose it from an inferential setting toward feature construction and predictive information in competitive measurement.
-
-\subsection{The PEF--Information Content Relationship}
-
-Statistical efficiency ($\eta$) alone cannot explain why relative features sometimes improve prediction when $\eta<1$. To address that paradox, we need a second quantity: how much the KPI difference reduces uncertainty about the match outcome.
-
-\subsubsection{Setup and Assumptions}
-\label{sec:mi_setup}
-
-We now connect PEF with predictive power. Let $Y\in\{0,1\}$ denote the binary match outcome and let $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ be the relative feature. The second-moment pair $(\kappa,\rho)$ fixes $\eta$. A further parameter, the mean of the relative feature, fixes how that geometry enters a probabilistic outcome. Two assumptions state the link. They are the data-generating process of the idealised simulation (Supplementary~\cref{sec:si_probit}).
-
-\begin{description}
-  \item[(A1)] $(X_{\mathrm{A}},X_{\mathrm{B}})$ is bivariate normal with means $\mu_{\mathrm{A}}$, $\mu_{\mathrm{B}}$, variances $\sigma^{2}_{\mathrm{A}}$, $\sigma^{2}_{\mathrm{B}}$, and correlation $\rho$. Then $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ is normal with mean $\delta=\mu_{\mathrm{A}}-\mu_{\mathrm{B}}$ and variance \cref{eq:var_factored}. In the simulation the means are $\delta/2$ and $-\delta/2$, so this marginal mean is exactly $\delta$.
-  \item[(A2)] Given $X=x$, the outcome is drawn from the probit link
-  \[
-    Y \mid X=x \;\sim\; \mathrm{Bernoulli}\!\left(\Phi\!\left(\frac{x}{\sqrt{\Var(X)}}\right)\right),
-  \]
-  where $\Phi$ is the standard normal distribution function. $Y$ is not a deterministic function of $X$.
-\end{description}
-
-\noindent\textbf{Remark.} (A1) is used only for the information calculation. The PEF formula (\cref{eq:pef}) is distribution-free. Paired differences in the sports data are approximately normal (Supplementary~\cref{sec:si_normality}). (A2) is the simulation's outcome mechanism. It is not a claim that a single KPI generates match results.
-
-The labelling convention is fixed throughout. Entity~A is the reference series and entity~B is the comparator, so $\kappa=\sigma^{2}_{\mathrm{B}}/\sigma^{2}_{\mathrm{A}}$. Swapping the labels sends $\kappa\mapsto 1/\kappa$ and leaves $\eta$ unchanged, because $\eta$ depends on the pair only through the variance of the difference. Quadrant labels that split on $\kappa=1$ do swap. In the sports data, A is the home side and B is the away side. In the finance series, A is the {S\&P}~500 and B is the constituent, so $\kappa=\sigma^{2}_{\mathrm{stock}}/\sigma^{2}_{\mathrm{index}}$ and is typically greater than $1$.
-
-\subsubsection{Derivation}
-
-Under (A1) and (A2), predictive information is quantified as the mutual information between the relative feature $X$ and the outcome $Y$. The mutual information \parencite{shannon1948,cover2006} between $X$ and $Y$ is
-\begin{equation}
-  I(X;Y) = H(Y) - H(Y\mid X).
-  \label{eq:mi_def}
-\end{equation}
-
-\noindent $H(Y)$ is the Shannon entropy of $Y$ in bits and $H(Y\mid X)=\mathbb{E}_{X}[h(Y\mid X=x)]$ is the conditional entropy. Write $h(p)=-p\log_{2}p-(1-p)\log_{2}(1-p)$ for the binary entropy, and standardise the mean of $X$ as
-\begin{equation}
-  d_{\mathrm{rel}} \;=\; \frac{|\delta|}{\sqrt{\Var(X)}} \;=\; \frac{|\delta|}{\sigma_{\mathrm{A}}}\sqrt{\frac{\eta}{1+\kappa}}.
-  \label{eq:drel}
-\end{equation}
-Under (A1)--(A2) the marginal success probability is $\mathbb{P}(Y=1)=\Phi(d_{\mathrm{rel}}/\sqrt{2})$, so $H(Y)=h(\Phi(d_{\mathrm{rel}}/\sqrt{2}))$. This is $1$ bit only when $d_{\mathrm{rel}}=0$. The conditional entropy is the one-dimensional integral
-\begin{equation}
-  H(Y\mid X) \;=\; \mathbb{E}\bigl[h\bigl(\Phi(d_{\mathrm{rel}}+U)\bigr)\bigr], \qquad U\sim\mathcal{N}(0,1),
-  \label{eq:hygx}
-\end{equation}
-and the mutual information is
-\begin{equation}
-  I(X;Y) \;=\; h\!\left(\Phi\!\left(\frac{d_{\mathrm{rel}}}{\sqrt{2}}\right)\right) - H(Y\mid X).
-  \label{eq:mi_closed}
-\end{equation}
-\noindent The integral is evaluated by quadrature (Supplementary~\cref{sec:si_maths}). $I(X;Y)$ depends on $(\kappa,\rho,\delta,\sigma_{\mathrm{A}})$ only through $d_{\mathrm{rel}}$. It is largest near $d_{\mathrm{rel}}=0$, where the outcome is balanced, and it falls toward $0$ as $d_{\mathrm{rel}}$ grows, because $\mathbb{P}(Y=1)$ tends to $0$ or $1$ and there is little outcome uncertainty left to explain. At a fixed ratio $\delta/\sigma_{\mathrm{A}}$, a larger $\eta$ raises $d_{\mathrm{rel}}$ and therefore lowers $I(X;Y)$. Cuts of $\eta$ and $I(X;Y)$ at $\kappa=1$ and at $\rho=0$, comparing the median empirical $|\hat d_Y|$ with $\delta/\sigma_{\mathrm{A}}=1$, are in Supplementary~\cref{fig:si_iso_eta_I}.
-
-Binary entropy is concave on $[0,1/2]$. Writing $p(x)=\mathbb{P}(Y=1\mid X=x)$ and $P_{e}=\mathbb{E}[\min(p(X),1-p(X))]$ for the Bayes error,
-\begin{equation}
-  I(X;Y) \;\ge\; h\!\left(\Phi\!\left(\frac{d_{\mathrm{rel}}}{\sqrt{2}}\right)\right) - h(P_{e}).
-  \label{eq:mi_bound}
-\end{equation}
-This is a lower bound, not the value of $I(X;Y)$. The bound is derived in Supplementary~\cref{sec:si_maths}. An earlier equal-prior discriminant expression, $1-h(\Phi(d_{\mathrm{rel}}/2))$, is not this bound and is not $I(X;Y)$ under (A1)--(A2). Reported information uses \cref{eq:mi_closed}.
-
-\subsubsection{The Efficiency--Power Tension}
-\label{sec:eff_power_theory}
-
-Negative correlation ($\rho<0$) makes $\eta<1$: the paired difference has larger variance than the unpaired baseline. That is a statement about efficiency. It is not a statement about classification accuracy.
-
-Under (A1)--(A2) the outcome depends on the pair only through $X$, so $X$ is Bayes-sufficient for $Y$. The accuracy of the relative feature is then a function of $d_{\mathrm{rel}}$ alone. The accuracy of the absolute feature $X_{\mathrm{A}}$ depends on $d_{\mathrm{rel}}$ and on
-\begin{equation}
-  r_{AX} \;=\; \Corr(X_{\mathrm{A}},X) \;=\; \frac{1-\rho\sqrt{\kappa}}{\sqrt{1+\kappa-2\sqrt{\kappa}\,\rho}}.
-  \label{eq:rax}
-\end{equation}
-The relativisation gain $\Delta\mathrm{ML}$ is the percentage gap between those two accuracies (Supplementary~\cref{sec:si_probit}, Validation~4). Because $X$ is Bayes-sufficient, the gain cannot be negative inside this model: $\Delta\mathrm{ML}\ge 0$. The gain is large when $d_{\mathrm{rel}}$ is modest, so accuracies have not saturated, and when $r_{AX}$ is small, so $X_{\mathrm{A}}$ is poorly aligned with $X$. The gain is not a function of $\eta$ alone. Even the Fisher baseline $\eta=1$ produces a positive gain in the simulation (\cref{tab:scenarios}).
-
-Cells of the simulation in which $\eta<1$ and $\Delta\mathrm{ML}>0$ are therefore a consistency check of Validation~4, not evidence that a quadrant predicts the sign of the gain. Empirical harm, $\Delta\mathrm{ML}<0$, occurs outside (A1)--(A2), when the match outcome is not generated from that single KPI (\cref{sec:exemplars}).
-
-Statistical harm ($\eta<1$) and predictive harm ($\Delta\mathrm{ML}<0$; \cref{sec:ml_cv}) are different comparisons. The first compares the paired variance with an unpaired variance. The second compares the paired feature with $X_{\mathrm{A}}$ alone. Those baselines are not the same.
-
-\subsection{Sources of Correlation in Paired Comparisons}
-
-Having linked $\eta$ to predictive information, we turn to the origins of $\rho$ itself. Paired measurements acquire correlation through three generic mechanisms, each of which appears across competitive and non-competitive domains:
-\begin{itemize}
-  \item \textbf{Shared exogenous factors.} Conditions common to both entities move their measurements together, inducing positive correlation. Examples include market-wide movements in finance, batch, instrument, or site effects in clinical measurement, and weather, venue, or officiating in sport.
-  \item \textbf{Zero-sum interaction.} When one entity's gain is the other's loss, their measurements move oppositely, inducing negative correlation. Examples include rivals competing for a fixed market share, and head-to-head contests in which possession or territory ceded by one competitor accrues directly to the other.
-  \item \textbf{Non-zero-sum (common-mode) constraints.} When both entities can succeed or fail together, positive correlation can arise even under competition. Examples include firms lifted or depressed by a common sector trend, and matches in which both teams perform well in open, high-tempo play.
-\end{itemize}
-The sign and magnitude of $\rho$ therefore reflect which mechanism dominates in a given setting. The PEF formula accommodates all correlation signs within a single expression, covering shared-factor regimes (typically $\rho>0$) and zero-sum competitive regimes (potentially $\rho<0$). The competitive sports KPIs analysed in \cref{sec:results} provide concrete instances spanning this range, including Quadrant~4 cases of the efficiency--power tension (\cref{sec:eff_power_theory}). In the primary sports application, each observation is a same-fixture home--away pair and each match contributes one point to the bivariate sample of size $n$; the estimated $\hat\rho$ therefore summarises cross-fixture co-movement between competitors (high home counts tending to co-occur with high or low away counts in the same fixture) rather than serial dependence of a single team's KPI across time. Estimation scope and the associated independence considerations are detailed in \cref{sec:methods}.
-
-\subsection{Quadrant Taxonomy}
-
-Each KPI occupies a position in the $(\kappa,\rho)$ plane shaped by these mechanisms. Dividing that plane at $\kappa=1$ and $\rho=0$ yields four quadrants (\cref{tab:quadrants}). The split on $\rho=0$ is the efficiency split: $\eta>1$ when $\rho>0$ and $\eta<1$ when $\rho<0$, for every admissible $\kappa$. The split on $\kappa=1$ records which series is more variable. It does not rank $I(X;Y)$. At fixed $\delta/\sigma_{\mathrm{A}}$, \cref{eq:mi_closed} moves with $d_{\mathrm{rel}}$, and a larger variance lowers $d_{\mathrm{rel}}$ and raises $I(X;Y)$. Quadrant membership is therefore a description of efficiency and of the labelling of A and B. It is not, by itself, a rule for the feature. The sports cloud is \cref{fig:pef_landscape}. The four exemplars are the rows of \cref{tab:exemplars}.
-
-\textbf{Quadrant 1 ($\kappa>1$, $\rho>0$): efficient, B more variable.} Positive correlation gives $\eta>1$, and the comparator is more variable than the reference. Market-adjusted returns usually fall here because the stock is more variable than the index.
-
-\textbf{Quadrant 2 ($\kappa<1$, $\rho>0$): efficient, A more variable.} Positive correlation again gives $\eta>1$, but the reference series is the more variable one. Swapping the sports labels home and away exchanges Quadrant~1 with Quadrant~2.
-
-\textbf{Quadrant 3 ($\kappa<1$, $\rho<0$): inefficient, A more variable.} Negative correlation gives $\eta<1$. High-volume invasion-game counts often fall here. Whether the absolute feature then classifies better is an empirical question. The probit model cannot produce $\Delta\mathrm{ML}<0$.
-
-\textbf{Quadrant 4 ($\kappa>1$, $\rho<0$): inefficient, B more variable.} Again $\eta<1$. The $\kappa$ split distinguishes this cell from Quadrant~3 only through which side is more variable. Every Quadrant~4 cell has $\eta<1$, so that clause does not add a further restriction.
-
-\subsection{Signal Strength and the Limits of \texorpdfstring{$\eta$}{eta} as a Predictor}
-\label{sec:signal_strength}
-
-In the simulation, $\delta=\mathbb{E}[X]$ is the mean of the relative feature and
-\begin{equation}
-  \frac{\delta}{\sigma_{\mathrm{A}}} = \frac{\mu_{\mathrm{A}} - \mu_{\mathrm{B}}}{\sigma_{\mathrm{A}}}
-  \label{eq:delta_ratio}
-\end{equation}
-sets $d_{\mathrm{rel}}$ once $(\kappa,\rho)$ are fixed. Two design points with the same $\eta$ can still have different $I(X;Y)$ and different $\Delta\mathrm{ML}$ when this ratio differs. Supplementary~\cref{fig:si_iso_eta_I} shows the resulting divergence of iso-$\eta$ and iso-$I$ contours.
-
-That ratio is not the empirical predictive signal. Estimated from home and away means, $(\bar X_{\mathrm{A}}-\bar X_{\mathrm{B}})/s_{\mathrm{A}}$ is the home--away gap on the KPI. A league with no home advantage has that gap near zero for every KPI, while winners and losers can still differ. The predictive separation used to match exemplars is the class-conditional gap in the relative feature,
-\begin{equation}
-  \hat d_{Y} \;=\; \frac{\bar X_{Y=1} - \bar X_{Y=0}}{s_{X}},
-  \label{eq:class_sep}
-\end{equation}
-with $X=X_{\mathrm{A}}-X_{\mathrm{B}}$ and $Y$ the home-win indicator (\cref{sec:methods}). The coordinate $r_{AX}$ in \cref{eq:rax} is algebraic in $(\hat\kappa,\hat\rho)$ and does not require a further estimate. \Cref{sec:exemplars} matches one KPI per quadrant on $\hat d_{Y}$.
-
-\subsection{Cross-Domain Connections}
-
-The same quadrant logic applies across fields. \Cref{tab:cross_domain} situates familiar methods on the $(\kappa,\rho)$ plane.
-
-\begin{table}[t]
-  \centering
-  \caption{Cross-domain mapping of familiar methods to typical PEF regimes.}
-  \label{tab:cross_domain}
-  \scalebox{0.9}{
-  \begin{tabular}{@{}llll@{}}
-    \toprule
-    \textbf{Field} & \textbf{Method} & \textbf{Correlation source} & \textbf{Typical PEF regime} \\
-    \midrule
-    Statistics & Paired $t$-test & Repeated measures & $\eta=1/(1-\rho)$ when $\kappa=1$ \\
-    Finance & Market-adjusted returns & Market factors & Typically Q1: $\kappa>1$, $\rho>0$ \\
-    Healthcare & Paired clinical readings & Same-visit biology & Q2 in this study: $\eta\gg 1$ \\
-    Sports & Relative metrics & Environmental/competitive & Q3-dominant; Q4 when $\kappa>1$ \\
-    \bottomrule
-  \end{tabular}}
-\end{table}
-Finance uses A as the index and B as the stock, so the typical cell is Quadrant~1. Two of the eighteen constituents have $\kappa<1$ and sit in Quadrant~2. Healthcare in this study is a single systolic--diastolic pair with $\kappa<1$ and $\rho>0$, hence Quadrant~2. Shared $(\kappa,\rho)$ values are a geometric resemblance. They are not a transfer of the sports classification result.
+The expansion does not require Gaussian features (Supplementary~\cref{sec:si_alignment}).
+Under leave-one-team-out, $n_{\mathrm{train}}$ is the training-set size.
+At the fold sizes of this study the median cost is $\PEFrugbyHalfN$ milli-nats in rugby and $\PEFfootHalfN$ milli-nats in football.
+Further geometric identities appear in a companion manuscript \parencite{pefstatistics2026}.

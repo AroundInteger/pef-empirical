@@ -1,60 +1,44 @@
 \section{Discussion}
 \label{sec:discussion}
 
-\subsection{The cell does not decide the feature}
+\subsection{Reading the medians against skill and \texorpdfstring{$1/(2n_{\mathrm{train}})$}{1/(2n)}}
 
-The four cells record efficiency and variance asymmetry. At matched class separation the exemplar intervals all include zero (\cref{tab:exemplars}), and no Quadrant~3 interval lies entirely below zero. The studies that motivated this work framed the choice as a gain against the absolute feature, or as a null \parencite{bennett2019descriptive,bennett2021predicting,mosey2020,scott2023urc,scott2023womens}. Some KPIs have a negative point estimate of $\Delta\mathrm{ML}$. On these intervals that sign is not separated from fold noise.
+Most KPIs in these leagues carry little leave-one-team-out information about home win beyond the base rate.
+Only $\PEFrugbyNinfo$ rugby and $\PEFfootNinfo$ football KPIs are informative under the pre-specified skill rule.
+Against that background, the median $D$ versus $(A,B)$ gaps of $\PEFrugbyMedGapDf$ and $\PEFfootMedGapDf$ milli-nats match the prediction $-1/(2n_{\mathrm{train}})$ ($\PEFrugbyHalfN$ and $\PEFfootHalfN$ milli-nats), and the bootstrap intervals for those medians contain the prediction.
+That agreement is what aligned, low-signal features should produce: the gap is mostly the cost of a redundant coefficient, not evidence that informative KPIs are aligned.
+Where $\Lambda<\PEFLRaic$, the difference is still expected to predict at least as well as the pair out of sample (Supplementary~\cref{sec:si_alignment}).
+The median $A$ versus $D$ gap is larger in rugby ($\PEFrugbyMedGapAD$ milli-nats) than in football ($\PEFfootMedGapAD$).
+Those statements describe the medians.
+They are not an instruction to prefer one column.
 
-Quadrant membership remains a coarse description. The PEF surface is nonlinear in $(\kappa,\rho)$ and in the relative signal, so two KPIs in the same cell need not share the same $\Delta\mathrm{ML}$.
+\subsection{The cell does not choose the feature}
 
-The analysis is univariate by design (\cref{sec:ml_cv}). The motivating studies used multi-KPI classifiers, where inter-feature correlations lie outside a single paired feature. This paper reports the univariate comparison. It does not treat that comparison as a bound on a multivariate effect that was not estimated. The four exemplars illustrate the pre-specified rule at typical class separation. The estimate of whether $\eta$ tracks $\Delta\mathrm{ML}$ is the full cloud (Supplementary~\cref{fig:si_ipred_vs_dml}).
-
-\subsection{Efficiency versus Information}
-
-$\eta$ and $I(X;Y)$ answer different questions. They meet in \cref{eq:mi_closed} only through $d_{\mathrm{rel}}$. At a fixed ratio $\delta/\sigma_{\mathrm{A}}$, a larger $\eta$ raises $d_{\mathrm{rel}}$ and lowers exact $I(X;Y)$. Classical advice to avoid the difference when $\eta<1$ is a variance rule. It is not a prediction rule. Inside the probit model the accuracy gain depends on $(d_{\mathrm{rel}},r_{AX})$ and is bounded below by zero, including at the Fisher point $\eta=1$.
-
-The PEF formula (\cref{eq:pef}) requires only finite second moments. The information-content relationship requires bivariate normality (A1). The efficiency characterisation is therefore the more general result.
-
-\subsection{Practical Guidance}
-\label{sec:practical_guidance}
-
-A practical reading of the estimates is:
-\begin{enumerate}
-  \item Estimate $\kappa$ and $\rho$ from available data.
-  \item Compute $\eta$ using \cref{eq:pef}.
-  \item Read the cell from \cref{tab:quadrants} as an efficiency and asymmetry label.
-  \item Do not treat the cell as a decision to relativise. Compare the absolute feature, the difference, and, where it is feasible, $(X_{\mathrm{A}},X_{\mathrm{B}})$, and report an interval for $\Delta\mathrm{ML}$.
-  \item Inside the probit model, $\Delta\mathrm{ML}\ge 0$. A negative empirical point estimate is outside that model and, on the Quadrant~3 intervals here, is consistent with fold noise.
-\end{enumerate}
-Possession-normalised rates are a different construction from opponent differences \parencite{sever2026}. They adjust for game state rather than pairing two teams' counts. An open implementation is provided (Supplementary~\cref{sec:si_practitioner}; \cref{sec:data_availability}).
-
-\subsection{The Same Geometry Outside Sport}
-
-The third question is whether the same geometry appears outside sport. Market-adjusted returns, paired clinical designs, and relative sports metrics are instances of correlation-based variance reduction with different $(\kappa,\rho)$ values. A further analogue is value-added benchmarking in education, which compares teacher performance with that of comparable cohorts \parencite{hanushek2010}.
-
-Healthcare pairing sits in Quadrant~2 (\cref{tab:validation}): $\rho$ is high and $\eta>1$, so pairing is efficient.
-That cell records efficiency and which margin is more variable.
-It does not recommend a feature.
-Invasion-game KPIs occupy all four cells and concentrate in Quadrant~3 (\cref{sec:results}).
-Whether the difference changes accuracy is a comparison of classifiers, reported with an interval.
-The cell does not settle that comparison.
+The Paired Efficiency Factor describes the variance of the difference relative to unpaired measurement.
+Paired-design theory motivates testing whether $\eta$ sorts predictive gaps; in these data it does not.
+Algebraic $r_A$ is a clearer candidate for the $A$ versus $D$ comparison and shows the expected sign, but it does not replace a direct comparison of $A$, $D$, and $(A,B)$ with an interval.
+Rugby and football occupy all four cells and concentrate in Quadrant~3 (\cref{fig:pef_landscape}).
+That count describes the cloud.
+It does not choose the feature.
+A joint model of many KPIs, where $p$ redundant coefficients would cost about $p/(2n_{\mathrm{train}})$, is left for future work.
 
 \subsection{Limitations}
 
-\textbf{Distributional assumptions.} The PEF formula is distribution-free, but the information content relationship (\cref{eq:mi_closed}) assumes bivariate normality. Paired differences are often closer to normal than the raw series (Supplementary~\cref{sec:si_normality}). Strongly skewed or multimodal distributions may still need a non-parametric mapping. For count-based KPIs, $Z=\log(X+1)$ can improve normality whilst preserving the $(\kappa,\rho)$ structure. Across \PEFrugbyNkpis{} rugby KPIs the rank ordering by $\rho$ was largely preserved (Spearman $r_{s}=0.967$), and the mean of the KPI-wise ratios $\eta_{\log}/\eta$ was $1.085$ (paired $t$, $p=0.357$; Supplementary~\cref{sec:si_qc}). Individual count-based KPIs can still move substantially (rucks won).
+The outcome is home win versus not.
+Draws are coded with non-wins.
+In these two seasons the home-win rate is $\PEFrugbyHomeWin\%$ in rugby and $\PEFfootHomeWin\%$ in football.
+Those rates sit in the usual range for elite rugby and English league football \parencite{morton2006,pollard1986}.
+They are a base-rate note for the outcome coding.
+They are not a finding of this paper.
+Log-loss remains the primary score.
+Accuracy is not reported.
+Leave-one-team-out holds out one club at a time; the opponent's other matches remain in training, and each match is typically scored twice.
+The informative subset is small, so subset correlations are descriptive.
+The likelihood-ratio statistic is a full-sample summary under logistic dependence that ignores team recurrence in the reference distribution.
+Four exemplars illustrate the cells.
+They were selected before the log-loss analysis, after an earlier accuracy-based analysis of the same data.
 
-\textbf{Stationarity.} The framework treats $\kappa$ and $\rho$ as fixed. Among the rugby and football KPIs, most drift modestly between seasons 23/24 and 24/25, though a minority of rugby KPIs cross quadrant boundaries (\cref{fig:pef_landscape}). Pooled two-season estimates (as in \cref{tab:exemplars}) therefore summarise a moving target.
+\subsection{Relation to the companion}
 
-\textbf{Binary outcomes.} Both \cref{eq:mi_closed} and the sports protocol target binary classification: which team wins a head-to-head match. That choice matches the probit link under (A1)--(A2) and keeps the KPI comparison on a common scale. Multi-class outcomes and continuous targets would need a corresponding information-theoretic mapping. The per-KPI $(\kappa,\rho)$ diagnostic still applies wherever paired absolute and relative features can be formed.
-
-\textbf{Strategic interactions.} In invasion-game sport, teams respond to opponents' tactics and game state. The $(\kappa,\rho)$ structure of a KPI is therefore partly an equilibrium property of competition, not a fixed physical law. Parameters here are estimated from observed match data without a model of within-game adaptation. Where such dynamics are material, $(\kappa,\rho)$ should be read as descriptive summaries at the chosen time scale.
-
-\textbf{Primary evidence base.} The rugby and football KPIs, the machine-learning validation, and the quadrant exemplars are the primary evidence. Healthcare, clinical genomics, and finance show that the same $(\kappa,\rho)$ geometry recurs (\cref{tab:validation}), but without the same per-unit ML scrutiny or temporal replication.
-
-\subsection{Future Directions}
-
-A distribution-free analogue of $I(X;Y)$, for example a rank-based or permutation measure, would extend the integral beyond bivariate normality (Supplementary~\cref{sec:si_qc}). Multivariate classifiers are a different question from the univariate comparison reported here.
-
-Rolling-window or state-space estimates of $(\kappa,\rho)$ would track parameter drift. Season-blocked or chronological cross-validation would tighten temporal leakage beyond the home-team folds used here (\cref{sec:ml_cv}).
-
-Relativisation is often justified as baseline cancellation rather than variance reduction. Connecting the geometry to causal estimands would show when differencing preserves a treatment or exposure contrast and when it introduces collider or selection bias.
+This paper reports the sports cloud and the classical alignment and $1/(2n)$ arguments in Supplementary~\cref{sec:si_alignment}.
+A companion manuscript records further geometric identities \parencite{pefstatistics2026}.

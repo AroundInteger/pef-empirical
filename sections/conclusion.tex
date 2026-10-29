@@ -1,30 +1,13 @@
 \section{Conclusion}
 
-The paper asked three questions.
-What does $\eta$ measure?
-Why does that measure diverge from $I(X;Y)$ and from $\Delta\mathrm{ML}$ under the probit model?
-Do the rugby and football KPIs, or the three supporting domains, show $\eta$ tracking predictive gain?
+The paper asked three questions about United Rugby Championship and Championship KPIs.
+Are they aligned with home win under $\beta_A+\beta_B=0$?
+How large is the team-blocked gap of $D$ relative to $(A,B)$ and to $A$?
+Does $\eta$, or the quadrant, sort that gap?
 
-The Paired Efficiency Factor $\eta=(1+\kappa)/(1+\kappa-2\sqrt{\kappa}\,\rho)$ compares the variance of the difference with unpaired measurement.
-The formula is distribution-free and contains Fisher's equal-variance result as the case $\kappa=1$.
-Positive $\rho$ reduces the variance of the difference ($\eta>1$).
-Negative $\rho$ inflates it ($\eta<1$).
-The cell also records which side is more variable.
-Swapping the labels of A and B sends $\kappa$ to $1/\kappa$ and leaves $\eta$ unchanged.
-For these leagues, A is home and B is away.
-
-Efficiency is not information about the outcome.
-Under the probit model, $I(X;Y)$ depends on the pair only through the relative signal $d_{\mathrm{rel}}$.
-At a fixed ratio $\delta/\sigma_{\mathrm{A}}$, a larger $\eta$ raises $d_{\mathrm{rel}}$ and lowers $I(X;Y)$.
-Inside the model the relative feature is Bayes-sufficient, so $\Delta\mathrm{ML}$ is at least zero, and the gain is a function of $(d_{\mathrm{rel}},r_{AX})$.
-The Fisher case $\eta=1$ still shows a gain.
-That is a property of the model.
-It is not a feature-choice rule for these KPIs.
-
-On the rugby and football KPIs, the correlation of $\hat\eta$ with $\Delta\mathrm{ML}$ is $\PEFcorrEtaML$, and the correlation of class separation $\hat d_Y$ with $\Delta\mathrm{ML}$ is $\PEFcorrIpredML$.
-Four exemplars at comparable class separation do not separate the sign of $\Delta\mathrm{ML}$ from fold noise (\cref{tab:exemplars}).
-Rugby and football occupy all four cells and concentrate in Quadrant~3, where pairing is inefficient (\cref{fig:pef_landscape}).
-Healthcare, clinical genomics, and finance show the same $(\kappa,\rho)$ geometry, with different mean $\hat\eta$ (\cref{tab:validation}), and they have no match outcome.
-
-Pairing efficiency does not decide whether a team KPI should be relativised.
-The predictive choice is a comparison of the absolute feature, the difference, and the pair $(X_{\mathrm{A}},X_{\mathrm{B}})$, reported with an interval.
+Most KPIs are near the base rate, with $\PEFrugbyNinfo$ rugby and $\PEFfootNinfo$ football KPIs informative under the skill rule.
+The median likelihood-ratio statistic is $\PEFrugbyMedLR$ in rugby and $\PEFfootMedLR$ in football, both below $\PEFLRaic$.
+The median $D$ versus $(A,B)$ gap matches $-1/(2n_{\mathrm{train}})$.
+Within sport, $\eta$ does not sort that gap.
+The cell describes the cloud.
+It does not choose the feature.

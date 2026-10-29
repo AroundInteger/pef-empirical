@@ -1,9 +1,14 @@
 \section{Data and Code Availability}
 \label{sec:data_availability}
 
-Rugby union KPIs were supplied by Oval Insights through access arranged with Scarlets RFC and are not redistributed. Football KPIs were analysed under agreement with Swansea City AFC and are not redistributed. Supporting-domain provenance is described in Methods (\cref{sec:methods}).
+Rugby union KPIs were supplied by Oval Insights through access arranged with Scarlets RFC and are not redistributed.
+Football KPIs were analysed under agreement with Swansea City AFC and are not redistributed.
 
-All PEF estimates, class separations, and $\Delta\mathrm{ML}$ values in this manuscript were produced by \path{scripts/paper_pipeline/run_paper_pipeline.m} in {MATLAB} {R2025b} with the Statistics and Machine Learning Toolbox. Team-blocked fold construction is described in Methods (\cref{sec:ml_cv}). A de-identified per-KPI table, with no match rows, is written to \path{scripts/paper_pipeline/outputs/referee_kpi_summary.csv}. Interactive tools for the analytic probit surface are available at \url{https://github.com/AroundInteger/pef-tools}.
+Team-blocked log-loss, skill, and likelihood-ratio statistics were produced by \path{Alternative Pipeline/pef_numerics/experiments/E6_sports.py}.
+Second-moment landscape files were produced by \path{scripts/paper_pipeline/run_paper_pipeline.m} in {MATLAB} {R2025b} with the Statistics and Machine Learning Toolbox.
+Macros in \path{scripts/paper_pipeline/outputs/sports_numbers.tex} are regenerated from those CSVs without refitting.
+A de-identified per-KPI table, with no match rows, is written to \path{scripts/paper_pipeline/outputs/referee_kpi_summary.csv}.
+Analysis code will be deposited with the accepted manuscript; match-level KPI files remain under the data agreements above.
 
 \section{Author Statements}
 \label{sec:author_statements}
@@ -12,7 +17,7 @@ The blanks below are for the authors to complete before submission.
 
 \subsection{CRediT}
 
-Rowan Brown: conceptualisation, methodology, software, formal analysis, writing (original draft). [Co-author name]: [contribution].
+M.~R. Brown: conceptualisation, methodology, software, formal analysis, writing (original draft). [Co-author name]: [contribution].
 
 \subsection{Funding}
 
@@ -20,8 +25,10 @@ Rowan Brown: conceptualisation, methodology, software, formal analysis, writing 
 
 \subsection{Competing interests}
 
-Rugby KPIs were supplied through access arranged with Scarlets RFC. Football KPIs were analysed under agreement with Swansea City AFC. [Other relationships to declare, or a statement that the authors have none.]
+Rugby KPIs were supplied through access arranged with Scarlets RFC (affiliation of M.~Evans).
+Football KPIs were analysed under agreement with Swansea City AFC (affiliation of D.~Morris).
+[Other relationships to declare, or a statement that the authors have none.]
 
 \subsection{Ethics}
 
-The sports KPIs are secondary operational records used for this analysis. [Ethics committee name and reference, or the secondary-use decision the authors will cite.] Healthcare, genomics, and finance use the public sources cited in Methods.
+The sports KPIs are secondary operational records used for this analysis. [Ethics committee name and reference, or the secondary-use decision the authors will cite.]

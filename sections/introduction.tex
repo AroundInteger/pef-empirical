@@ -1,58 +1,55 @@
 \section{Introduction}
 
-\subsection{Why Relativisation? From Cross-Domain Practice to Sport}
+\subsection{Absolute, relative, or paired features}
 
-Across quantitative disciplines, a recurring analysis decision is whether to represent a measurement in absolute terms or relative to a comparator. In many cases, the relative quantity is preferred because it cancels a shared baseline and isolates the signal of interest. For example, in finance, asset returns are routinely benchmarked against the market \parencite{sharpe1966,fama1970}; in clinical medicine, pulse pressure, the difference between systolic and diastolic blood pressure, is an established relative biomarker \parencite{franklin1999,blacher1999}; and in industrial process control, statistical control charts track deviations from a reference rather than raw values \parencite{montgomery2012}. Management research more broadly emphasises that competitive benchmarking shifts attention from absolute totals to relative performance \parencite{keiningham2015}.
+Match-outcome models in rugby union and association football often choose among three representations of a team key performance indicator (KPI): the home count $A$, the difference $D=A-B$ from the away count, or the pair $(A,B)$ \parencite{bennett2019descriptive,bennett2021predicting,mosey2020,scott2023urc,scott2023womens}.
+Those studies usually compare absolute and relative columns by cross-validated accuracy under logistic regression \parencite{dixon1997,berrar2019}.
+Relative formulations improve accuracy in the United Rugby Championship \parencite{scott2023urc}.
+They show no improvement over absolute features in international women's rugby \parencite{scott2023womens} and in Australian sub-elite rugby \parencite{mosey2020}.
+A six-league football preprint again finds that team--opponent differences outperform isolated team statistics \parencite{brito2026}.
+None of those reports answers whether the KPIs are aligned with home win, how large the team-blocked gap of $D$ is relative to the pair, or whether pairing efficiency sorts that gap.
 
-The same choice arises in competitive sport: whether to represent a team's performance in absolute terms or relative to the opponent. In rugby union and association football, several studies contrast absolute and relative team-level formulations of key performance indicators (KPIs) for match-outcome prediction \parencite{bennett2019descriptive,bennett2021predicting,mosey2020,scott2023urc,scott2023womens}. These studies typically assess KPIs by building match-outcome classifiers, most commonly logistic regression, from team-level features, evaluated by cross-validated predictive accuracy \parencite{dixon1997,berrar2019}. Quantitative international sports ratings illustrate the same long-standing reliance on structured comparison under common rules \parencite{stefani2011}. The rugby KPI literature is large and often inconsistent across competitions \parencite{colomer2020,watson2017validity}. The reported results run in several directions. Relative formulations improve accuracy in the United Rugby Championship \parencite{scott2023urc}. They show no significant improvement over absolute features in international women's rugby \parencite{scott2023womens}, and Australian sub-elite rugby likewise shows no significant improvement over absolute features \parencite{mosey2020}. A recent six-league football preprint again finds that team--opponent differences outperform isolated team statistics \parencite{brito2026}. Those studies treat the choice as a gain against the absolute feature, or as a null. They do not give a condition on the variance ratio and the correlation that decides the feature. The question this paper answers is whether pairing efficiency decides it.
+\subsection{Three questions}
 
-Underlying that question is a distinction the baseline-cancellation rationale collapses. Differencing is often expected to reduce noise. When the two teams' KPI values are negatively correlated, so that one performs well when the other performs poorly, the difference can have \emph{larger} variance than either raw measurement. That larger variance is a statement about efficiency. It is not, by itself, a statement about match-outcome accuracy. The statistical principle underneath the efficiency comparison is Fisher's paired design.
+This paper studies $\PEFrugbyNkpis$ United Rugby Championship KPIs and $\PEFfootNkpis$ English Championship KPIs over seasons 23/24--24/25.
+Home is $A$ and away is $B$, so $D=A-B$.
+The outcome is home win versus not.
+The analysis is organised around three questions.
 
-\subsection{Fisher's Paired Efficiency}
+\begin{enumerate}
+  \item Are these KPIs aligned with home win under the null $\beta_A+\beta_B=0$ in a logistic model of $(A,B)$?
+  \item How large is the team-blocked out-of-sample log-loss gap of $D$ relative to $(A,B)$ and to $A$?
+  \item Does the Paired Efficiency Factor $\eta$, or the quadrant of $(\kappa,\rho)$, sort that gap?
+\end{enumerate}
 
-The principle that correlated measurements yield more efficient inference than independent samples has been recognised since Fisher's work on experimental design \parencite{fisher1935}. For two correlated measurements $X_{\mathrm{A}}$ and $X_{\mathrm{B}}$ with equal variances $\sigma^{2}$ and correlation $\rho$, the variance of their difference is
-\begin{equation*}
-  \Var(X_{\mathrm{A}} - X_{\mathrm{B}}) = 2\sigma^{2}(1-\rho).
-\end{equation*}
-Compared to independent measurements (variance $2\sigma^{2}$), the efficiency gain is $1/(1-\rho)$. This result, which is purely algebraic and requires no distributional assumptions beyond finite second moments, underpins the paired $t$-test \parencite{student1908} and decades of experimental design across medicine, psychology, and agriculture \parencite{fisher1935}.
+Alignment means that the score from $(A,B)$ depends on the pair only through $D$.
+The classical cost of a redundant coefficient is about $1/(2n_{\mathrm{train}})$ in expected test log-loss \parencite{akaike1973,stone1977}.
+Both statements are recorded in Supplementary~\cref{sec:si_alignment}.
+Because many KPIs may carry little signal beyond the home-win rate, the paper first reports leave-one-team-out skill against an intercept-only model and then answers the three questions for all KPIs and for an informative subset.
 
-This classical formula, however, rests on a single structural assumption: equal variances. The competitive data that motivate our question violate it \parencite{welch1947}. Examining KPIs from professional rugby union and football, we observe two features Fisher's equal-variance relation cannot represent. First, for each KPI the per-match paired-difference series $X_{\mathrm{A},i}-X_{\mathrm{B},i}$ is a sampled distribution across fixtures. Those differences are approximately normal even where the individual team series are mildly right-skewed, the behaviour expected of paired differences (Supplementary~\cref{sec:si_normality}). Second, the two teams' per-match series rarely share a common variance, and their cross-fixture correlation takes both positive values (from shared environmental conditions) and negative values (from competitive dynamics) depending on the KPI (\cref{tab:validation}). Variance asymmetry and signed correlation are typical, and Fisher's equal-variance formula does not decide the feature.
+\subsection{Pairing efficiency is not the switch}
 
-\subsection{The Paired Efficiency Factor}
-\label{sec:pef_def}
-
-These observations, approximately normal differences with non-zero means and unequal second moments, motivate a formula parameterised jointly by the variance ratio and the correlation. We allow unequal variances $\sigma^{2}_{\mathrm{A}}$ and $\sigma^{2}_{\mathrm{B}}$ with variance ratio $\kappa=\sigma^{2}_{\mathrm{B}}/\sigma^{2}_{\mathrm{A}}$. The variance of the difference in this case then becomes
-\begin{equation*}
-  \Var(X_{\mathrm{A}} - X_{\mathrm{B}}) = \sigma^{2}_{\mathrm{A}}\bigl(1 + \kappa - 2\sqrt{\kappa}\,\rho\bigr).
-\end{equation*}
-Defining the Paired Efficiency Factor as the ratio of unpaired to paired variance, similar to the Fisher efficiency gain relation above, we have:
+The variance of the difference is $\Var(A-B)=\sigma_A^2(1+\kappa-2\sqrt{\kappa}\,\rho)$ with $\kappa=\sigma_B^2/\sigma_A^2$ and $\rho=\Corr(A,B)$.
+The Paired Efficiency Factor
 \begin{equation}
-  \eta = \frac{1+\kappa}{1+\kappa-2\sqrt{\kappa}\,\rho}.
+  \eta = \frac{1+\kappa}{1+\kappa-2\sqrt{\kappa}\,\rho}
   \label{eq:pef}
 \end{equation}
+compares that variance with unpaired measurement of the same two counts \parencite{fisher1935}.
+Paired-design theory suggests that differencing should help when pairing reduces variance.
+Positive $\rho$ yields $\eta>1$; negative $\rho$ yields $\eta<1$.
+The four cells of $(\kappa,\rho)$ record whether pairing reduces variance and which side is more variable.
+They describe the KPI cloud.
+They do not choose among $A$, $D$, and $(A,B)$.
 
-\noindent where $\eta>1$ indicates that pairing reduces variance. Across sports KPIs, variance ratios and signed correlations occupy a wide range, with a broader spread in the supporting domains (\cref{tab:validation}). Specifically, $\rho=\Corr(X_{\mathrm{A}},X_{\mathrm{B}})$ is the Pearson correlation between the home and away KPI values \emph{across fixtures}: for each match $i$, $X_{\mathrm{A},i}$ and $X_{\mathrm{B},i}$ are the two teams' counts from the same game, and $\hat\rho$ is computed from the $n$ such paired observations (\cref{sec:methods}).
+\subsection{Scope and contributions}
 
-Like the classical result, this formula is purely algebraic, and it recovers Fisher's equal-variance ($\kappa=1$) as a special case. Thus, $\eta$ depends jointly on correlation strength and variance asymmetry, a dependence the classical formula cannot express. Under bivariate normality and equal group sizes, the PEF equals the Pitman asymptotic relative efficiency of the paired $t$-test versus the independent two-sample $t$-test, confirming the variance-ratio formula (see Supplementary~\cref{sec:pitman} and \parencite{lehmann1999} for the general framework).
+\Cref{sec:theory} states $D$, the null, $\eta$, $r_A$, and the $1/(2n_{\mathrm{train}})$ cost.
+\Cref{sec:methods} defines the likelihood-ratio statistic, leave-one-team-out log-loss, and the skill rule.
+\Cref{sec:results} answers the three questions.
+\Cref{sec:discussion} reads the medians against skill and the cost prediction.
 
-\subsection{Efficiency is not the predictive choice}
-
-From \eqref{eq:pef}, negative correlation yields $\eta<1$: pairing increases the variance of the difference relative to independent measurement. Classical variance-reduction reasoning treats that as a reason to avoid the difference. Match-outcome studies have reported both gains and nulls for relative features \parencite{bennett2019descriptive,scott2023urc,mosey2020}. Those reports do not identify a cell of $(\kappa,\rho)$ in which the difference should be used.
-
-Three comparisons stay separate. $\eta$ compares the paired difference with an unpaired measurement of the same two counts. $I(X;Y)$, under the probit model in \cref{sec:theory}, is an integral in the relative signal. $\Delta\mathrm{ML}$ compares the difference with the home KPI alone. The claim of the paper is that $\eta$ does not decide $\Delta\mathrm{ML}$. The sports cloud is the comparison that would falsify that claim (\cref{fig:si_ipred_vs_dml}).
-
-\subsection{Scope and Contributions}
-\label{sec:contributions}
-
-The primary empirical analysis draws on KPI data from professional rugby union and football, where head-to-head matchups produce natural pairing across a range of $(\kappa,\rho)$ values, including negative within-match correlation. Performance-indicator construction in invasion games is well established \parencite{hughes2002}, and modern team-sports analytics emphasises spatiotemporal and match-context structure \parencite{bornn2021}. A complementary programme evaluates the statistical properties of sports metrics before they enter prediction models \parencite{franks2016,matteo2026}. We supplement this with validation data from healthcare ({NHANES} oscillometric systolic and diastolic readings on the same visit), transcriptomics ({GEO} {GSE47462}), and finance to assess generalisability. Supporting-domain summaries appear in \cref{tab:validation}. The Supplementary Information records the mathematical derivations, the sports KPI landscape, and the simulation diagnostics.
-
-The empirical argument is organised around three questions. What does $\eta$ measure? Why does that measure diverge from $I(X;Y)$ and from $\Delta\mathrm{ML}$ under the probit model? Do these KPIs, or the three supporting domains, show $\eta$ tracking predictive gain? \Cref{sec:theory,sec:methods} supply the shared apparatus. \Cref{sec:results} addresses each question. \Cref{sec:discussion} interprets the answers. Mathematical derivations appear in Supplementary~\cref{sec:si_maths}.
-
-Answering those questions produces five contributions:
-\begin{enumerate}
-  \item \textbf{PEF generalisation.} We extend Fisher's paired efficiency to unequal variances through a distribution-free formula (\cref{eq:pef}). This is what $\eta$ measures.
-  \item \textbf{Quadrant taxonomy.} We partition the $(\kappa,\rho)$ plane into four cells. Each cell records efficiency and which side is more variable. The cell does not decide whether to relativise.
-  \item \textbf{Information content relationship.} Under the probit model, $I(X;Y)$ is a one-dimensional integral in the relative signal, with a Jensen lower bound \parencite{cover2006,guyon2003}. At a fixed ratio $\delta/\sigma_{\mathrm{A}}$, a larger $\eta$ lowers that integral. Inside the model the accuracy gain depends on $(d_{\mathrm{rel}},r_{AX})$ and is bounded below by zero.
-  \item \textbf{Sports cloud.} Across the rugby and football KPIs, $\hat\eta$ does not line up with $\Delta\mathrm{ML}$ (Supplementary~\cref{fig:si_ipred_vs_dml}). Four pre-specified exemplars, one per cell at comparable class separation, have fold intervals that cover zero (\cref{tab:exemplars}). They illustrate the typical signal. They are not an estimate of the sign.
-  \item \textbf{Cross-domain geometry.} Healthcare, genomics, and finance show the same $(\kappa,\rho)$ geometry. They have no match outcome, so they do not answer the predictive question.
-\end{enumerate}
+The contributions are empirical.
+First, intercept-only skill shows that most of these KPIs sit near the base rate, so alignment must not be over-read from null features.
+Second, the sport-level distribution of $\Lambda$, with landmarks at $\PEFLRaic$ and $\PEFLRlandmark$.
+Third, median team-blocked gaps that match $-1/(2n_{\mathrm{train}})$, with the finding that $\eta$ does not sort the $D$ versus $(A,B)$ gap.

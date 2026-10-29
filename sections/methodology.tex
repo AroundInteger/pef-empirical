@@ -1,80 +1,64 @@
 \section{Methodology}
 \label{sec:methods}
 
-\subsection{Study Design}
+\subsection{Study design}
 
-The validation proceeds in three tiers. The first is an idealised probit simulation under (A1)--(A2) that evaluates the integral for $I(X;Y)$ (\cref{eq:mi_closed}) on a $(\kappa,\rho,\delta/\sigma_{\mathrm{A}})$ grid (Supplementary~\cref{sec:si_probit}). The second tier is the primary analysis of professional sports KPIs: the $\PEFtotalStudies{}$ rugby and football KPIs ($\PEFrugbyNkpis{}$ rugby, $\PEFfootNkpis{}$ football) on the $(\kappa,\rho)$ plane (\cref{fig:pef_landscape}; Supplementary~\cref{fig:si_ipred_vs_dml}), with four single-KPI exemplars chosen by the rule below (\cref{sec:exemplars,tab:exemplars}). The third tier is supporting validation in healthcare, clinical genomics, and finance. The objectives are to state $I(X;Y)$ under one generative model, describe what the four cells do and do not decide, and test whether the same $(\kappa,\rho)$ geometry appears outside sport.
+The primary units are team KPIs from professional rugby union and association football.
+For each KPI the home series is $A$, the away series is $B$, and the difference is $D=A-B$.
+The outcome is home win versus not.
+Draws are coded as not a home win.
+Across the pooled fixtures the home-win rates are $\PEFrugbyHomeWin\%$ in rugby and $\PEFfootHomeWin\%$ in football.
+The analysis reports a likelihood-ratio statistic for $\beta_A+\beta_B=0$, leave-one-team-out log-loss for an intercept-only model and for $A$, $D$, and $(A,B)$, and the second-moment quantities $\eta$ and $r_A$.
 
-\subsection{Primary Data: Sports KPIs}
+\subsection{Primary data}
 
-The primary analysis uses match-level KPI data from two professional leagues:
-\begin{itemize}
-  \item \textbf{Rugby union.} United Rugby Championship ({URC}): $n=\PEFrugbyNgames$ games pooled across seasons 23/24 and 24/25 ($m=16$ teams; 18 regular-season rounds in which each team plays 12 opponents once and three opponents twice). KPIs include rucks won, kick metres, kicks from hand, carries, penalties conceded, turnovers won, and others (\cref{fig:pef_landscape}).
-  \item \textbf{Football.} English Championship: $n=\PEFfootNgames$ games pooled across the same two seasons ($m=24$ teams, double round-robin). KPIs include duels, pressures, interceptions, fouls, and shot volume (\cref{fig:pef_landscape}). The outcome in both sports is a home win versus not: draws are coded as not a home win. The home-win rate is $\PEFrugbyHomeWinPct\%$ in rugby and $\PEFfootHomeWinPct\%$ in football, so a majority-class classifier is already accurate in rugby and only modestly above one half in football. Association-football score and outcome modelling has a long econometric lineage \parencite{dixon1997,boulier2003}, with contemporary machine-learning approaches incorporating domain knowledge \parencite{berrar2019}.
-\end{itemize}
-Head-to-head matchups provide natural pairing through shared environmental conditions (weather, venue, officiating), and KPI variability across matches is well documented in professional sport \parencite{malcata2014}. Those rugby union lines of work motivate treating head-to-head KPIs as a primary testbed for the present framework \parencite{bennett2019descriptive,bennett2021predicting,mosey2020,scott2023urc,scott2023womens}. The sports data are well suited to testing the framework because the KPIs span a range of correlation values (including negative correlation from competitive dynamics) and variance ratios, populating all four quadrants. To assess temporal stability, we compute $(\hat{\kappa},\hat{\rho})$ for each KPI in both seasons separately. \Cref{fig:pef_landscape} is the full cloud, by season. The four exemplars are \cref{tab:exemplars}.
+Rugby KPIs are from the United Rugby Championship over seasons 23/24--24/25 ($\PEFrugbyNgames$ matches; $\PEFrugbyNkpis$ KPIs).
+Football KPIs are from the English Championship over the same two seasons ($\PEFfootNgames$ matches; $\PEFfootNkpis$ KPIs).
+Performance-indicator construction in invasion games is well established \parencite{hughes2002,bornn2021}.
+Rugby records were supplied through access arranged with Scarlets RFC.
+Football records were analysed under agreement with Swansea City AFC.
+Neither source is redistributed (\cref{sec:data_availability}).
 
-\subsection{Supporting Data: Cross-Domain Validation}
+\subsection{Parameter estimation}
 
-To assess generalisability beyond sports, we applied the framework to three additional domains. Domain-level summaries are reported in \cref{tab:validation}; the supporting tier is summarised in \cref{tab:validation}, not as markers on the sports cloud.
+For each KPI, $\hat\kappa=\hat\sigma_B^2/\hat\sigma_A^2$ and $\hat\rho$ are the sample variance ratio and Pearson correlation of the home and away series across fixtures.
+Then $\hat\eta$ follows \cref{eq:pef} and $\hat r_A$ follows \cref{eq:rA}.
+The four cells of $(\kappa,\rho)$ are labelled Quadrants~1--4 in the usual way: Q1 is $\kappa>1$, $\rho>0$; Q2 is $\kappa<1$, $\rho>0$; Q3 is $\kappa<1$, $\rho<0$; Q4 is $\kappa>1$, $\rho<0$.
+Uncertainty for $(\hat\kappa,\hat\rho,\hat\eta)$ uses a team-cluster bootstrap on the home-team index ($B=1{,}000$), reported in Supplementary~\cref{sec:si_qc}.
 
-\textbf{Healthcare.} Paired systolic ({BPXOSY1}) and diastolic ({BPXODI1}) blood pressure readings from the same oscillometric measurement event, drawn from the {NHANES} 2017 public-use examination file \texttt{P\_BPXO} \parencite{nhanes2017pbxo}. Each participant contributes one (systolic, diastolic) pair; pulse pressure $\mathrm{PP}=\mathrm{SBP}-\mathrm{DBP}$ is the relative feature, an established cardiovascular risk biomarker \parencite{franklin1999,blacher1999}. Observations with $\mathrm{SBP}\le\mathrm{DBP}$ were excluded as physiologically implausible ($N=10{,}352$ retained).
+\subsection{Likelihood-ratio statistic}
 
-\textbf{Clinical Genomics.} Normalised {RNA}-seq gene-level expression from {GEO} series {GSE47462}: patient-matched normal breast tissue vs early neoplasia \parencite{geoGSE47462,brunner2014earlybreast}. Pairs were defined by shared subject identifiers in the series sample annotations. Genes were ranked by paired-differential signal before the PEF summary. That ranking preferentially retains genes with a large between-condition shift and, in a paired design, high $\rho$, so the share with $\hat\eta>1$ is not a random-gene rate.
+On the full sample, logistic regression is fitted for $D$ and for $(A,B)$ by maximum likelihood.
+Features are centred and scaled by the pooled standard deviation of $A$ and $B$ so that the null $\beta_A+\beta_B=0$ is unchanged by the common scale.
+The statistic is \cref{eq:lr}.
+Sport-level medians and quartiles summarise the distribution across KPIs.
+No per-KPI $p$-value is reported.
 
-\textbf{Finance.} Daily log returns for $\PEFfinanceN$ {S\&P}~100 constituents over the pinned window 2020--2023, obtained from Yahoo Finance, each paired with the {S\&P}~500 \parencite{sharpe1966,sharpe1994,fama1970,carhart1997,fama1993}. Label A is the index and label B is the constituent, so $\kappa=\mathrm{Var}(\mathrm{stock})/\mathrm{Var}(\mathrm{market})$. Stored $\kappa$ is above one for most names and the correlation is positive, which places the typical name in Quadrant~1. Swapping the labels would send $\kappa$ to $1/\kappa$ and move those names to Quadrant~2 without changing $\eta$.
-
-\subsection{Parameter Estimation}
-
-For each dataset, the variance ratio and correlation were estimated using standard sample estimators
-\begin{equation}
-  \hat{\kappa} = \frac{s^{2}_{\mathrm{B}}}{s^{2}_{\mathrm{A}}},
-  \quad
-  \hat{\rho} =
-  \frac{\sum_{i=1}^{n}(X_{\mathrm{A},i}-\bar{X}_{\mathrm{A}})(X_{\mathrm{B},i}-\bar{X}_{\mathrm{B}})}
-       {\sqrt{\sum_{i=1}^{n}(X_{\mathrm{A},i}-\bar{X}_{\mathrm{A}})^{2}
-              \sum_{i=1}^{n}(X_{\mathrm{B},i}-\bar{X}_{\mathrm{B}})^{2}}}.
-\end{equation}
-Under bivariate normality (Assumption~(A1)), these are maximum likelihood estimators. PEF was computed by substituting into \cref{eq:pef}. For sports KPIs, index $i$ runs over fixtures; $X_{\mathrm{A},i}$ and $X_{\mathrm{B},i}$ denote the home and away KPI counts from game~$i$, so $(\hat\kappa,\hat\rho)$ characterise the cross-fixture distribution of those paired observations rather than correlation within a single match or serial correlation of one team's time series.
-
-\subsection{Empirical Units and Outcome Definitions}
-\label{sec:outcome_defs}
-
-Each sports KPI is one PEF unit: match-level home and away measurements pooled across seasons 23/24 and 24/25, yielding a single $(\hat\kappa,\hat\rho,\hat\eta)$ estimate per KPI. There are $\PEFtotalStudies{}$ such units ($\PEFrugbyNkpis{}$ rugby union, $\PEFfootNkpis{}$ football). Score, scoring events, cards, expected-goals and on-ball-value models, and shots on target are omitted, because those quantities are circular with the binary match outcome. Action KPIs (passes, carries, shot volume, tackles) are retained. Per-KPI estimates and season-to-season positions are in \cref{fig:pef_landscape}. Class separation against $\Delta\mathrm{ML}$, and the quadrant table, are in Supplementary~\cref{sec:si_landscape} (\cref{fig:si_ipred_vs_dml}).
-
-Two reporting roles are distinguished. \textbf{Descriptive mapping} uses all rugby and football KPIs to show where they sit on the $(\kappa,\rho)$ plane, to summarise domain-level distributions, and to place them on \cref{fig:pef_landscape}. These aggregates are descriptive: $\PEFlandscapeQthreePct\%$ of the KPIs lie in Quadrant~3, so pooled statistics primarily reflect the dominant negative-correlation regime rather than a balanced sample of the quadrant space. \textbf{Illustrative checks} use four exemplars, one per quadrant (\cref{tab:exemplars}). The estimate of whether $\hat\eta$ tracks $\Delta\mathrm{ML}$ is the full cloud (Supplementary~\cref{fig:si_ipred_vs_dml}), together with the probit grid as a model check (Supplementary~\cref{sec:si_probit}). The exemplar rule is fixed before looking at $\Delta\mathrm{ML}$. Within a quadrant, keep KPIs with $|\log\hat\kappa|>\log 1.05$, so $\hat\kappa$ lies outside $[1/1.05,\,1.05]$ and the pick is not on the $\kappa=1$ boundary. Among those, choose the KPI whose absolute class separation $|\hat d_Y|$ is closest to the median $|\hat d_Y|$ of that eligible set. Walk Quadrants~1 to~4 and skip a name that contains, or is contained in, a name already chosen, so two versions of the same construct are not both used. If a quadrant has no eligible KPI the margin is relaxed to $\log 1.02$ and then to zero, and the margin actually used is recorded. Class separation is \cref{eq:class_sep}, with $Y$ the home-win indicator. The home--away gap $(\bar X_{\mathrm{A}}-\bar X_{\mathrm{B}})/s_{\mathrm{A}}$ is kept in the per-KPI export as a description of the two teams. It is not plugged into $I(X;Y)$. The four selected KPIs have $\hat d_Y$ from $\PEFexDeltaRatioLo$ to $\PEFexDeltaRatioHi$. Supplementary~\cref{tab:si_quad_landscape} summarises the remaining rugby and football KPIs by quadrant.
-
-Where domain summaries report the proportion of KPIs with $\hat\eta>1$, this is the share for which pairing reduces variance relative to independent measurement. That share is a descriptive summary of the $(\kappa,\rho)$ distribution, not a hypothesis-test outcome; quadrant-level aggregates appear in Supplementary~\cref{tab:si_quad_landscape}.
-
-\subsection{Machine Learning Validation}
+\subsection{Team-blocked log-loss and skill}
 \label{sec:ml_cv}
 
-To assess the relationship between quadrant position and ML performance, logistic regression was fitted with five-fold cross-validation \parencite{kohavi1995}, implemented in {MATLAB} (\texttt{glmfit}, Statistics and Machine Learning Toolbox). The signed change $\Delta\mathrm{ML}=100(\mathrm{acc}_{\mathrm{rel}}-\mathrm{acc}_{\mathrm{abs}})/\mathrm{acc}_{\mathrm{abs}}$ compares the relative feature $X_{\mathrm{A}}-X_{\mathrm{B}}$ with the absolute feature $X_{\mathrm{A}}$. For the exemplars we also fit the two-feature logistic on $(X_{\mathrm{A}},X_{\mathrm{B}})$, and we report AUC, Brier score, and the majority-class accuracy. The point estimate in \cref{tab:exemplars} is the mean of the five fold-wise changes, with a paired $t$ interval on four degrees of freedom. That interval is a description of fold-to-fold variation. It is not a cluster-robust confidence interval for a super-population of leagues. Positive $\Delta\mathrm{ML}$ means the relative feature classified more accurately in these folds. Negative $\Delta\mathrm{ML}$ means it classified less accurately. The home--away gap is not used as the signal in this comparison. Class separation is \cref{eq:class_sep}.
+Out-of-sample log-loss uses leave-one-team-out scoring.
+For each team $t$, the test set is the matches in which $t$ is home or away.
+The training set is the remaining matches: only $t$ is held out, so the opponent's other fixtures remain in training.
+Each match is scored once for each participating team that yields a valid fold, so a match typically contributes twice to the mean.
+Matches with fewer than 20 training rows, fewer than 5 test rows, or a single outcome class in training are skipped.
+Mean test log-loss is reported for an intercept-only model and for $A$, $D$, and $(A,B)$.
+Skill is $\mathrm{LL}(\mathrm{intercept})-\mathrm{LL}(\mathrm{best\ of\ }A,D,(A,B))$.
+A KPI is called informative when the team-bootstrap interval for skill excludes zero.
+Gaps are $\mathrm{LL}(D)-\mathrm{LL}(A,B)$ and $\mathrm{LL}(A)-\mathrm{LL}(D)$, converted to milli-nats in the Results.
+Negative $\mathrm{LL}(D)-\mathrm{LL}(A,B)$ means $D$ has the lower loss.
+The prediction $\mathbb{E}[\mathrm{LL}(D)-\mathrm{LL}(A,B)]\approx -1/(2n_{\mathrm{train}})$ uses the mean training-set size across folds.
+Uncertainty for per-KPI gaps and skill uses a team multinomial bootstrap with out-of-bag matches (Supplementary~\cref{sec:si_qc}).
+Sport-level intervals for median gaps resample KPIs within sport.
 
-\textbf{Team-blocked cross-validation.} Each match is one observation, but teams recur across fixtures, so random match-level folds can place the same side in both training and test sets and inflate accuracy. We partition home teams (not matches) into five disjoint sets with a fixed random seed. A match is assigned to the fold of its home team. For fold~$f$, the test set is the matches whose home team belongs to set~$f$, and the training set is the remaining matches. No home team therefore appears in both partitions within a fold. Away matches of a held-out club can remain in training when that club is the away side, so the block is not a full club hold-out. The same fold assignment is used for the absolute feature, the relative feature, and the two-feature model. Pooled $\Delta\mathrm{ML}$ values describe the rugby and football KPIs. Claims about sign use the fold intervals on the full set, including the Quadrant~3 counts in \cref{sec:exemplars}. The four exemplars illustrate the rule at typical $|\hat d_Y|$.
+\subsection{Pre-specified exemplars}
 
-\subsection{Inference and Quality Control}
-\label{sec:qc}
+Four KPIs were selected before the log-loss analysis, after an earlier accuracy-based analysis of the same data: lineout throws lost (rugby, Quadrant~1), rucks won (rugby, Quadrant~2), corners (football, Quadrant~3), and fouls (football, Quadrant~4).
+They illustrate one cell each.
+They are not confirmatory of a sign for the gap.
 
-The $\PEFtotalStudies{}$-KPI landscape is descriptive. It is not a family-wise hypothesis battery, so Bonferroni, FDR, and Holm corrections are not applied. Uncertainty for $(\hat\kappa,\hat\rho,\hat\eta)$ uses a team-cluster bootstrap: teams are resampled with replacement and all home-side matches for each drawn team are retained ($B=1{,}000$) \parencite{efron1979}. That bootstrap, like the cross-validation, holds out home-team blocks, so away matches of the same club can remain in the resample. Supplementary~\cref{sec:si_qc} reports the check. Predictive comparisons use team-blocked $\Delta\mathrm{ML}$ (\cref{sec:ml_cv}).
+\subsection{Reproducibility}
 
-Paired-difference series were checked with the Shapiro--Wilk test on the two-season window. The difference series rejects normality for $\PEFrugbySwReject\%$ of rugby KPIs and $\PEFfootSwReject\%$ of football KPIs (Supplementary~\cref{sec:si_normality}). Mean $W$ remains high ($0.977$ in rugby and $0.986$ in football). Several KPIs are low-count discrete series, so a rejection can reflect that discreteness. The PEF formula uses second moments and does not require the rejection rate to be zero. Analysis code was version-controlled. The canonical run is \texttt{run\_paper\_pipeline.m} in {MATLAB} {R2025b} with the Statistics and Machine Learning Toolbox (\cref{sec:data_availability}).
-
-\subsection{Sports Data: Independence Considerations}
-
-The sports datasets present a hierarchical structure requiring careful treatment. Each team appears in multiple games, inducing correlation across observations involving the same team through latent team ability $\theta_{j}$:
-\begin{equation}
-  X_{j,i} = \theta_{j} + \epsilon_{j,i}.
-\end{equation}
-We model game-level observations using a bivariate normal approximation
-\begin{equation}
-  \bigl(X_{\mathrm{A}(i)}, X_{\mathrm{B}(i)}\bigr) \sim \mathcal{N}(\boldsymbol{\mu},\boldsymbol{\Sigma}),
-  \quad i=1,\ldots,n,
-\end{equation}
-treating games as conditionally independent. Three considerations justify this approximation for PEF analysis:
-\begin{enumerate}
-  \item \textbf{Target of inference.} PEF focuses on cross-fixture (same-occasion) correlation $\rho=\Corr(X_{\mathrm{A},i},X_{\mathrm{B},i})$ summarised over fixtures $i=1,\ldots,n$, capturing shared environmental factors and competitive dynamics on each game occasion rather than serial dependence of a single team across games. Team quality primarily affects mean structure rather than the correlation structure driving PEF.
-  \item \textbf{Variance estimation.} The total variance $\sigma^{2}_{\mathrm{A}}=\Var(\theta_{j})+\Var(\epsilon_{j,i})$ correctly reflects the observable variance relevant to feature engineering decisions.
-  \item \textbf{Robustness checks.} For $(\hat\kappa,\hat\rho,\hat\eta)$, bootstrap confidence intervals resample \emph{teams} with replacement and retain all home-side matches for each drawn team (cluster bootstrap on the home-team index; Supplementary~\cref{sec:si_qc}). For predictive validation, team-blocked cross-validation (\cref{sec:ml_cv}) prevents home teams from appearing in both training and test folds. Together, these checks address the main dependence induced by recurring teams without altering the distribution-free PEF formula itself.
-\end{enumerate}
-This parallels established practice in sports analytics \parencite{benaim2006,owen2014} and panel data econometrics \parencite{cameron2015,wooldridge2010}.
+Alignment, skill, and log-loss numbers are written by \path{Alternative Pipeline/pef_numerics/experiments/E6_sports.py}.
+Second-moment landscape files are written by \path{scripts/paper_pipeline/run_paper_pipeline.m} in {MATLAB} {R2025b}.
+Macros in \path{scripts/paper_pipeline/outputs/sports_numbers.tex} are regenerated from those CSVs without refitting.

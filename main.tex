@@ -36,42 +36,14 @@
 
 
 \newcommand{\Var}{\operatorname{Var}}
-
-
-\newcommand{\PEFrugbyMeanEta}{???}    \newcommand{\PEFrugbySdEta}{???}
-\newcommand{\PEFrugbySuccess}{???}    \newcommand{\PEFrugbyNkpis}{???}
-\newcommand{\PEFrugbyNgames}{???}     \newcommand{\PEFrugbyCIlo}{???}
-\newcommand{\PEFrugbyCIhi}{???}
-\newcommand{\PEFfootMeanEta}{???}     \newcommand{\PEFfootSdEta}{???}
-\newcommand{\PEFfootSuccess}{???}     \newcommand{\PEFfootNkpis}{???}
-\newcommand{\PEFfootNgames}{???}      \newcommand{\PEFfootCIlo}{???}
-\newcommand{\PEFfootCIhi}{???}
-\newcommand{\PEFtotalStudies}{???}
-\newcommand{\PEFhealthMeanEta}{???}   \newcommand{\PEFhealthSdEta}{???}
-\newcommand{\PEFhealthSuccess}{???}   \newcommand{\PEFhealthN}{???}
-\newcommand{\PEFgenomicsMeanEta}{???} \newcommand{\PEFgenomicsSdEta}{???}
-\newcommand{\PEFgenomicsSuccess}{???} \newcommand{\PEFgenomicsN}{???}
-\newcommand{\PEFfinanceMeanEta}{???}  \newcommand{\PEFfinanceSdEta}{???}
-\newcommand{\PEFfinanceSuccess}{???}  \newcommand{\PEFfinanceN}{???}
-\newcommand{\PEFmfgMeanEta}{???}      \newcommand{\PEFmfgSdEta}{???}
-\newcommand{\PEFmfgSuccess}{???}      \newcommand{\PEFmfgN}{???}
-\newcommand{\PEFqOneMeanEta}{???}     \newcommand{\PEFqOneCIlo}{???}
-\newcommand{\PEFqOneCIhi}{???}        \newcommand{\PEFqOneMLimpr}{???}
-\newcommand{\PEFqTwoMeanEta}{???}     \newcommand{\PEFqTwoMLimpr}{???}
-\newcommand{\PEFqThreeMeanEta}{???}   \newcommand{\PEFqThreeMLimpr}{???}
-\newcommand{\PEFqFourMeanEta}{???}    \newcommand{\PEFqFourCIlo}{???}
-\newcommand{\PEFqFourCIhi}{???}       \newcommand{\PEFqFourMLimpr}{???}
-\newcommand{\PEFmlCorr}{???}          \newcommand{\PEFmlRsq}{???}
-\newcommand{\PEFmlMAE}{???}           \newcommand{\PEFmlRMSE}{???}
-% Pipeline output overrides the fallbacks above via \renewcommand:
-\InputIfFileExists{scripts/paper_pipeline/outputs/numbers.tex}{}{}
-\providecommand{\PEFmedianDeltaRatio}{???}
-\InputIfFileExists{scripts/paper_pipeline/outputs/finalize_correlations.tex}{}{}
 \newcommand{\Cov}{\operatorname{Cov}}
 \DeclareMathOperator{\Corr}{Corr}
 \newcommand{\ind}{\mathbbm{1}}
 
-\title{Pairing Efficiency Does Not Decide Whether a Team KPI Should Be Relativised}
+% Sports-paper macros (E6 oracles). Do not hand-edit sports_numbers.tex.
+\input{scripts/paper_pipeline/outputs/sports_numbers.tex}
+
+\title{Alignment and Team-Blocked Log-Loss for Paired Team KPIs}
 
 \author{%
   M.~R. Brown\textsuperscript{1,*},
